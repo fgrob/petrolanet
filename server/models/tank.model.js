@@ -28,9 +28,11 @@ module.exports = (sequelize, Sequelize) => {
         },
         tank_speed: {
             type: Sequelize.INTEGER,
+            defaultValue: 0,
         },
         status: {
-            type: Sequelize.STRING(20),
+            type: Sequelize.ENUM('DISPONIBLE', 'NO DISPONIBLE', 'EN CARGA', 'CARGA EN PAUSA', 'EN DESCARGA'),
+            defaultValue: 'DISPONIBLE'
         },
         timestamp_current_quantity: {
             type: Sequelize.DATE,

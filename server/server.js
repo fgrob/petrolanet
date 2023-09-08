@@ -7,8 +7,9 @@ app.use(express.json());
 app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 
-// require(rutas!) 
-db.sequelize.sync({ force: true })
+require('./routes/tank.routes')(app);
+
+db.sequelize.sync({ })
     .then(() => {
         console.log('Database ready for use')})
     .catch(() => {

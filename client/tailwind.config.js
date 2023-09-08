@@ -4,21 +4,22 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        roboto: ["Roboto", "sans-serif"],
+        sans: ["Roboto"],
+        // 'roboto': ["Roboto", "sans-serif"],
       },
       colors: {
-        "mountain-meadow": {
-          50: "#effef7",
-          100: "#dafeef",
-          200: "#b8fadd",
-          300: "#81f4c3",
-          400: "#43e5a0",
-          500: "#1acd81",
-          600: "#0fa968",
-          700: "#108554",
-          800: "#126945",
-          900: "#11563a",
-          950: "#03301f",
+        "ocean-green": {
+          50: "#effaf2",
+          100: "#d8f3de",
+          200: "#b4e6c2",
+          300: "#82d39d",
+          400: "#49b671",
+          500: "#2c9d59",
+          600: "#1d7e46",
+          700: "#17653a",
+          800: "#15502f",
+          900: "#124228",
+          950: "#092516",
         },
       },
     },

@@ -1,12 +1,10 @@
-import React from 'react';
+import React from "react";
+import TankCards from "../components/TankCards";
 
 const Home = () => {
-    return (
-        <div className='border-2'>
-            React Tailwind
-        </div>
-    );
+  return (
+    <TankCards />
+  );
 };
 
 export default Home;
-
