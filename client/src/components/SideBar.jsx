@@ -69,17 +69,11 @@ const SideBar = ({ openSideBar, toggleSideBar }) => {
   }, [openSideBar]);
 
   return (
-    <>
-      <div
-        className={`fixed top-0 h-screen w-screen bg-black transition-opacity duration-300 ${
-          openSideBar ? " z-30 opacity-80" : "-z-40 opacity-0"
-        }`}
-      ></div>
       <aside
         ref={sidebarRef}
         className={`${
           openSideBar ? "translate-x-0" : "-translate-x-full"
-        } fixed top-0 z-40 h-screen w-4/5  shadow-[2px_3px_15px] shadow-gray-500 bg-gray-100 duration-100 md:top-auto md:block md:w-1/6 md:translate-x-0 md:pt-5
+        } fixed top-0 z-40 md:z-20 h-screen w-4/5  shadow-[2px_3px_15px] shadow-gray-500 bg-gray-100 duration-200 md:top-auto md:block md:w-1/6 md:translate-x-0 md:pt-5
         `}
       > 
         <div className="md:hidden text-4xl text-white h-14 text-center from-ocean-green-900 to-ocean-green-500 bg-gradient-to-r mb-5 flex items-center justify-center">
@@ -103,7 +97,6 @@ const SideBar = ({ openSideBar, toggleSideBar }) => {
           ))}
         </div>
       </aside>
-    </>
   );
 };
 

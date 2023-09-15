@@ -4,3 +4,14 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.divider {
+  @apply my-1 h-px w-full border-0 bg-gray-200;
+}
+
+.btn-success {
+  @apply rounded-lg border border-ocean-green-800 px-10
+   py-2.5 text-ocean-green-700 hover:bg-ocean-green-800 hover:text-white;
+}
+
+

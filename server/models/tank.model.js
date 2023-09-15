@@ -1,7 +1,7 @@
 module.exports = (sequelize, Sequelize) => {
     const Tank = sequelize.define('Tank', {
         type: {
-            type: Sequelize.STRING(20),
+            type: Sequelize.ENUM('estanque', 'estanque movil', 'camion'),
             allowNull: false,
         },
         name: {
@@ -21,6 +21,10 @@ module.exports = (sequelize, Sequelize) => {
             type: Sequelize.INTEGER,
             allowNull: false,
             defaultValue: 0,
+        },
+        tank_gauge: {
+            type: Sequelize.BOOLEAN,
+            defaultValue: false
         },
         tank_number: {
             type: Sequelize.INTEGER,

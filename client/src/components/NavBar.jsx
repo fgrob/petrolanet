@@ -4,12 +4,12 @@ import { HiOutlineMenuAlt2 } from "react-icons/hi";
 
 const NavBar = ({ toggleSideBar }) => {
   return (
-    <nav className="from-ocean-green-900 to-ocean-green-500 fixed flex h-14 w-full items-center justify-between bg-gradient-to-r text-center text-white z-20">
+    <nav className="from-ocean-green-900 to-ocean-green-500 fixed flex h-14 w-full items-center justify-between bg-gradient-to-r text-center text-white">
       <div className="flex items-center gap-1 pl-2 md:w-1/6 md:pl-4">
         <button onClick={toggleSideBar}>
           <HiOutlineMenuAlt2 className="h-11 w-11 md:hidden" />
         </button>
-        <span className="hidden text-3xl md:block">PETROLANET</span>
+        <span className="hidden text-3xl md:block">PETROLANET</span>  
       </div>
       <div className="text-3xl">
         BASE DE DATOS*
