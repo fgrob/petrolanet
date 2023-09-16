@@ -1,5 +1,7 @@
 const db = require('./index');
 const Tank = db.tank;
+const Operation = db.operation;
+const User = db.user;
 
 const initial = () => {
     Tank.create({
@@ -49,6 +51,32 @@ const initial = () => {
         timestamp_measured_quantity: db.Sequelize.fn('NOW')
     });
 
+    Operation.create({
+        name: 'CARGA'
+    });
+
+    Operation.create({
+        name: 'DESCARGA'
+    });
+
+    Operation.create({
+        name: 'TRASPASO'
+    });
+
+    Operation.create({
+        name: 'AJUSTE'
+    });
+
+    Operation.create({
+        name: 'MEDICION'
+    });
+
+    User.create({
+        username: 'admin',
+        password: '1234',
+        email: 'admin@admin.cl',
+        cellphone: '1234'
+    });
 };
 
 module.exports = initial;

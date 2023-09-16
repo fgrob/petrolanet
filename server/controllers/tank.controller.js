@@ -1,5 +1,5 @@
 const db = require("../models");
-const { tank: Tank } = db;
+const { tank: Tank, eventLog: EventLog } = db;
 
 const getTanks = async (req, res) => {
   try {
@@ -36,7 +36,6 @@ const transferOperation = async (req, res) => {
   try {
     //Start a transaction
     await db.sequelize.transaction(async (t) => {
-
       //Define the origin and destination tank
       let originTankId;
       let destinationTankId;
@@ -65,17 +64,36 @@ const transferOperation = async (req, res) => {
       //Update destination tank
       destinationTank.current_quantity += intQuantity;
       destinationTank.timestamp_current_quantity = new Date();
-      await destinationTank.save({ transaction: t});
+      await destinationTank.save({ transaction: t });
 
-      const updatedTanks = await Tank.findAll(); 
+      //Event Logs Origin Tank
+      const originLog = await EventLog.create({
+        operation_id: 1, // load
+        user_id: 1, // CORREGIR ESTO *********************************************
+        tank_id: originTankId,
+        transaction_quantity: intQuantity * -1,
+        balance: originTank.current_quantity,
+        tank_number_to_date: originTank.tank_number,
+      })
 
-      console.log('aaaaaaaaaahooooooooooooooooooooooooooooo!!!!!!!!!!')
-      console.log(updatedTanks); 
-
-      return res.status(200).json(updatedTanks);      
+      //Event logs Destination Tank
+      const destinationLog = await EventLog.create({
+        operation_id: 2, // unload
+        user_id: 1, // *********************************
+        tank_id: destinationTankId,
+        transaction_quantity: intQuantity,
+        balance: destinationTank.current_quantity,
+        tank_number_to_date: destinationTank.tank_number,
+      })
     });
+
+    const updatedTanks = await Tank.findAll();
+    return res.status(200).json(updatedTanks);
+
   } catch (err) {
-    return res.status(500).json({ err: 'Error in the transfer: ' + err.message });
+    return res
+      .status(500)
+      .json({ err: "Error in the transfer: " + err.message });
   }
 };
 

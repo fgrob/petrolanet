@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://192.168.1.17:8000/api/tank/';
+const API_URL = 'http://192.168.1.9:8000/api/tank/';
 
 const getTanks = () => {
     return axios.get(API_URL + 'all')

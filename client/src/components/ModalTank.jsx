@@ -14,7 +14,6 @@ const ModalTank = ({
   openModal,
   toggleModal,
   action,
-  tanks,
   triggerTankId,
 }) => {
   const modalView = {
@@ -24,12 +23,15 @@ const ModalTank = ({
     TRANSFER: "TRANSFER",
   };
 
-  const { setTanks } = useContext(AppContext);
+  console.log('ModalTank renderizado')
+
+  const { tanks, setTanks } = useContext(AppContext);
   const [selectedView, setSelectedView] = useState(modalView.SELECTOR);
   const modalTankRef = useRef();
 
   const [selectedTankId, setselectedTankId] = useState("");
   const [quantity, setQuantity] = useState("");
+  const [error, setError] = useState("");
 
   const TankObjectWithId = (id) => {
     const tank = tanks.find((tank) => tank.id == id);
@@ -47,6 +49,7 @@ const ModalTank = ({
     setSelectedView(modalView.SELECTOR);
     setselectedTankId("");
     setQuantity("");
+    setError("");
 
     const handleClickOutside = (e) => {
       if (openModal) {
@@ -64,25 +67,41 @@ const ModalTank = ({
   }, [openModal, toggleModal]);
 
   const handleTransfer = (event) => {
+
+    if (!selectedTankId || !quantity) {
+        setError('Favor completa todos los campos');
+        return;
+    } else if (selectedTankId == triggerTankId) {
+        setError('El destino no puede ser igual al origen');
+        return;
+    }
+
     event.preventDefault();
     tankService.transfer(action, triggerTankId, selectedTankId, quantity)
         .then((res) => {
-            console.log(res.data)
             setTanks(res.data);
+            toggleModal();
         })
+  };
+
+  const handleEnter = (e) => {
+    if (e.key === "Enter") {
+        e.preventDefault();
+        e.target.blur();
+    }
   };
 
   return (
     <div
       className={`fixed inset-0 z-50 flex items-center justify-center transition-opacity duration-100 ease-in-out${
         openModal
-          ? "visible border border-red-500 opacity-100"
+          ? "visible opacity-100"
           : "pointer-events-none invisible opacity-0"
       }`}
     >
       <div
         ref={modalTankRef}
-        className="relative mx-2 flex h-5/6 w-full justify-center rounded-lg bg-white p-5 shadow-[rgba(0,_0,_0,_0.24)_0px_3px_8px] md:w-1/3"
+        className="relative mx-2 flex h-5/6 w-full justify-center rounded-lg bg-white p-5 shadow-[rgba(0,_0,_0,_0.24)_0px_3px_8px] md:w-1/3 md:h-auto"
       >
         <button onClick={toggleModal} className="absolute right-1 top-1">
           <IoClose className="h-9 w-9" />
@@ -150,7 +169,7 @@ const ModalTank = ({
             <div className=" w-full text-center text-2xl font-bold">
               {action === "load" ? "(Carga)" : "(Descarga)"}
             </div>
-            <form onSubmit="#" className="grid gap-5">
+            <form onSubmit={handleTransfer} className="grid gap-5">
               <div>
                 {/* <label htmlFor="tank">Seleccionar Estanque</label> */}
                 <select
@@ -161,7 +180,7 @@ const ModalTank = ({
                   className="mt-10 h-12 w-full rounded-lg border border-gray-600 bg-gray-50"
                   required
                 >
-                  <option value="">Seleccionar estanque</option>
+                  <option value="">Seleccionar estanque {action === 'load' ? "origen" : "destino"}</option>
                   {tanks.map((tank) => (
                     <option key={tank.id} value={tank.id}>
                       {tank.name.toUpperCase()}
@@ -184,6 +203,7 @@ const ModalTank = ({
                       setQuantity(e.target.value);
                     }
                   }}
+                  onKeyDown={handleEnter}
                   className="p2 h-12 w-full rounded-lg border border-gray-600"
                   required
                 />
@@ -229,6 +249,9 @@ const ModalTank = ({
               </div>
               <div className="mt-12 flex w-full justify-center">
                 <button className="btn-success" onClick={handleTransfer}>Transferir</button>
+              </div>
+              <div className="mt-3 flex w-full justify-center text-red-600 font-bold">
+                {error}
               </div>
             </div>
           </div>

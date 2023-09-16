@@ -9,6 +9,9 @@ import ModalTank from "./modalTank";
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 const TankCards = () => {
+
+  console.log('TankCards renderizado');
+
   const { tanks, setTanks, openBackdrop, setOpenBackdrop } = useContext(AppContext);
   const [openModal, setOpenModal] = useState(false);
   const [action, setAction] = useState('');
@@ -63,7 +66,7 @@ const TankCards = () => {
               <div className="flex w-full justify-between font-light capitalize">
                 <div>{tank.type}</div>
                 {tank.tank_gauge && (
-                  <div>Numeral: {tank.tank_number} 3337698</div>
+                  <div>Numeral: {tank.tank_number}</div>
                 )}
               </div>
               <hr className="divider" />
@@ -123,17 +126,11 @@ const TankCards = () => {
                 <button type="button" className="btn-success w-full">
                   Ver últimos movimientos
                 </button>
-                <button type="button" className="btn-success flex-1">
-                  Ajustar
-                </button>
-                <button type="button" className="btn-success flex-1">
-                  Medir
-                </button>
               </div>
             </div>
           );
         })}
-      <ModalTank openModal={openModal} toggleModal={toggleModal} action={action} tanks={tanks} triggerTankId={triggerTankId} />
+      <ModalTank openModal={openModal} toggleModal={toggleModal} action={action} triggerTankId={triggerTankId} />
     </div>
   );
 };
