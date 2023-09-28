@@ -99,7 +99,7 @@ const transferOperation = async (req, res) => {
 const sellOrSupplyOperation = async (req, res) => {
   const {
     action,
-    triggerTankId,  
+    triggerTankId,
     clientSupplierId,
     selectedDocument,
     documentNumber,
@@ -163,11 +163,45 @@ const sellOrSupplyOperation = async (req, res) => {
   }
 };
 
+const measurementOperation = async (req, res) => {
+  const { triggerTankId, quantity } = req.body;
+  const intQuantity = parseInt(quantity);
+  const operationId = 5;
+
+  try {
+    await db.sequelize.transaction(async (t) => {
+      const triggerTank = await Tank.findByPk(triggerTankId);
+
+      triggerTank.measured_quantity = intQuantity;
+      triggerTank.timestamp_measured_quantity = new Date();
+      await triggerTank.save({ transaction: t });
+
+      await EventLog.create({
+        operation_id: operationId,
+        user_id: 1, // CORREGIR ESTO ********
+        tank_id: triggerTankId,
+        balance: triggerTank.current_quantity,
+        measured_balance: intQuantity,
+        tank_number_to_date: triggerTank.tank_number,
+      });
+    });
+
+    const updatedTanks = await Tank.findAll();
+    return res.status(200).json(updatedTanks);
+
+  } catch (err) {
+    return res
+      .status(500)
+      .json({ err: "Error in the measurement operation: " + err.message });
+  }
+};
+
 const tankController = {
   getTanks,
   createTank,
   transferOperation,
   sellOrSupplyOperation,
+  measurementOperation,
 };
 
 module.exports = tankController;

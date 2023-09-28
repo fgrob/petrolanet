@@ -18,24 +18,44 @@ const transfer = (action, triggerTankId, selectedTankId, quantity) => {
     .catch((err) => console.log(err));
 };
 
-const sellOrSupply = (action, triggerTankId, clientSupplierId, selectedDocument, documentNumber, quantity, notes) => {
-    return axios.put(API_URL + "sellorsupply", {
-        action,
-        triggerTankId,  
-        clientSupplierId,
-        selectedDocument,
-        documentNumber,
-        quantity,
-        notes
+const sellOrSupply = (
+  action,
+  triggerTankId,
+  clientSupplierId,
+  selectedDocument,
+  documentNumber,
+  quantity,
+  notes,
+) => {
+  return axios
+    .put(API_URL + "sellorsupply", {
+      action,
+      triggerTankId,
+      clientSupplierId,
+      selectedDocument,
+      documentNumber,
+      quantity,
+      notes,
     })
     .catch((err) => console.log(err));
+};
 
+const tankMeasurement = (
+  triggerTankId,
+  quantity
+) => {
+  return axios.put(API_URL + "measurement", {
+    triggerTankId,
+    quantity
+  })
+  .catch((err) => console.log(err));
 }
 
 const tankService = {
   getTanks,
   transfer,
   sellOrSupply,
+  tankMeasurement,
 };
 
 export default tankService;

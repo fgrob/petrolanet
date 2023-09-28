@@ -8,17 +8,16 @@ function TransferView({ action, triggerTank, toggleModal, openModal }) {
   const [selectedTankId, setSelectedTankId] = useState("");
   const [selectedTank, setSelectedTank] = useState("");
   const [quantity, setQuantity] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
   const [isConfirmationVisible, setIsConfirmationVisible] = useState(false);
+
+  const [transferError, setTransferError] = useState('');
 
   useEffect(() => {
     setSelectedTankId("");
     setQuantity("");
-    setErrorMessage("");
   }, [openModal]);
 
   useEffect(() => {
-    setErrorMessage("");
 
     if (
       (selectedTankId !== "" &&
@@ -31,23 +30,8 @@ function TransferView({ action, triggerTank, toggleModal, openModal }) {
     }
   }, [selectedTankId, quantity]);
 
-  const handleEnter = (e) => {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      handleTransfer(e);
-    }
-  };
-
   const handleTransfer = (event) => {
     event.preventDefault();
-
-    if (!selectedTankId || !quantity) {
-      setErrorMessage("Debes completar todos los campos");
-      return;
-    } else if (selectedTankId == triggerTank.id) {
-      setErrorMessage("El destino no puede ser igual al origen");
-      return;
-    }
     setIsConfirmationVisible(true);
   };
 
@@ -56,11 +40,12 @@ function TransferView({ action, triggerTank, toggleModal, openModal }) {
       .transfer(action, triggerTank.id, selectedTankId, quantity)
       .then((res) => {
         setTanks(res.data);
+        setTransferError('');
         toggleModal();
       })
       .catch(() => {
-        setErrorMessage(
-          "Se produjo un error al intentar realizar la transferencia",
+        setTransferError(
+          "No se pudo realizar la transferencia. Favor informar",
         );
       });
   };
@@ -80,14 +65,20 @@ function TransferView({ action, triggerTank, toggleModal, openModal }) {
               id="tank"
               name="tank"
               value={selectedTankId}
-              onChange={(e) => setSelectedTankId(e.target.value)}
+              onChange={(e) => {
+                setSelectedTankId(e.target.value);
+                e.target.setCustomValidity('');
+              }}
               className="mt-10 h-12 w-full rounded-lg border border-gray-600 bg-gray-50"
               required
+              onInvalid={e => e.target.setCustomValidity("Debes seleccionar un estanque")}
             >
               <option value="">
                 Seleccionar estanque {action === "load" ? "origen" : "destino"}
               </option>
-              {tanks.map((tank) => (
+              {tanks
+                .filter((tank) => tank.id !== triggerTank.id)
+                .map((tank) => (
                 <option key={tank.id} value={tank.id}>
                   {tank.name.toUpperCase()}
                 </option>
@@ -99,7 +90,7 @@ function TransferView({ action, triggerTank, toggleModal, openModal }) {
               Cantidad a transferir
             </label>
             <input
-              type="number"
+              type="text"
               id="quantity"
               name="quantity"
               value={quantity}
@@ -108,19 +99,19 @@ function TransferView({ action, triggerTank, toggleModal, openModal }) {
                 if (e.target.value <= 100000) {
                   setQuantity(e.target.value);
                 }
+                e.target.setCustomValidity('');
               }}
-              onKeyDown={handleEnter}
               className=" h-12 w-full rounded-lg border border-gray-600"
               required
+              pattern="[0-9]*"
+              autoComplete="off"
+              onInvalid={e => e.target.setCustomValidity("Debes ingresar una cantidad válida")}
             />
           </div>
           <div className="mt-12 flex w-full justify-center">
-            <button className="btn-success" onClick={handleTransfer}>
+            <button className="btn-success" type="submit">
               Transferir
             </button>
-          </div>
-          <div className="mt-3 flex w-full justify-center font-bold text-red-600">
-            {errorMessage}
           </div>
         </form>
       ) : (
@@ -131,6 +122,7 @@ function TransferView({ action, triggerTank, toggleModal, openModal }) {
           quantity={quantity}
           selectedTank={selectedTank}
           handleConfirmation={handleConfirmationTransfer}
+          transferError={transferError}
         />
       )}
     </div>

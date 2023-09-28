@@ -4,20 +4,26 @@ import { IoArrowBack } from "react-icons/io5";
 import TransferView from "./TransferView";
 import SelectorView from "./SelectorView";
 import ClientSupplierView from "./ClientSupplierView";
+import MeasureStick from "./MeasureStick";
 
-const TankModal = ({ openModal, toggleModal, action, triggerTank }) => {
+const TankModal = ({ openModal, toggleModal, action, triggerTank}) => {
   const modalView = {
     SELECTOR: "SELECTOR",
     SALE: "SALE",
     REFILL: "REFILL",
     TRANSFER: "TRANSFER",
+    MEASURE: "MEASURE",
   };
 
   const [selectedView, setSelectedView] = useState();
   const tankModalRef = useRef();
 
   useEffect(() => {
-    setSelectedView(modalView.SELECTOR);
+    if (action === "measure"){
+      setSelectedView(modalView.MEASURE)
+    } else {
+      setSelectedView(modalView.SELECTOR);
+    }
 
     const handleClickOutside = (e) => {
       if (openModal) {
@@ -94,6 +100,14 @@ const TankModal = ({ openModal, toggleModal, action, triggerTank }) => {
             selectedView === modalView.SALE) && (
             <ClientSupplierView action={action} triggerTank={triggerTank} toggleModal={toggleModal}/>
           )}
+
+        {/* MODAL DE MEDICION DE ESTANQUE */}
+        {openModal && (
+          selectedView === modalView.MEASURE && (
+            <MeasureStick triggerTank={triggerTank} toggleModal={toggleModal} />
+          )
+        )}
+
       </div>
     </div>
   );

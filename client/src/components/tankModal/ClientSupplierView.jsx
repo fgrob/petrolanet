@@ -8,13 +8,10 @@ import ConfirmationView from "./ConfirmationView";
 import { BiSolidCheckCircle } from "react-icons/bi";
 import { BiLoaderCircle } from "react-icons/bi";
 
-//detalles finales: agregar onSubmit al form, y luego el boton final ponerle type subtmit
 // revisar con ia si conviene usar un useReducer
-// manejar errores
 
 const ClientSupplierView = ({ action, triggerTank, toggleModal }) => {
-  const { tanks, setTanks } = useContext(AppContext);
-
+  const { setTanks } = useContext(AppContext);
   const [clientSupplierList, setClientSupplierList] = useState("");
   const documentOptions = ["Sin documento", "Guia", "Factura"];
   const [isLoading, setIsLoading] = useState(true);
@@ -29,6 +26,7 @@ const ClientSupplierView = ({ action, triggerTank, toggleModal }) => {
 
   const [isConfirmationVisible, setIsConfirmationVisible] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [autocompleteError, setAutocompleteError] = useState("");
 
   useEffect(() => {
     setClientSupplierId("");
@@ -40,6 +38,7 @@ const ClientSupplierView = ({ action, triggerTank, toggleModal }) => {
     setNotes("");
 
     setErrorMessage("");
+    setAutocompleteError("");
 
     setIsLoading(true);
 
@@ -67,6 +66,12 @@ const ClientSupplierView = ({ action, triggerTank, toggleModal }) => {
 
   const handleSellOrSupply = (e) => {
     e.preventDefault();
+
+    if (clientSupplier === "") {
+      setAutocompleteError("Debes seleccionar una opción válida");
+      return;
+    }
+
     setIsConfirmationVisible(true);
   };
 
@@ -103,7 +108,10 @@ const ClientSupplierView = ({ action, triggerTank, toggleModal }) => {
             <BiLoaderCircle className="h-8 w-8 animate-spin text-gray-500" />
           </div>
         ) : (
-          <form className="space-y-2 text-gray-600">
+          <form
+            className="space-y-2 text-gray-600"
+            onSubmit={handleSellOrSupply}
+          >
             {clientSupplierList && clientSupplierList.length > 0 && (
               <div className="w-full">
                 <label htmlFor="rut" className="block">
@@ -117,6 +125,8 @@ const ClientSupplierView = ({ action, triggerTank, toggleModal }) => {
                     value: client.rut,
                     label: client.business_name,
                   }))}
+                  autocompleteError={autocompleteError}
+                  setAutocompleteError={setAutocompleteError}
                 />
               </div>
             )}
@@ -158,10 +168,17 @@ const ClientSupplierView = ({ action, triggerTank, toggleModal }) => {
                   Folio
                 </label>
                 <input
-                  type="number"
+                  type="text"
                   value={documentNumber}
                   className="w-full rounded-lg border border-gray-400 px-3 py-2"
-                  onChange={(e) => setDocumentNumber(e.target.value)}
+                  onChange={(e) => {
+                    setDocumentNumber(e.target.value);
+                    e.target.setCustomValidity('');
+                  }}
+                  required
+                  pattern="[0-9]*"
+                  autoComplete="off"
+                  onInvalid={e => e.target.setCustomValidity("Debes ingresar un folio válido")}
                 />
               </div>
             )}
@@ -171,7 +188,7 @@ const ClientSupplierView = ({ action, triggerTank, toggleModal }) => {
                 Cantidad
               </label>
               <input
-                type="number"
+                type="text"
                 id="quantity"
                 name="quantity"
                 value={quantity}
@@ -180,9 +197,13 @@ const ClientSupplierView = ({ action, triggerTank, toggleModal }) => {
                   if (e.target.value <= 100000) {
                     setQuantity(e.target.value);
                   }
+                  e.target.setCustomValidity('');
                 }}
                 className="w-full rounded-lg border border-gray-400 px-3 py-2"
                 required
+                pattern="[0-9]*"
+                autoComplete="off"
+                onInvalid={e => e.target.setCustomValidity("Debes ingresar una cantidad")}
               />
             </div>
 
@@ -200,10 +221,11 @@ const ClientSupplierView = ({ action, triggerTank, toggleModal }) => {
             </div>
 
             <div className="mt-6 flex justify-center">
-              <button className="btn-success" onClick={handleSellOrSupply}>
+              <button className="btn-success" type="submit">
                 Transferir
               </button>
             </div>
+            <div className="text-center text-red-600">{errorMessage}</div>
           </form>
         )
       ) : (

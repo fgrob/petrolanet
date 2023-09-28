@@ -8,7 +8,7 @@ const Supplier = db.supplier;
 const initial = () => {
   Tank.create({
     type: "estanque",
-    name: "PRINCIPAL20",
+    name: "PRINCIPAL20M",
     capacity: 21000,
     current_quantity: 9000,
     tank_gauge: true,
@@ -22,7 +22,7 @@ const initial = () => {
 
   Tank.create({
     type: "estanque",
-    name: "SECUNDARIO50",
+    name: "SECUNDARIO50M",
     capacity: 50000,
     current_quantity: 45000,
     tank_gauge: true,

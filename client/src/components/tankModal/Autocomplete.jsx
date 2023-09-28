@@ -5,6 +5,8 @@ const Autocomplete = ({
   setInputValue,
   setClientSupplier,
   suggestions,
+  autocompleteError,
+  setAutocompleteError
 }) => {
   const suggestionListRef = useRef(null);
   const inputRef = useRef(null);
@@ -14,6 +16,7 @@ const Autocomplete = ({
   const handleInputChange = (e) => {
     setInputValue(e.target.value);
     setClientSupplier("");
+    e.target.setCustomValidity('');
 
     const filtered = suggestions.filter((suggestion) =>
       suggestion.value
@@ -102,9 +105,21 @@ const Autocomplete = ({
     }
   };
 
+  // Autocomplete Error Message Handlers
+  useEffect(() => {
+    const input = document.getElementById("valueInput");
+    input.setCustomValidity(autocompleteError);
+    input.reportValidity();
+  }, [autocompleteError])
+
+  useEffect(() => {
+      setAutocompleteError('');
+  }, [inputValue])
+
   return (
     <div className="relative">
       <input
+        id="valueInput"
         type="text"
         value={inputValue}
         ref={inputRef}
@@ -112,6 +127,7 @@ const Autocomplete = ({
         onChange={handleInputChange}
         onKeyDown={handleInputKeyDown}
         className="w-full rounded-lg border border-gray-400 px-3 py-2"
+        autoComplete="off"
       />
       {openSuggestions && (
         <ul

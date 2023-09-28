@@ -8,18 +8,14 @@ import TankModal from "./tankModal/TankModal";
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 const TankCards = () => {
-
   const { tanks, openBackdrop, setOpenBackdrop } = useContext(AppContext);
   const [openModal, setOpenModal] = useState(false);
-  const [action, setAction] = useState('');
-  const [triggerTankId, setTriggerTankId] = useState(null); 
+  const [action, setAction] = useState("");
   const [triggerTank, setTriggerTank] = useState(null);
 
-  // const toggleModal = (tankId) => {
   const toggleModal = (tank) => {
-    // setTriggerTankId(tankId); 
-    setTriggerTank(tank)
-    
+    setTriggerTank(tank);
+
     setOpenModal(!openModal);
     setOpenBackdrop(!openBackdrop);
   };
@@ -59,9 +55,7 @@ const TankCards = () => {
               <h1 className="w-full text-2xl uppercase">{tank.name}</h1>
               <div className="flex w-full justify-between font-light capitalize">
                 <div>{tank.type}</div>
-                {tank.tank_gauge && (
-                  <div>Numeral: {tank.tank_number}</div>
-                )}
+                {tank.tank_gauge && <div>Numeral: {tank.tank_number}</div>}
               </div>
               <hr className="divider" />
               <div className="h-52">
@@ -82,7 +76,13 @@ const TankCards = () => {
               </div>
               <hr className="divider" />
               {tank.type == "estanque" && (
-                <div className="my-2 flex w-full flex-col rounded bg-gray-200 text-center shadow-md">
+                <button
+                  className="my-2 flex w-full flex-col items-center rounded bg-gray-200 shadow-md"
+                  onClick={() => {
+                    setAction("measure");
+                    toggleModal(tank);
+                  }}
+                >
                   <div className="flex-grow-0">
                     Regla:{" "}
                     <span className="text-red-500">
@@ -94,14 +94,14 @@ const TankCards = () => {
                       .tz("America/Santiago")
                       .format("DD/MM/yyyy - HH:mm")}
                   </div>
-                </div>
+                </button>
               )}
               <div className="mt-2 flex w-full flex-wrap justify-between gap-4">
                 <button
                   type="button"
                   className="btn-success flex-1"
                   onClick={() => {
-                    setAction('load');
+                    setAction("load");
                     // toggleModal(tank.id);
                     toggleModal(tank);
                   }}
@@ -112,7 +112,7 @@ const TankCards = () => {
                   type="button"
                   className="btn-success flex-1"
                   onClick={() => {
-                    setAction('unload');
+                    setAction("unload");
                     toggleModal(tank);
                   }}
                 >
@@ -125,7 +125,12 @@ const TankCards = () => {
             </div>
           );
         })}
-      <TankModal openModal={openModal} toggleModal={toggleModal} action={action} triggerTank={triggerTank} />
+      <TankModal
+        openModal={openModal}
+        toggleModal={toggleModal}
+        action={action}
+        triggerTank={triggerTank}
+      />
     </div>
   );
 };

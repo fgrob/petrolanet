@@ -12,7 +12,8 @@ const ConfirmationView = ({
   quantity,
   selectedTank = null,
   clientSupplier = null,
-  handleConfirmation
+  handleConfirmation,
+  transferError
 }) => {
   let originType;
   let originName;
@@ -109,6 +110,11 @@ const ConfirmationView = ({
           <button className="btn-success" onClick={handleConfirmation}>Confirmar</button>
         </div>
       </div>
+        {transferError !== '' && (
+          <div className="text-red-500 text-center w-full mt-2">
+              {transferError}
+          </div>
+        )}
     </div>
   );
 };
