@@ -6,7 +6,7 @@ const getTanks = async (req, res) => {
     const tanks = await Tank.findAll();
     res.json(tanks);
   } catch (err) {
-    console.error("Error fetching tanks:", err);
+    console.error("Error fetching tanks: ", err);
     res.status(500).json({ err: "Internal server error" });
   }
 };
@@ -74,7 +74,7 @@ const transferOperation = async (req, res) => {
         transaction_quantity: intQuantity * -1,
         balance: originTank.current_quantity,
         tank_number_to_date: originTank.tank_number,
-      })
+      });
 
       //Event logs Destination Tank
       const destinationLog = await EventLog.create({
@@ -84,12 +84,78 @@ const transferOperation = async (req, res) => {
         transaction_quantity: intQuantity,
         balance: destinationTank.current_quantity,
         tank_number_to_date: destinationTank.tank_number,
-      })
+      });
     });
 
     const updatedTanks = await Tank.findAll();
     return res.status(200).json(updatedTanks);
+  } catch (err) {
+    return res
+      .status(500)
+      .json({ err: "Error in the transfer: " + err.message });
+  }
+};
 
+const sellOrSupplyOperation = async (req, res) => {
+  const {
+    action,
+    triggerTankId,  
+    clientSupplierId,
+    selectedDocument,
+    documentNumber,
+    quantity,
+    notes,
+  } = req.body;
+
+  let operationId;
+  let clientId;
+  let supplierId;
+  let parsedDocumentNumber = documentNumber ? documentNumber : null;
+  let intQuantity = parseInt(quantity);
+
+  if (action === "unload") {
+    intQuantity = -intQuantity;
+    operationId = 2;
+    clientId = clientSupplierId;
+  } else {
+    operationId = 1;
+    supplierId = clientSupplierId;
+  }
+
+  try {
+    await db.sequelize.transaction(async (t) => {
+      const triggerTank = await Tank.findByPk(triggerTankId);
+
+      //Check if tank_gauge is true
+      if (triggerTank.tank_gauge && action === "unload") {
+        triggerTank.tank_number -= intQuantity;
+      }
+
+      //Update current quantity and timestamp in trigger Tank
+      action === "unload";
+      triggerTank.current_quantity += intQuantity;
+      triggerTank.timestamp_current_quantity = new Date();
+      await triggerTank.save({ transaction: t });
+
+      //Event Logs
+
+      await EventLog.create({
+        operation_id: operationId,
+        user_id: 1, // CORREGIR ESTO *****************
+        tank_id: triggerTankId,
+        transaction_quantity: intQuantity,
+        balance: triggerTank.current_quantity,
+        tank_number_to_date: triggerTank.tank_number,
+        document_type: selectedDocument,
+        document_number: parsedDocumentNumber,
+        client_id: clientId,
+        supplier_id: supplierId,
+        notes: notes,
+      });
+    });
+
+    const updatedTanks = await Tank.findAll();
+    return res.status(200).json(updatedTanks);
   } catch (err) {
     return res
       .status(500)
@@ -101,6 +167,7 @@ const tankController = {
   getTanks,
   createTank,
   transferOperation,
+  sellOrSupplyOperation,
 };
 
 module.exports = tankController;

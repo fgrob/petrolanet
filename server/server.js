@@ -9,6 +9,8 @@ app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 
 require('./routes/tank.routes')(app);
+require('./routes/client.routes')(app);
+require('./routes/supplier.routes')(app);
 
 db.sequelize.sync({force: true })
     .then(() => {

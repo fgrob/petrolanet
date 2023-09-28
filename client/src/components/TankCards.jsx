@@ -1,34 +1,28 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import { AppContext } from "../App";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { Doughnut } from "react-chartjs-2";
-import tankService from "../services/tank.service";
 import moment from "moment-timezone";
-import ModalTank from "./modalTank";
+import TankModal from "./tankModal/TankModal";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 const TankCards = () => {
 
-  console.log('TankCards renderizado');
-
-  const { tanks, setTanks, openBackdrop, setOpenBackdrop } = useContext(AppContext);
+  const { tanks, openBackdrop, setOpenBackdrop } = useContext(AppContext);
   const [openModal, setOpenModal] = useState(false);
   const [action, setAction] = useState('');
-  const [triggerTankId, setTriggerTankId] = useState(null);
+  const [triggerTankId, setTriggerTankId] = useState(null); 
+  const [triggerTank, setTriggerTank] = useState(null);
 
-  const toggleModal = (tankId) => {
-    setTriggerTankId(tankId);
+  // const toggleModal = (tankId) => {
+  const toggleModal = (tank) => {
+    // setTriggerTankId(tankId); 
+    setTriggerTank(tank)
+    
     setOpenModal(!openModal);
     setOpenBackdrop(!openBackdrop);
   };
-
-  // useEffect(() => {
-  //   tankService.getTanks().then((res) => {
-  //     console.log(res.data);
-  //     setTanks(res.data);
-  //   });
-  // }, []);
 
   const getBackgroundColor = (tankType) => {
     const typeToColor = {
@@ -44,7 +38,7 @@ const TankCards = () => {
     <div className="flex flex-wrap content-between justify-evenly">
       {tanks
         .sort((a, b) => a.id - b.id)
-        .map((tank, index) => {
+        .map((tank) => {
           const data = {
             labels: [],
             datasets: [
@@ -108,7 +102,8 @@ const TankCards = () => {
                   className="btn-success flex-1"
                   onClick={() => {
                     setAction('load');
-                    toggleModal(tank.id);
+                    // toggleModal(tank.id);
+                    toggleModal(tank);
                   }}
                 >
                   Cargar
@@ -118,7 +113,7 @@ const TankCards = () => {
                   className="btn-success flex-1"
                   onClick={() => {
                     setAction('unload');
-                    toggleModal(tank.id);
+                    toggleModal(tank);
                   }}
                 >
                   Descargar
@@ -130,7 +125,7 @@ const TankCards = () => {
             </div>
           );
         })}
-      <ModalTank openModal={openModal} toggleModal={toggleModal} action={action} triggerTankId={triggerTankId} />
+      <TankModal openModal={openModal} toggleModal={toggleModal} action={action} triggerTank={triggerTank} />
     </div>
   );
 };

@@ -1,30 +1,41 @@
-import axios from 'axios';
+import axios from "axios";
+import API_BASE_URL from "./apiConfig";
 
-const API_URL = 'http://192.168.1.9:8000/api/tank/';
+const API_URL = `${API_BASE_URL}/tank/`;
 
 const getTanks = () => {
-    return axios.get(API_URL + 'all')
-        // .then((res) => {
-        //     console.log('axios OK')
-        //     return res.data
-        // })
-        // .catch((err) => {
-        //     console.log('axios ERROR')
-        // })
+  return axios.get(API_URL + "all").catch((err) => console.log(err));
 };
 
 const transfer = (action, triggerTankId, selectedTankId, quantity) => {
-    return axios.put(API_URL + 'transfer', {action, triggerTankId, selectedTankId, quantity})
-        // .then(res => {
-        //     console.log(res.data)
-        //     return res.data;
-        // })
-        // .catch(err => console.log(err))
+  return axios
+    .put(API_URL + "transfer", {
+      action,
+      triggerTankId,
+      selectedTankId,
+      quantity,
+    })
+    .catch((err) => console.log(err));
 };
 
+const sellOrSupply = (action, triggerTankId, clientSupplierId, selectedDocument, documentNumber, quantity, notes) => {
+    return axios.put(API_URL + "sellorsupply", {
+        action,
+        triggerTankId,  
+        clientSupplierId,
+        selectedDocument,
+        documentNumber,
+        quantity,
+        notes
+    })
+    .catch((err) => console.log(err));
+
+}
+
 const tankService = {
-    getTanks,
-    transfer,
+  getTanks,
+  transfer,
+  sellOrSupply,
 };
 
 export default tankService;

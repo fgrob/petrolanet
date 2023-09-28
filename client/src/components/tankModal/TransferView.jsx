@@ -1,0 +1,140 @@
+import React, { useContext, useEffect, useState } from "react";
+import { AppContext } from "../../App";
+import ConfirmationView from "./ConfirmationView";
+import tankService from "../../services/tank.service";
+
+function TransferView({ action, triggerTank, toggleModal, openModal }) {
+  const { tanks, setTanks } = useContext(AppContext);
+  const [selectedTankId, setSelectedTankId] = useState("");
+  const [selectedTank, setSelectedTank] = useState("");
+  const [quantity, setQuantity] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const [isConfirmationVisible, setIsConfirmationVisible] = useState(false);
+
+  useEffect(() => {
+    setSelectedTankId("");
+    setQuantity("");
+    setErrorMessage("");
+  }, [openModal]);
+
+  useEffect(() => {
+    setErrorMessage("");
+
+    if (
+      (selectedTankId !== "" &&
+        selectedTank &&
+        selectedTank.id !== selectedTankId) ||
+      (selectedTankId !== "" && selectedTank === "")
+    ) {
+      const tank = tanks.find((tank) => tank.id == selectedTankId);
+      setSelectedTank(tank ? tank : "");
+    }
+  }, [selectedTankId, quantity]);
+
+  const handleEnter = (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      handleTransfer(e);
+    }
+  };
+
+  const handleTransfer = (event) => {
+    event.preventDefault();
+
+    if (!selectedTankId || !quantity) {
+      setErrorMessage("Debes completar todos los campos");
+      return;
+    } else if (selectedTankId == triggerTank.id) {
+      setErrorMessage("El destino no puede ser igual al origen");
+      return;
+    }
+    setIsConfirmationVisible(true);
+  };
+
+  const handleConfirmationTransfer = () => {
+    tankService
+      .transfer(action, triggerTank.id, selectedTankId, quantity)
+      .then((res) => {
+        setTanks(res.data);
+        toggleModal();
+      })
+      .catch(() => {
+        setErrorMessage(
+          "Se produjo un error al intentar realizar la transferencia",
+        );
+      });
+  };
+
+  return (
+    <div className="w-full">
+      <div className=" w-full text-center text-2xl font-bold">
+        Transferencia Interna
+      </div>
+      <div className=" w-full rounded bg-gray-200 text-center text-2xl font-thin">
+        {action === "load" ? "Cargar " + triggerTank.name : "Descargar " + triggerTank.name}
+      </div>
+      {!isConfirmationVisible ? (
+        <form onSubmit={handleTransfer} className="grid gap-5">
+          <div>
+            <select
+              id="tank"
+              name="tank"
+              value={selectedTankId}
+              onChange={(e) => setSelectedTankId(e.target.value)}
+              className="mt-10 h-12 w-full rounded-lg border border-gray-600 bg-gray-50"
+              required
+            >
+              <option value="">
+                Seleccionar estanque {action === "load" ? "origen" : "destino"}
+              </option>
+              {tanks.map((tank) => (
+                <option key={tank.id} value={tank.id}>
+                  {tank.name.toUpperCase()}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label htmlFor="quantity" className="text-gray-600">
+              Cantidad a transferir
+            </label>
+            <input
+              type="number"
+              id="quantity"
+              name="quantity"
+              value={quantity}
+              max={100000}
+              onChange={(e) => {
+                if (e.target.value <= 100000) {
+                  setQuantity(e.target.value);
+                }
+              }}
+              onKeyDown={handleEnter}
+              className=" h-12 w-full rounded-lg border border-gray-600"
+              required
+            />
+          </div>
+          <div className="mt-12 flex w-full justify-center">
+            <button className="btn-success" onClick={handleTransfer}>
+              Transferir
+            </button>
+          </div>
+          <div className="mt-3 flex w-full justify-center font-bold text-red-600">
+            {errorMessage}
+          </div>
+        </form>
+      ) : (
+        <ConfirmationView
+          setIsConfirmationVisible={setIsConfirmationVisible}
+          action={action}
+          triggerTank={triggerTank}
+          quantity={quantity}
+          selectedTank={selectedTank}
+          handleConfirmation={handleConfirmationTransfer}
+        />
+      )}
+    </div>
+  );
+}
+
+export default TransferView;

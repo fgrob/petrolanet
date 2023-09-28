@@ -14,11 +14,9 @@ function App() {
 
   useEffect(() => {
     tankService.getTanks().then((res) => {
-      console.log('LLamado a la BBDD para traer la lista de estanques') 
-      // console.log(res.data)
-      setTanks(res.data)
-    })
-  }, [])
+      setTanks(res.data);
+    });
+  }, []);
 
   const toggleSideBar = () => {
     setOpenSideBar(!openSideBar);
@@ -26,7 +24,9 @@ function App() {
   };
 
   return (
-    <AppContext.Provider value={{tanks, setTanks, openBackdrop, setOpenBackdrop}}>
+    <AppContext.Provider
+      value={{ tanks, setTanks, openBackdrop, setOpenBackdrop }}
+    >
       <div className="grid grid-cols-6">
         <Backdrop />
         <div className="col-span-6 h-14">

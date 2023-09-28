@@ -4,8 +4,6 @@ import { HiOutlineMenuAlt2 } from "react-icons/hi";
 
 const NavBar = ({ toggleSideBar }) => {
 
-  console.log('NavBar renderizado')
-
   return (
     <nav className="from-ocean-green-900 to-ocean-green-500 fixed flex h-14 w-full items-center justify-between bg-gradient-to-r text-center text-white">
       <div className="flex items-center gap-1 pl-2 md:w-1/6 md:pl-4">
