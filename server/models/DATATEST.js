@@ -4,6 +4,7 @@ const Operation = db.operation;
 const User = db.user;
 const Client = db.client;
 const Supplier = db.supplier;
+const EventLog = db.eventLog;
 
 const initial = () => {
   Tank.create({
@@ -34,7 +35,7 @@ const initial = () => {
   Tank.create({
     type: "estanque movil",
     name: "bidon2000",
-    capacity: 1000,
+    capacity: 2000,
     current_quantity: 500,
     tank_gauge: false,
     status: "DISPONIBLE",
@@ -193,6 +194,7 @@ const initial = () => {
     business_name: "FERRETERÍA HERRAMIENTAS S.A",
     alias: "HERRAMIENTAS",
   });
+
 };
 
 module.exports = initial;

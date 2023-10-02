@@ -44,11 +44,11 @@ module.exports = (sequelize, Sequelize) => {
         }
     });
 
-    EventLog.belongsTo(sequelize.models.Operation, { foreignKey: 'operation_id' });
-    EventLog.belongsTo(sequelize.models.User, { foreignKey: 'user_id' });
-    EventLog.belongsTo(sequelize.models.Tank, { foreignKey: 'tank_id' });
-    EventLog.belongsTo(sequelize.models.Client, { foreignKey: 'client_id' });
-    EventLog.belongsTo(sequelize.models.Supplier, { foreignKey: 'supplier_id' });
+    EventLog.belongsTo(sequelize.models.Operation, { foreignKey: 'operation_id', as: 'operation' });
+    EventLog.belongsTo(sequelize.models.User, { foreignKey: 'user_id', as: 'user' });
+    EventLog.belongsTo(sequelize.models.Tank, { foreignKey: 'tank_id', as: 'tank' });
+    EventLog.belongsTo(sequelize.models.Client, { foreignKey: 'client_id', as: 'client' });
+    EventLog.belongsTo(sequelize.models.Supplier, { foreignKey: 'supplier_id', as: 'supplier' });
 
     return EventLog;
 };

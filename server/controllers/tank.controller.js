@@ -68,7 +68,7 @@ const transferOperation = async (req, res) => {
 
       //Event Logs Origin Tank
       const originLog = await EventLog.create({
-        operation_id: 1, // load
+        operation_id: 2, // load
         user_id: 1, // CORREGIR ESTO *********************************************
         tank_id: originTankId,
         transaction_quantity: intQuantity * -1,
@@ -78,7 +78,7 @@ const transferOperation = async (req, res) => {
 
       //Event logs Destination Tank
       const destinationLog = await EventLog.create({
-        operation_id: 2, // unload
+        operation_id: 1, // unload
         user_id: 1, // *********************************
         tank_id: destinationTankId,
         transaction_quantity: intQuantity,
@@ -164,7 +164,7 @@ const sellOrSupplyOperation = async (req, res) => {
 };
 
 const measurementOperation = async (req, res) => {
-  const { triggerTankId, quantity } = req.body;
+  const { triggerTankId, quantity, notes } = req.body;
   const intQuantity = parseInt(quantity);
   const operationId = 5;
 
@@ -183,6 +183,7 @@ const measurementOperation = async (req, res) => {
         balance: triggerTank.current_quantity,
         measured_balance: intQuantity,
         tank_number_to_date: triggerTank.tank_number,
+        notes: notes,
       });
     });
 

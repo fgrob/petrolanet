@@ -11,10 +11,12 @@ app.use(express.urlencoded({ extended: true }));
 require('./routes/tank.routes')(app);
 require('./routes/client.routes')(app);
 require('./routes/supplier.routes')(app);
+require('./routes/eventLog.routes')(app);
 
-db.sequelize.sync({force: true })
+db.sequelize.sync({})
+// db.sequelize.sync({force: true })
     .then(() => {
-        initial();
+        // initial();
         console.log('Database ready for use')})
     .catch(() => {
         console.log('Database Error')
