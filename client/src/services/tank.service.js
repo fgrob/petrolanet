@@ -42,11 +42,13 @@ const sellOrSupply = (
 
 const tankMeasurement = (
   triggerTankId,
-  quantity
+  quantity,
+  notes
 ) => {
   return axios.put(API_URL + "measurement", {
     triggerTankId,
-    quantity
+    quantity,
+    notes
   })
   .catch((err) => console.log(err));
 }

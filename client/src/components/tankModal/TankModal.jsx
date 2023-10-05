@@ -6,7 +6,7 @@ import SelectorView from "./SelectorView";
 import ClientSupplierView from "./ClientSupplierView";
 import MeasureStick from "./MeasureStick";
 
-const TankModal = ({ openModal, toggleModal, action, triggerTank}) => {
+const TankModal = ({ openModal, toggleModal, action, triggerTank }) => {
   const modalView = {
     SELECTOR: "SELECTOR",
     SALE: "SALE",
@@ -17,10 +17,14 @@ const TankModal = ({ openModal, toggleModal, action, triggerTank}) => {
 
   const [selectedView, setSelectedView] = useState();
   const tankModalRef = useRef();
+  const [isConfirmationVisible, setIsConfirmationVisible] = useState(false);
 
   useEffect(() => {
-    if (action === "measure"){
-      setSelectedView(modalView.MEASURE)
+
+    setIsConfirmationVisible(false);
+
+    if (action === "measure") {
+      setSelectedView(modalView.MEASURE);
     } else {
       setSelectedView(modalView.SELECTOR);
     }
@@ -34,13 +38,13 @@ const TankModal = ({ openModal, toggleModal, action, triggerTank}) => {
     };
 
     const handleKeyESC = (e) => {
-      if(openModal) {
+      if (openModal) {
         if (e.key === "Escape") {
           toggleModal();
         }
       }
-    }
-    
+    };
+
     document.addEventListener("keydown", handleKeyESC);
     document.addEventListener("mousedown", handleClickOutside);
 
@@ -64,13 +68,17 @@ const TankModal = ({ openModal, toggleModal, action, triggerTank}) => {
       >
         <button
           onClick={toggleModal}
-          className="absolute right-1 top-1 h-9 w-9 z-50"
+          className="absolute right-1 top-1 z-50 h-9 w-9"
         >
           <IoClose className="h-full w-full" />
         </button>
-        {selectedView !== modalView.SELECTOR && (
+        {selectedView !== modalView.SELECTOR && selectedView !== modalView.MEASURE && (
           <button
-            onClick={() => setSelectedView(modalView.SELECTOR)}
+            onClick={() => {
+              isConfirmationVisible
+                ? setIsConfirmationVisible(false)
+                : setSelectedView(modalView.SELECTOR);
+            }}
             className="absolute left-1 top-1"
           >
             <IoArrowBack className="h-9 w-9" />
@@ -92,22 +100,27 @@ const TankModal = ({ openModal, toggleModal, action, triggerTank}) => {
             triggerTank={triggerTank}
             toggleModal={toggleModal}
             openModal={openModal}
+            isConfirmationVisible={isConfirmationVisible}
+            setIsConfirmationVisible={setIsConfirmationVisible}
           />
         )}
         {/* MODAL CLIENTE PROVEEDOR */}
         {openModal &&
           (selectedView === modalView.REFILL ||
             selectedView === modalView.SALE) && (
-            <ClientSupplierView action={action} triggerTank={triggerTank} toggleModal={toggleModal}/>
+            <ClientSupplierView
+              action={action}
+              triggerTank={triggerTank}
+              toggleModal={toggleModal}
+              isConfirmationVisible={isConfirmationVisible}
+              setIsConfirmationVisible={setIsConfirmationVisible}
+            />
           )}
 
         {/* MODAL DE MEDICION DE ESTANQUE */}
-        {openModal && (
-          selectedView === modalView.MEASURE && (
-            <MeasureStick triggerTank={triggerTank} toggleModal={toggleModal} />
-          )
+        {openModal && selectedView === modalView.MEASURE && (
+          <MeasureStick triggerTank={triggerTank} toggleModal={toggleModal} />
         )}
-
       </div>
     </div>
   );

@@ -7,15 +7,16 @@ import { IoClose } from "react-icons/io5";
 
 const SideBar = ({ openSideBar, toggleSideBar }) => {
   const Menus = [
-    { title: "Inicio", icon: IoHomeSharp },
+    { title: "Inicio", icon: IoHomeSharp, link: "/" },
     { title: "Solicitudes", icon: RiMailSendFill },
-    { title: "Base de datos", icon: AiFillDatabase },
+    { title: "Base de datos", icon: AiFillDatabase, link: "/database" },
     { title: "Recursos", icon: AiTwotoneSetting },
   ];
 
   const sidebarRef = useRef();
   const startX = useRef(null);
   const startY = useRef(null);
+  const isDatabaseRoute = true;
 
   useEffect(() => {
     const handleTouchStart = (e) => {
@@ -61,6 +62,7 @@ const SideBar = ({ openSideBar, toggleSideBar }) => {
   }, [openSideBar, toggleSideBar]);
 
   useEffect(() => {
+    // disables vertical scrolling 
     if (openSideBar) {
       document.body.style.overflow = "hidden";
     } else {
@@ -85,7 +87,7 @@ const SideBar = ({ openSideBar, toggleSideBar }) => {
         <div className="h-screen w-fullfont-medium flex flex-col gap-3 ">
           {Menus.map((Menu, index) => (
             <a
-              href="#"
+              href={Menu.link}
               key={index}
               className="group rounded-lg hover:bg-gray-200 flex p-2 pl-5"
             >

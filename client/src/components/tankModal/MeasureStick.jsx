@@ -1,17 +1,20 @@
 import React, { useContext, useState } from "react";
 import tankService from "../../services/tank.service";
 import { AppContext } from "../../App";
+import { RxRulerHorizontal } from "react-icons/rx";
 
 const MeasureStick = ({ triggerTank, toggleModal }) => {
-  const { tanks, setTanks } = useContext(AppContext);
+  const { setTanks } = useContext(AppContext);
   const [quantity, setQuantity] = useState("");
+  const [notes, setNotes] = useState("");
 
   const handleMeasure = (e) => {
     e.preventDefault();
+
     tankService
-      .tankMeasurement(triggerTank.id, quantity)
+      .tankMeasurement(triggerTank.id, quantity, notes)
       .then((res) => {
-        console.log(res.data)
+        console.log(res.data);
         setTanks(res.data);
         toggleModal();
       })
@@ -21,35 +24,52 @@ const MeasureStick = ({ triggerTank, toggleModal }) => {
   };
 
   return (
-    <div>
-      <div>Medición de Estanque</div>
-      <form onSubmit={handleMeasure}>
-        <div>
-          <label>Ingresa los litros</label>
+    <div className="text-center">
+      <div className="mb-2 mt-5 text-2xl text-ocean-green-500">
+        Medición de Estanque
+      </div>
+      <form onSubmit={handleMeasure} className="mt-5">
+        <div className="mb-4">
           <input
+            placeholder="Ingresa los litros"
             type="text"
+            inputMode="numeric"
             id="quantity"
             name="quantity"
             value={quantity}
-            max={100000}
             onChange={(e) => {
               if (e.target.value <= 100000) {
                 setQuantity(e.target.value);
               }
-              e.target.setCustomValidity("");
+              e.target.setCustomValidity('');
             }}
-            className=" h-12 w-full rounded-lg border border-gray-600"
+            className="h-12 w-full rounded-lg border border-gray-400 px-3"
             required
-            pattern="[0-9]*"
             autoComplete="off"
+            pattern="[0-9]*"
             onInvalid={(e) =>
               e.target.setCustomValidity("Debes ingresar una cantidad válida")
             }
           />
         </div>
+        <div className="mb-4">
+          <textarea
+            placeholder="Notas adicionales"
+            className="w-full rounded-lg border border-gray-400 p-2"
+            rows={3}
+            onChange={(e) => setNotes(e.target.value)}
+          />
+        </div>
+        <RxRulerHorizontal className="mx-auto h-20 w-20 text-ocean-green-500" />
+        <div className="mb-4 text-3xl text-ocean-green-500">
+          {quantity && parseInt(quantity).toLocaleString("es-CL")} Litros
+        </div>
         <div>
-          <button type="submit" className="btn-success">
-            Ingresar medición
+          <button
+            type="submit"
+            className="btn-success rounded-lg px-6 py-2 font-bold text-white hover:bg-ocean-green-600"
+          >
+            Confirmar medición
           </button>
         </div>
       </form>

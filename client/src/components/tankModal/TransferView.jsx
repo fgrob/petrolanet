@@ -3,12 +3,11 @@ import { AppContext } from "../../App";
 import ConfirmationView from "./ConfirmationView";
 import tankService from "../../services/tank.service";
 
-function TransferView({ action, triggerTank, toggleModal, openModal }) {
+function TransferView({ action, triggerTank, toggleModal, openModal, isConfirmationVisible, setIsConfirmationVisible }) {
   const { tanks, setTanks } = useContext(AppContext);
   const [selectedTankId, setSelectedTankId] = useState("");
   const [selectedTank, setSelectedTank] = useState("");
   const [quantity, setQuantity] = useState("");
-  const [isConfirmationVisible, setIsConfirmationVisible] = useState(false);
 
   const [transferError, setTransferError] = useState('');
 
@@ -91,10 +90,10 @@ function TransferView({ action, triggerTank, toggleModal, openModal }) {
             </label>
             <input
               type="text"
+              inputMode="numeric"
               id="quantity"
               name="quantity"
               value={quantity}
-              max={100000}
               onChange={(e) => {
                 if (e.target.value <= 100000) {
                   setQuantity(e.target.value);

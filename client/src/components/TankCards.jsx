@@ -77,14 +77,14 @@ const TankCards = () => {
               <hr className="divider" />
               {tank.type == "estanque" && (
                 <button
-                  className="my-2 flex w-full flex-col items-center rounded bg-gray-200 shadow-md"
+                  className="my-2 flex w-full flex-col items-center rounded bg-gray-200 shadow-md hover:bg-gray-300"
                   onClick={() => {
                     setAction("measure");
                     toggleModal(tank);
                   }}
                 >
                   <div className="flex-grow-0">
-                    Regla:{" "}
+                    Regla: {" "}
                     <span className="text-red-500">
                       {tank.measured_quantity.toLocaleString("es-CL")} Litros
                     </span>

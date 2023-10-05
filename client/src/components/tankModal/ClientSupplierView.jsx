@@ -10,7 +10,7 @@ import { BiLoaderCircle } from "react-icons/bi";
 
 // revisar con ia si conviene usar un useReducer
 
-const ClientSupplierView = ({ action, triggerTank, toggleModal }) => {
+const ClientSupplierView = ({ action, triggerTank, toggleModal, isConfirmationVisible, setIsConfirmationVisible }) => {
   const { setTanks } = useContext(AppContext);
   const [clientSupplierList, setClientSupplierList] = useState("");
   const documentOptions = ["Sin documento", "Guia", "Factura"];
@@ -24,7 +24,6 @@ const ClientSupplierView = ({ action, triggerTank, toggleModal }) => {
   const [quantity, setQuantity] = useState("");
   const [notes, setNotes] = useState("");
 
-  const [isConfirmationVisible, setIsConfirmationVisible] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [autocompleteError, setAutocompleteError] = useState("");
 
@@ -169,6 +168,7 @@ const ClientSupplierView = ({ action, triggerTank, toggleModal }) => {
                 </label>
                 <input
                   type="text"
+                  inputMode="numeric"
                   value={documentNumber}
                   className="w-full rounded-lg border border-gray-400 px-3 py-2"
                   onChange={(e) => {
@@ -189,10 +189,10 @@ const ClientSupplierView = ({ action, triggerTank, toggleModal }) => {
               </label>
               <input
                 type="text"
+                inputMode="numeric"
                 id="quantity"
                 name="quantity"
                 value={quantity}
-                max={100000}
                 onChange={(e) => {
                   if (e.target.value <= 100000) {
                     setQuantity(e.target.value);
