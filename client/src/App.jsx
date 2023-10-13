@@ -1,4 +1,4 @@
-import { createContext, useEffect, useState } from "react";
+import { createContext, useEffect, useReducer, useState } from "react";
 import { Route, Routes } from "react-router-dom";
 import NavBar from "./components/NavBar";
 import SideBar from "./components/SideBar";
@@ -11,9 +11,29 @@ export const AppContext = createContext();
 
 function App() {
   const [tanks, setTanks] = useState([]);
-  const [openSideBar, setOpenSideBar] = useState(false);
   const [openBackdrop, setOpenBackdrop] = useState(false);
-  const [newOpenSideBar, setNewOpenSideBar] = useState(false);
+  const sideBarReducer = (state, action) => {
+    switch (action.type) {
+      case "TOGGLE_STATE":
+        console.log("modo tog");
+        setOpenBackdrop(!openBackdrop);
+        return state === "full"
+          ? "hidden"
+          : state === "hidden"
+          ? "full"
+          : state;
+
+      case "ICONS_MODE":
+        return state === "icons" ? "hidden" : "icons";
+      default:
+        return state;
+    }
+  };
+
+  const [sideBarState, dispatchSideBarState] = useReducer(
+    sideBarReducer,
+    "hidden",
+  );
 
   useEffect(() => {
     tankService.getTanks().then((res) => {
@@ -21,33 +41,39 @@ function App() {
     });
   }, []);
 
-  const toggleSideBar = () => {
-    setOpenSideBar(!openSideBar);
-    setOpenBackdrop(!openBackdrop);
-  };
-
   return (
     <AppContext.Provider
       value={{ tanks, setTanks, openBackdrop, setOpenBackdrop }}
     >
-      <div className="grid grid-cols-6 h-screen overflow-hidden">
+      <div className="flex h-screen flex-col">
         <Backdrop />
-        <div className="col-span-6 h-14">
-          <NavBar toggleSideBar={toggleSideBar} />
+        <div className="h-14 flex-shrink-0">
+          <NavBar dispatchSideBarState={dispatchSideBarState} />
         </div>
-        {}
-        <div className="col-span-1 h-full">
-          <SideBar openSideBar={openSideBar} toggleSideBar={toggleSideBar} />
-        </div>
-        {/* <div className="col-span-6 font-bold md:col-span-5"> */}
-        <div className={`col-span-6 font-bold ${newOpenSideBar ? 'md:col-span-5' : 'md:col-span-6'}`}>
-          <div className="">
+        <div className="flex flex-1 overflow-hidden border-2 border-yellow-500">
+          {/* <div className={` ${sideBarState === "icons" ? "w-14 hover:w-1/8" : "w-1/8" } transition-all duration-300 `}> */}
+          <div
+            className={` ${
+              sideBarState === "full"
+                ? "w-0"
+                : sideBarState === "icons"
+                ? "hover:w-1/8 w-14"
+                : "w-1/8"
+            } transition-all duration-300 `}
+          >
+            <SideBar
+              sideBarState={sideBarState}
+              dispatchSideBarState={dispatchSideBarState}
+            />
+          </div>
+          <div className="flex-1 overflow-y-scroll border border-red-500">
             <Routes>
               <Route path="/" element={<Home />} />
-              <Route path="/database" element={<Database setOpenSideBar={setOpenSideBar} />} />
+              {/* <Route path="/database" element={<Database />} /> */}
             </Routes>
           </div>
         </div>
+        {/* <div className="h-14 flex-shrink-0 border-2 border-red-500">Footer</div> */}
       </div>
     </AppContext.Provider>
   );

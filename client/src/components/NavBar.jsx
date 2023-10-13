@@ -2,25 +2,30 @@ import React from "react";
 import { FaUserCircle } from "react-icons/fa";
 import { HiOutlineMenuAlt2 } from "react-icons/hi";
 
-const NavBar = ({ toggleSideBar }) => {
-
+const NavBar = ({ dispatchSideBarState }) => {
   return (
-    <nav className="from-ocean-green-900 to-ocean-green-500 fixed flex h-14 w-full items-center justify-between bg-gradient-to-r text-center text-white">
+    <nav
+      id="navbar"
+      className="flex h-full w-full items-center justify-between bg-gradient-to-r from-ocean-green-900 to-ocean-green-500 text-center text-white "
+    >
       <div className="flex items-center gap-1 pl-2 md:w-1/6 md:pl-4">
-        <button onClick={toggleSideBar}>
+        <button onClick={() => dispatchSideBarState({ type: "TOGGLE_STATE" })}>
           <HiOutlineMenuAlt2 className="h-11 w-11 md:hidden" />
         </button>
-        <span className="hidden text-3xl md:block">PETROLANET</span>  
+        <span className="hidden text-3xl md:block">PETROLANET</span>
       </div>
       <div className="text-3xl">
-        BASE DE DATOS* 
+        BASE DE DATOS*
+        <button onClick={() => dispatchSideBarState({ type: "ICONS_MODE" })}>
+          HOLO
+        </button>
       </div>
       <div className="md:w-1/6">
         <a
           href="#"
-          className="group flex items-center justify-end gap-1 mr-2 md:mr-4"
+          className="group mr-2 flex items-center justify-end gap-1 md:mr-4"
         >
-          <span className="hidden transition duration-100 md:block group-hover:text-gray-200">
+          <span className="hidden transition duration-100 group-hover:text-gray-200 md:block">
             fgrobc*
           </span>
           <FaUserCircle className="h-7 w-7 transition duration-100 group-hover:text-gray-200" />

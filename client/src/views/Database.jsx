@@ -3,14 +3,11 @@ import eventLogService from "../services/eventLog.service";
 import { BiLoaderCircle } from "react-icons/bi";
 import moment from "moment-timezone";
 
-const Database = ({setOpenSideBar}) => {
+const Database = () => {
   const [eventLogs, setEventLogs] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-
-    setOpenSideBar(false);
-
     eventLogService
       .getEventLogs()
       .then((res) => {
@@ -23,7 +20,7 @@ const Database = ({setOpenSideBar}) => {
   }, []);
 
   return (
-    <div className="container mx-auto h-[calc(100vh-60px)] overflow-y-auto">
+    <div className="h-[calc(100vh-60px)] overflow-y-auto border-2 border-red-500">
       {isLoading ? (
         <div className="flex h-16 items-center justify-center">
           <BiLoaderCircle className="animate-spin text-2xl text-blue-500" />

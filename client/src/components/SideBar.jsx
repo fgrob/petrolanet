@@ -5,7 +5,8 @@ import { AiFillDatabase } from "react-icons/ai";
 import { AiTwotoneSetting } from "react-icons/ai";
 import { IoClose } from "react-icons/io5";
 
-const SideBar = ({ openSideBar, toggleSideBar }) => {
+const SideBar = ({ sideBarState, dispatchSideBarState }) => {
+
   const Menus = [
     { title: "Inicio", icon: IoHomeSharp, link: "/" },
     { title: "Solicitudes", icon: RiMailSendFill },
@@ -16,25 +17,24 @@ const SideBar = ({ openSideBar, toggleSideBar }) => {
   const sidebarRef = useRef();
   const startX = useRef(null);
   const startY = useRef(null);
-  const isDatabaseRoute = true;
 
   useEffect(() => {
     const handleTouchStart = (e) => {
-      if (openSideBar) {
+      if (sideBarState === 'full') {
         startX.current = e.touches[0].clientX; // touches clientx property returns the X coordinate of the touch point relative to the viewport
         startY.current = e.touches[0].clientY;
       }
     };
 
     const handleTouchMove = (e) => {
-      if (openSideBar && startX.current !== null) {
+      if (sideBarState === 'full' && startX.current !== null) {
         const currentX = e.touches[0].clientX;
         const currentY = e.touches[0].clientY;
         const deltaX = startX.current - currentX;
         const deltaY = Math.abs(startY.current - currentY);
 
         if (deltaX > 50 && deltaY < 30) {
-          toggleSideBar();
+          dispatchSideBarState({ type: "TOGGLE_STATE"});
           startX.current = null;
           startY.current = null;
         }
@@ -42,10 +42,10 @@ const SideBar = ({ openSideBar, toggleSideBar }) => {
     };
 
     const handleClickOutside = (e) => {
-      if (openSideBar) {
+      if (sideBarState === 'full') {
         if (!sidebarRef.current.contains(e.target)) {
           // return true if the event.target is inside of the sidebarRef
-          toggleSideBar();
+          dispatchSideBarState({ type: "TOGGLE_STATE"});
         }
       }
     };
@@ -59,40 +59,42 @@ const SideBar = ({ openSideBar, toggleSideBar }) => {
       document.removeEventListener("touchmove", handleTouchMove);
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [openSideBar, toggleSideBar]);
+  }, [sideBarState]); 
 
   useEffect(() => {
-    // disables vertical scrolling 
-    if (openSideBar) {
+    // disables vertical scrolling (for movile)
+    if (sideBarState === 'full') {
       document.body.style.overflow = "hidden";
     } else {
       document.body.style.overflow = "auto";
     }
-  }, [openSideBar]);
+  }, [sideBarState]);
 
   return (
       <aside
+        id="sidebar"
         ref={sidebarRef}
         className={`${
-          openSideBar ? "translate-x-0" : "-translate-x-full"
-        } fixed top-0 z-40 md:z-20 h-screen w-4/5  shadow-[2px_3px_15px] shadow-gray-500 bg-gray-100 duration-200 md:top-auto md:block md:w-1/6 md:translate-x-0 md:pt-5
+          sideBarState === 'full' ? "translate-x-0" : "-translate-x-full"
+        }  overflow-hidden top-0 z-40 md:z-20 h-full w-4/5 md:w-full shadow-[2px_3px_15px] shadow-gray-500 bg-gray-100 duration-200 md:top-auto md:block md:translate-x-0
         `}
       > 
         <div className="md:hidden text-4xl text-white h-14 text-center from-ocean-green-900 to-ocean-green-500 bg-gradient-to-r mb-5 flex items-center justify-center">
-          <button onClick={toggleSideBar} className="absolute left-1 ">
+          <button onClick={() => dispatchSideBarState({ type: "TOGGLE_STATE"})} className="absolute left-1 ">
             <IoClose className="text-white h-14 w-11"/>
           </button>
           <div>PETROLANET</div>
         </div>
-        <div className="h-screen w-fullfont-medium flex flex-col gap-3 ">
+
+        <div className=" flex flex-col gap-3 mt-5">
           {Menus.map((Menu, index) => (
             <a
               href={Menu.link}
               key={index}
-              className="group rounded-lg hover:bg-gray-200 flex p-2 pl-5"
+              className="group rounded-lg hover:bg-gray-200 flex py-2 px-4 whitespace-nowrap"
             >
-              <Menu.icon className="h-7 w-7 md:h-6 md:w-6 text-gray-500 transition duration-100 group-hover:text-gray-900" />
-              <span className="text-2xl md:text-base md:font-bold ml-2">
+              <Menu.icon className="h-7 w-7 md:h-6 md:w-6 flex-shrink-0 text-gray-500 transition duration-100 group-hover:text-gray-900" />
+              <span className="text-2xl md:text-base md:font-bold ml-4">
                 {Menu.title}
               </span>
             </a>

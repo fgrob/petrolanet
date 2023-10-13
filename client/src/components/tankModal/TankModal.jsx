@@ -65,6 +65,7 @@ const TankModal = ({ openModal, toggleModal, action, triggerTank }) => {
       <div
         ref={tankModalRef}
         className="relative mx-2 flex h-5/6 max-h-full w-full justify-center rounded-lg bg-white p-5 shadow-[rgba(0,_0,_0,_0.24)_0px_3px_8px] md:h-auto md:w-1/3"
+        id="modal"
       >
         <button
           onClick={toggleModal}
