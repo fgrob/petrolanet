@@ -54,6 +54,15 @@ const TankModal = ({ openModal, toggleModal, action, triggerTank }) => {
     };
   }, [openModal]);
 
+  useEffect(() => {
+    // disables vertical scrolling (for movile)
+    if (openModal) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "auto";
+    }
+  }, [openModal]);
+
   return (
     <div
       className={`fixed inset-0 z-50 flex items-center justify-center transition-opacity duration-100 ease-in-out${

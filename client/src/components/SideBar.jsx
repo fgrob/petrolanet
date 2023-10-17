@@ -20,14 +20,14 @@ const SideBar = ({ sideBarState, dispatchSideBarState }) => {
 
   useEffect(() => {
     const handleTouchStart = (e) => {
-      if (sideBarState === 'full') {
+      if (sideBarState.open) {
         startX.current = e.touches[0].clientX; // touches clientx property returns the X coordinate of the touch point relative to the viewport
         startY.current = e.touches[0].clientY;
       }
     };
 
     const handleTouchMove = (e) => {
-      if (sideBarState === 'full' && startX.current !== null) {
+      if (sideBarState.open && startX.current !== null) {
         const currentX = e.touches[0].clientX;
         const currentY = e.touches[0].clientY;
         const deltaX = startX.current - currentX;
@@ -42,7 +42,7 @@ const SideBar = ({ sideBarState, dispatchSideBarState }) => {
     };
 
     const handleClickOutside = (e) => {
-      if (sideBarState === 'full') {
+      if (sideBarState.open) {
         if (!sidebarRef.current.contains(e.target)) {
           // return true if the event.target is inside of the sidebarRef
           dispatchSideBarState({ type: "TOGGLE_STATE"});
@@ -63,7 +63,7 @@ const SideBar = ({ sideBarState, dispatchSideBarState }) => {
 
   useEffect(() => {
     // disables vertical scrolling (for movile)
-    if (sideBarState === 'full') {
+    if (sideBarState.open) {
       document.body.style.overflow = "hidden";
     } else {
       document.body.style.overflow = "auto";
@@ -75,8 +75,8 @@ const SideBar = ({ sideBarState, dispatchSideBarState }) => {
         id="sidebar"
         ref={sidebarRef}
         className={`${
-          sideBarState === 'full' ? "translate-x-0" : "-translate-x-full"
-        }  overflow-hidden top-0 z-40 md:z-20 h-full w-4/5 md:w-full shadow-[2px_3px_15px] shadow-gray-500 bg-gray-100 duration-200 md:top-auto md:block md:translate-x-0
+          sideBarState.open ? "translate-x-0" : "-translate-x-full"
+        }  overflow-hidden fixed md:static top-0 z-40 md:z-20 h-full w-4/5 md:w-full shadow-[2px_3px_15px] shadow-gray-500 bg-gray-100 duration-200 md:top-auto md:block md:translate-x-0
         `}
       > 
         <div className="md:hidden text-4xl text-white h-14 text-center from-ocean-green-900 to-ocean-green-500 bg-gradient-to-r mb-5 flex items-center justify-center">

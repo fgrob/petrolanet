@@ -16,9 +16,6 @@ const NavBar = ({ dispatchSideBarState }) => {
       </div>
       <div className="text-3xl">
         BASE DE DATOS*
-        <button onClick={() => dispatchSideBarState({ type: "ICONS_MODE" })}>
-          HOLO
-        </button>
       </div>
       <div className="md:w-1/6">
         <a

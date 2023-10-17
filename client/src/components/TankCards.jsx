@@ -102,7 +102,6 @@ const TankCards = () => {
                   className="btn-success flex-1"
                   onClick={() => {
                     setAction("load");
-                    // toggleModal(tank.id);
                     toggleModal(tank);
                   }}
                 >

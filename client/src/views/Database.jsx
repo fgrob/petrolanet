@@ -3,7 +3,7 @@ import eventLogService from "../services/eventLog.service";
 import { BiLoaderCircle } from "react-icons/bi";
 import moment from "moment-timezone";
 
-const Database = () => {
+const Database = ({ dispatchSideBarState }) => {
   const [eventLogs, setEventLogs] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -19,10 +19,18 @@ const Database = () => {
       });
   }, []);
 
+  useEffect(() => {
+    dispatchSideBarState({ type: "ICONS_MODE", value: true });
+
+    return () => {
+      dispatchSideBarState({ type: "ICONS_MODE", value: false});
+    }
+  }, [])
+
   return (
-    <div className="h-[calc(100vh-60px)] overflow-y-auto border-2 border-red-500">
+    <div>
       {isLoading ? (
-        <div className="flex h-16 items-center justify-center">
+        <div className="flex h-screen items-center justify-center">
           <BiLoaderCircle className="animate-spin text-2xl text-blue-500" />
         </div>
       ) : (
@@ -72,8 +80,8 @@ const Database = () => {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {eventLogs.map((eventlog) => (
-                <tr key={eventlog.id}>
+              {eventLogs.sort((a, b) => b.id - a.id).map((eventlog, index) => (
+                <tr key={eventlog.id} className={index % 2 === 0 ? "" : "bg-gray-100"}>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                     {eventlog.id}
                   </td>

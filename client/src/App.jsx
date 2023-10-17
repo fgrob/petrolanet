@@ -1,10 +1,10 @@
 import { createContext, useEffect, useReducer, useState } from "react";
 import { Route, Routes } from "react-router-dom";
+import tankService from "./services/tank.service";
 import NavBar from "./components/NavBar";
 import SideBar from "./components/SideBar";
-import Home from "./views/Home";
 import Backdrop from "./components/Backdrop";
-import tankService from "./services/tank.service";
+import Home from "./views/Home";
 import Database from "./views/Database";
 
 export const AppContext = createContext();
@@ -15,25 +15,35 @@ function App() {
   const sideBarReducer = (state, action) => {
     switch (action.type) {
       case "TOGGLE_STATE":
-        console.log("modo tog");
         setOpenBackdrop(!openBackdrop);
-        return state === "full"
-          ? "hidden"
-          : state === "hidden"
-          ? "full"
-          : state;
+        return {
+          open: !state.open,
+          onlyIcons: state.onlyIcons,
+        };
 
       case "ICONS_MODE":
-        return state === "icons" ? "hidden" : "icons";
+        if (action.value !== undefined) {
+          // Enables manual input of the 'true' or 'false' value
+          return {
+            open: state.open,
+            onlyIcons: action.value,
+          };
+        } else {
+          return {
+            open: state.open,
+            onlyIcons: !state.onlyIcons,
+          };
+        }
+
       default:
         return state;
     }
   };
 
-  const [sideBarState, dispatchSideBarState] = useReducer(
-    sideBarReducer,
-    "hidden",
-  );
+  const [sideBarState, dispatchSideBarState] = useReducer(sideBarReducer, {
+    open: false,
+    onlyIcons: false,
+  });
 
   useEffect(() => {
     tankService.getTanks().then((res) => {
@@ -45,20 +55,15 @@ function App() {
     <AppContext.Provider
       value={{ tanks, setTanks, openBackdrop, setOpenBackdrop }}
     >
-      <div className="flex h-screen flex-col">
+      <div className="flex h-auto flex-col md:h-screen">
         <Backdrop />
-        <div className="h-14 flex-shrink-0">
+        <div className="sticky top-0 h-14 flex-shrink-0 md:static md:top-auto">
           <NavBar dispatchSideBarState={dispatchSideBarState} />
         </div>
-        <div className="flex flex-1 overflow-hidden border-2 border-yellow-500">
-          {/* <div className={` ${sideBarState === "icons" ? "w-14 hover:w-1/8" : "w-1/8" } transition-all duration-300 `}> */}
+        <div className="flex flex-1 overflow-auto md:overflow-hidden">
           <div
-            className={` ${
-              sideBarState === "full"
-                ? "w-0"
-                : sideBarState === "icons"
-                ? "hover:w-1/8 w-14"
-                : "w-1/8"
+            className={`${
+              sideBarState.onlyIcons ? "md:w-14 md:hover:w-1/8" : "w-0 md:w-1/8"
             } transition-all duration-300 `}
           >
             <SideBar
@@ -66,14 +71,18 @@ function App() {
               dispatchSideBarState={dispatchSideBarState}
             />
           </div>
-          <div className="flex-1 overflow-y-scroll border border-red-500">
+          <div className="flex-1 overflow-y-scroll">
             <Routes>
               <Route path="/" element={<Home />} />
-              {/* <Route path="/database" element={<Database />} /> */}
+              <Route
+                path="/database"
+                element={
+                  <Database dispatchSideBarState={dispatchSideBarState} />
+                }
+              />
             </Routes>
           </div>
         </div>
-        {/* <div className="h-14 flex-shrink-0 border-2 border-red-500">Footer</div> */}
       </div>
     </AppContext.Provider>
   );
