@@ -15,7 +15,7 @@ const getEventLogs = async (req, res) => {
         {
           model: Operation,
           as: "operation",
-          attributes: ["name"],
+          attributes: ["id", "name"],
         },
         {
           model: User,
@@ -39,7 +39,7 @@ const getEventLogs = async (req, res) => {
         },
       ],
       attributes: {
-        exclude: ["operation_id", "client_id", "supplier_id", "tank_id", "updatedAt"],
+        exclude: ["operation_id", "client_id", "supplier_id", "tank_id", "updatedAt", "user_id"],
       },
     });
     res.json(eventLogs);

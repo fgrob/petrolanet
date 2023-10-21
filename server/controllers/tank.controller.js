@@ -68,7 +68,8 @@ const transferOperation = async (req, res) => {
 
       //Event Logs Origin Tank
       const originLog = await EventLog.create({
-        operation_id: 2, // load
+        // operation_id: 2, // load
+        operation_id: 3, // traspaso
         user_id: 1, // CORREGIR ESTO *********************************************
         tank_id: originTankId,
         transaction_quantity: intQuantity * -1,
@@ -78,7 +79,8 @@ const transferOperation = async (req, res) => {
 
       //Event logs Destination Tank
       const destinationLog = await EventLog.create({
-        operation_id: 1, // unload
+        // operation_id: 1, // unload
+        operation_id: 3,
         user_id: 1, // *********************************
         tank_id: destinationTankId,
         transaction_quantity: intQuantity,
