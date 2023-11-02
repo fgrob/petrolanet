@@ -25,17 +25,17 @@ const getEventLogs = async (req, res) => {
         {
           model: Tank,
           as: "tank",
-          attributes: ["name"],
+          attributes: ["name", "type"],
         },
         {
           model: Client,
           as: "client",
-          attributes: ["business_name"],
+          attributes: ["rut", "business_name"],
         },
         {
           model: Supplier,
           as: "supplier",
-          attributes: ["business_name"],
+          attributes: ["rut", "business_name"],
         },
       ],
       attributes: {

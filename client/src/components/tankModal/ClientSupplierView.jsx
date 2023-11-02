@@ -3,7 +3,7 @@ import { AppContext } from "../../App";
 import tankService from "../../services/tank.service";
 import clientService from "../../services/client.service";
 import supplierService from "../../services/supplier.service";
-import Autocomplete from "./Autocomplete";
+import Autocomplete from "../common/Autocomplete";
 import ConfirmationView from "./ConfirmationView";
 import { BiSolidCheckCircle } from "react-icons/bi";
 import { BiLoaderCircle } from "react-icons/bi";
@@ -57,6 +57,7 @@ const ClientSupplierView = ({ action, triggerTank, toggleModal, isConfirmationVi
   }, [selectedDocument]);
 
   useEffect(() => {
+    // set's and id for the selected client
     if (clientSupplier !== "") {
       const client = clientSupplierList.find((client) => client.rut === rut);
       setClientSupplierId(client.id);
