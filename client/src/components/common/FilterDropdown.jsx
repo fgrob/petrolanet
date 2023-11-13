@@ -1,6 +1,7 @@
 import React from "react";
 
 const FilterDropdown = ({ filters, handleFilter, filterType }) => {
+  // actualmente sin uso
   return (
     <div className="absolute rounded-md bg-white p-2 text-black shadow-lg">
       {Object.keys(filters).map((filter) => (

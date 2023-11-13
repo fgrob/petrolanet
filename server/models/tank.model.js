@@ -22,6 +22,11 @@ module.exports = (sequelize, Sequelize) => {
             allowNull: false,
             defaultValue: 0,
         },
+        error_quantity: {
+            type: Sequelize.INTEGER,
+            allowNull: false,
+            defaultValue: 0,
+        },
         tank_gauge: {
             type: Sequelize.BOOLEAN,
             defaultValue: false

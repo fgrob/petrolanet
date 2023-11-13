@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { AppContext } from "../App";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { Doughnut } from "react-chartjs-2";
@@ -12,10 +12,34 @@ const TankCards = () => {
   const [openModal, setOpenModal] = useState(false);
   const [action, setAction] = useState("");
   const [triggerTank, setTriggerTank] = useState(null);
+  const [dataForTotal, setDataForTotal] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const companyCard = () => {
+    let companyCapacity = 0;
+    let companyBalance = 0;
+
+    tanks.forEach((tank) => {
+      companyCapacity += parseInt(tank.capacity);
+      companyBalance += parseInt(tank.current_quantity);
+    });
+    const dataForTotal = {};
+    dataForTotal.companyCapacity = companyCapacity;
+    dataForTotal.companyBalance = companyBalance;
+    dataForTotal.doughnut = {
+      labels: [],
+      datasets: [
+        {
+          data: [companyCapacity, companyCapacity - companyBalance],
+          backgroundColor: ["#17653a", "#0c715150"],
+        },
+      ],
+    };
+    setDataForTotal(dataForTotal);
+  };
 
   const toggleModal = (tank) => {
     setTriggerTank(tank);
-
     setOpenModal(!openModal);
     setOpenBackdrop(!openBackdrop);
   };
@@ -26,110 +50,150 @@ const TankCards = () => {
       "estanque movil": "#17a254",
       camion: "#0f2d5c",
     };
-
     return typeToColor[tankType] || "#17653a";
   };
 
+  useEffect(() => {
+    companyCard();
+    setIsLoading(false);
+  }, [tanks]);
+
   return (
     <div className="flex flex-wrap content-between justify-evenly">
-      {tanks
-        .sort((a, b) => a.id - b.id)
-        .map((tank) => {
-          const data = {
-            labels: [],
-            datasets: [
-              {
-                data: [
-                  tank.current_quantity,
-                  tank.capacity - tank.current_quantity,
-                ],
-                backgroundColor: [getBackgroundColor(tank.type), "#0c715150"],
-              },
-            ],
-          };
-          return (
-            <div
-              key={tank.id}
-              className="m-2 flex w-[400px] flex-wrap rounded p-2 shadow-[0_3px_10px_rgb(0,0,0,0.2)]"
-            >
-              <h1 className="w-full text-2xl uppercase">{tank.name}</h1>
+      {isLoading ? (
+        <div>cargando...</div>
+      ) : (
+        <>
+          <div className="m-2 flex w-[400px] flex-col flex-wrap justify-between rounded p-2 shadow-[0_3px_10px_rgb(0,0,0,0.2)]">
+            <div>
+              <h1 className="w-full text-2xl font-bold uppercase">
+                Balance Total
+              </h1>
               <div className="flex w-full justify-between font-light capitalize">
-                <div>{tank.type}</div>
-                {tank.tank_gauge && <div>Numeral: {tank.tank_number}</div>}
+                <div>Compañía</div>
               </div>
               <hr className="divider" />
-              <div className="h-52">
-                <Doughnut data={data} />
-              </div>
-              <div className="flex-grow self-center text-center">
-                <div className=" text-3xl">
-                  {tank.current_quantity.toLocaleString("es-CL")} Lts
-                </div>
-                <div className="">
-                  / {tank.capacity.toLocaleString("es-CL")}
-                </div>
-                <div className="text-sm font-light">
-                  {moment(tank.timestamp_current_quantity)
-                    .tz("America/Santiago")
-                    .format("DD/MM/yyyy - HH:mm")}
-                </div>
-              </div>
+            </div>
+            <div className="flex flex-1 justify-center items-center">
+              <Doughnut data={dataForTotal.doughnut} className="p-14" />
+            </div>
               <hr className="divider" />
-              {tank.type == "estanque" && (
-                <button
-                  className="my-2 flex w-full flex-col items-center rounded bg-gray-200 shadow-md hover:bg-gray-300"
-                  onClick={() => {
-                    setAction("measure");
-                    toggleModal(tank);
-                  }}
-                >
-                  <div className="flex-grow-0">
-                    Regla: {" "}
-                    <span className="text-red-500">
-                      {tank.measured_quantity.toLocaleString("es-CL")} Litros
-                    </span>
-                  </div>
-                  <div className="text-sm font-light">
-                    {moment(tank.timestamp_measured_quantity)
-                      .tz("America/Santiago")
-                      .format("DD/MM/yyyy - HH:mm")}
-                  </div>
-                </button>
-              )}
-              <div className="mt-2 flex w-full flex-wrap justify-between gap-4">
-                <button
-                  type="button"
-                  className="btn-success flex-1"
-                  onClick={() => {
-                    setAction("load");
-                    toggleModal(tank);
-                  }}
-                >
-                  Cargar
-                </button>
-                <button
-                  type="button"
-                  className="btn-success flex-1"
-                  onClick={() => {
-                    setAction("unload");
-                    toggleModal(tank);
-                  }}
-                >
-                  Descargar
-                </button>
-                <button type="button" className="btn-success w-full">
-                  Ver últimos movimientos
-                </button>
+            <div className="text-center ">
+              <div className="text-4xl font-bold">
+                {dataForTotal.companyBalance.toLocaleString("es-CL")} Lts
+              </div>
+              <div className="text-2xl">
+                / {dataForTotal.companyCapacity.toLocaleString("es-CL")}
               </div>
             </div>
-          );
-        })}
-      <TankModal
-        openModal={openModal}
-        toggleModal={toggleModal}
-        action={action}
-        triggerTank={triggerTank}
-      />
+            {/* <div className="mt-2 flex w-full flex-wrap justify-between gap-4 border border-red-500">
+              lista de alon algo algo sup!
+            </div> */}
+          </div>
+          {tanks
+            .sort((a, b) => a.id - b.id)
+            .map((tank) => {
+              const data = {
+                labels: [],
+                datasets: [
+                  {
+                    data: [
+                      tank.current_quantity,
+                      tank.capacity - tank.current_quantity,
+                    ],
+                    backgroundColor: [
+                      getBackgroundColor(tank.type),
+                      "#0c715150",
+                    ],
+                  },
+                ],
+              };
+              return (
+                <div
+                  key={tank.id}
+                  className="m-2 flex w-[400px] flex-wrap rounded p-2 shadow-[0_3px_10px_rgb(0,0,0,0.2)]"
+                >
+                  <h1 className="w-full text-2xl uppercase">{tank.name}</h1>
+                  <div className="flex w-full justify-between font-light capitalize">
+                    <div>{tank.type}</div>
+                    {tank.tank_gauge && <div>Numeral: {tank.tank_number}</div>}
+                  </div>
+                  <hr className="divider" />
+                  <div className="h-52">
+                    <Doughnut data={data} />
+                  </div>
+                  <div className="flex-grow self-center text-center">
+                    <div className=" text-3xl">
+                      {tank.current_quantity.toLocaleString("es-CL")} Lts
+                    </div>
+                    <div className="">
+                      / {tank.capacity.toLocaleString("es-CL")}
+                    </div>
+                    <div className="text-sm font-light">
+                      {moment(tank.timestamp_current_quantity)
+                        .tz("America/Santiago")
+                        .format("DD/MM/yyyy - HH:mm")}
+                    </div>
+                  </div>
+                  <hr className="divider" />
+                  {tank.type == "estanque" && (
+                    <button
+                      className="my-2 flex w-full flex-col items-center rounded bg-gray-200 shadow-md hover:bg-gray-300"
+                      onClick={() => {
+                        setAction("measure");
+                        toggleModal(tank);
+                      }}
+                    >
+                      <div className="flex-grow-0">
+                        Regla:{" "}
+                        <span className="text-red-500">
+                          {tank.measured_quantity.toLocaleString("es-CL")}{" "}
+                          Litros
+                        </span>
+                      </div>
+                      <div className="text-sm font-light">
+                        {moment(tank.timestamp_measured_quantity)
+                          .tz("America/Santiago")
+                          .format("DD/MM/yyyy - HH:mm")}
+                      </div>
+                    </button>
+                  )}
+                  <div className="mt-2 flex w-full flex-wrap justify-between gap-4">
+                    <button
+                      type="button"
+                      className="btn-success flex-1"
+                      onClick={() => {
+                        setAction("load");
+                        toggleModal(tank);
+                      }}
+                    >
+                      Cargar
+                    </button>
+                    <button
+                      type="button"
+                      className="btn-success flex-1"
+                      onClick={() => {
+                        setAction("unload");
+                        toggleModal(tank);
+                      }}
+                    >
+                      Descargar
+                    </button>
+                    <button type="button" className="btn-success w-full">
+                      Ver últimos movimientos
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+          <TankModal
+            openModal={openModal}
+            toggleModal={toggleModal}
+            action={action}
+            triggerTank={triggerTank}
+          />
+        </>
+      )}
     </div>
   );
 };

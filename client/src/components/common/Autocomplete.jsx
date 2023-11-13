@@ -107,7 +107,7 @@
 
     // Autocomplete Error Message Handlers
     useEffect(() => {
-      const input = document.getElementById("valueInput");
+      const input = document.getElementById("autocompleteInput");
       input.setCustomValidity(autocompleteError);
       input.reportValidity();
     }, [autocompleteError]);
@@ -119,7 +119,7 @@
     return (
       <div className="relative">
         <input
-          id="valueInput"
+          id="autocompleteInput"
           type="text"
           value={inputValue}  
           ref={inputRef}
