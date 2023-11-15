@@ -8,12 +8,13 @@ const FiltersBar = ({
   clientSupplierList,
   eventLogs,
   generateFilteredEventLogs,
+  fetchEventLogs,
 }) => {
   const [rut, setRut] = useState("");
   const [clientSupplier, setClientSupplier] = useState("");
   const [clientSupplierInputError, setClientSupplierInputError] = useState("");
-  const [dateFrom, setDateFrom] = useState("");
-  const [dateTo, setDateTo] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
   const [openFiltersBar, setOpenFiltersBar] = useState(false);
 
   const handleFilterSelector = (filterType, selectedOption) => {
@@ -24,6 +25,11 @@ const FiltersBar = ({
         selectedOption === "TODOS" || selectedOption === option;
     }
     setFilters(newFilters);
+  };
+ 
+  const clearClientSupplierFilter = () => {
+    setClientSupplier("");
+    setRut("");
   };
 
   const handleDocumentNumberFilter = (value) => {
@@ -39,50 +45,63 @@ const FiltersBar = ({
     setFilters(newFilters);
   };
 
-  const handleDateFilter = () => {
-    const parseCustomDate = (input) => {
-      //To prevent the timezone differences when creating a new date directly from the date state
-      const [year, month, day] = input.split("-").map(Number);
-      return new Date(year, month - 1, day); // month's start in 0
+  const defaultDate = (
+    setDefaultStartDate = true,
+    setDefaultEndDate = true,
+  ) => {
+    let date = new Date().toLocaleDateString(); // for UTC differences management
+    let [month, day, year] = date.split("/");
+
+    if (setDefaultStartDate) {
+      let startDateMonth = month;
+      let startDateYear = year;
+
+      if (month === "1") {
+        // january case
+        startDateMonth = "12";
+        startDateYear = parseInt(year) - 1;
+      } else {
+        startDateMonth = parseInt(month) - 1;
+        startDateMonth = startDateMonth.toString(); // the following padStart requires string
+      }
+
+      startDateMonth = startDateMonth.padStart(2, "0"); // add a leading zero if it is less than 10 (required):
+
+      const startDate = `${startDateYear}-${startDateMonth}-01`;
+      setStartDate(startDate);
+    }
+
+    if (setDefaultEndDate) {
+      month = month.padStart(2, "0"); // add a leading zero if it is less than 10 (required):
+      const endDate = `${year}-${month}-${day}`;
+      setEndDate(endDate);
+    }
+  };
+
+  const handleDate = () => {
+    if (!startDate) {
+      defaultDate(true, false) // setDefaultStartDate, setDefaultEndDate
     };
 
-    let dateFromISO;
-    let dateToISO;
+    if (!endDate) {
+      defaultDate(false, true)
+    };
 
-    if (dateFrom) {
-      dateFromISO = parseCustomDate(dateFrom);
-    }
-
-    if (dateTo) {
-      dateToISO = parseCustomDate(dateTo);
-    }
-
-    const filteredByDate = eventLogs.filter((eventLog) => {
-      const eventDate = new Date(eventLog.createdAt);
-      eventDate.setHours(0, 0, 0, 0);
-
-      if (dateFrom && dateTo) {
-        return eventDate >= dateFromISO && eventDate <= dateToISO;
-      } else if (dateFrom) {
-        return eventDate >= dateFromISO;
-      } else if (dateTo) {
-        return eventDate <= dateToISO;
-      } else {
-        return true;
-      }
-    });
-    generateFilteredEventLogs(filteredByDate);
+    fetchEventLogs(startDate, endDate);
   };
 
   const clearDateFilter = () => {
-    setDateFrom("");
-    setDateTo("");
-    generateFilteredEventLogs(eventLogs);
+    defaultDate();
+    fetchEventLogs();
   };
 
   useEffect(() => {
+    // set's the dates in the inputs
+    defaultDate();
+  }, []);
+
+  useEffect(() => {
     // handle the client-supplier selector filter
-    // if (filters) {
     const newFilters = { ...filters };
 
     for (const option in newFilters["clientSupplierFilters"]) {
@@ -95,22 +114,17 @@ const FiltersBar = ({
 
       setFilters(newFilters);
     }
-    // }
   }, [clientSupplier]);
 
   useEffect(() => {
-    if (dateFrom || dateTo) {
-      handleDateFilter(); // this include the generateFilteredEventLogs
-    } else {
-      generateFilteredEventLogs(eventLogs);
-    }
+    generateFilteredEventLogs(eventLogs);
   }, [filters]);
 
   return (
     <div className="border-2 border-red-500">
       <div
         className={`${
-          openFiltersBar ? "h-96" : "h-10"
+          openFiltersBar ? "h-auto" : "h-10 overflow-hidden"
         } flex flex-col border-4 border-blue-500 bg-orange-500 transition-all duration-300`}
       >
         {/* <div className="border-4 border-red-500"> */}
@@ -121,9 +135,54 @@ const FiltersBar = ({
           Buscar o filtrar!
         </button>
         {/* </div> */}
-        <div className="flex flex-col flex-wrap justify-evenly overflow-auto bg-ocean-green-50 p-2 md:flex-row">
+        <div className="flex flex-wrap justify-between gap-5 bg-gray-100 p-2 md:justify-evenly">
+          {/* Client Supplier Filter*/}
+          <div className="flex w-full flex-wrap gap-1 md:w-full">
+            <label
+              htmlFor="autocompleteInput"
+              className="mb-2 block w-full text-sm font-bold"
+            >
+              Cliente / Proveedor
+            </label>
+            <div className="w-full md:w-auto md:flex-1">
+              <Autocomplete
+                inputValue={rut}
+                setInputValue={setRut}
+                setClientSupplier={setClientSupplier}
+                suggestions={clientSupplierList.map((client) => ({
+                  value: client.rut,
+                  label: client.business_name,
+                }))}
+                autocompleteError={clientSupplierInputError}
+                setAutocompleteError={setClientSupplierInputError}
+              />
+            </div>
+            <div className="relative flex-1">
+              <BiSolidCheckCircle
+                className={`absolute right-4 top-8 h-6 w-6 text-green-600 transition-opacity duration-200 ease-in-out ${
+                  clientSupplier ? "opacity-100" : "opacity-0"
+                }`}
+              />
+              <input
+                id="clientSupplierInput"
+                name="clientSupplierInput"
+                value={clientSupplier}
+                className="w-full rounded-lg border border-black bg-gray-200 px-3 py-2"
+                disabled
+              />
+            </div>
+            <div className="flex w-full justify-end md:w-auto">
+              <button
+                className="rounded border border-red-400 p-2 text-xs font-bold text-red-500 shadow hover:bg-red-200"
+                onClick={clearClientSupplierFilter}
+              >
+                Limpiar cliente
+              </button>
+            </div>
+          </div>
+
           {/* Operation Selector */}
-          <div>
+          <div className="md:w-1/8">
             <label
               htmlFor="operationSelector"
               className="mb-2 block text-sm font-bold"
@@ -147,7 +206,7 @@ const FiltersBar = ({
           </div>
 
           {/* Type Selector */}
-          <div className="mb-4 md:w-1/8">
+          <div className="md:w-1/8">
             <label
               htmlFor="typeSelector"
               className="mb-2 block text-sm font-bold"
@@ -171,7 +230,7 @@ const FiltersBar = ({
           </div>
 
           {/* Tank Selector */}
-          <div className="mb-4 md:w-1/8">
+          <div className="md:w-1/8">
             <label
               htmlFor="tankSelector"
               className="mb-2 block text-sm font-bold"
@@ -195,7 +254,7 @@ const FiltersBar = ({
           </div>
 
           {/* Document Type Selector */}
-          <div className="mb-4 md:w-1/8">
+          <div className="md:w-1/8">
             <label
               htmlFor="documentTypeSelector"
               className="mb-2 block text-sm font-bold"
@@ -217,7 +276,7 @@ const FiltersBar = ({
           </div>
 
           {/* Document Number Input */}
-          <div className="mb-4 md:w-1/8">
+          <div className="md:w-1/8">
             <label
               htmlFor="documentNumberInput"
               className="mb-2 block text-sm font-bold"
@@ -233,7 +292,7 @@ const FiltersBar = ({
           </div>
 
           {/* User Selector */}
-          <div className="mb-4 md:w-1/8">
+          <div className="md:w-1/8">
             <label
               htmlFor="userSelector"
               className="mb-2 block text-sm font-bold"
@@ -254,106 +313,53 @@ const FiltersBar = ({
             </select>
           </div>
 
-          <div className="mb-4 flex flex-wrap items-center">
-            {/* Client Supplier Filter*/}
-            <div className="flex flex-col gap-1">
-              <div className="flex flex-wrap justify-center gap-1">
-                <div>
-                  <label
-                    htmlFor="autocompleteInput"
-                    className="mb-2 block text-sm font-bold"
-                  >
-                    Cliente / Proveedor
-                  </label>
-                  <Autocomplete
-                    inputValue={rut}
-                    setInputValue={setRut}
-                    setClientSupplier={setClientSupplier}
-                    suggestions={clientSupplierList.map((client) => ({
-                      value: client.rut,
-                      label: client.business_name,
-                    }))}
-                    autocompleteError={clientSupplierInputError}
-                    setAutocompleteError={setClientSupplierInputError}
-                  />
-                </div>
-                <div className="flex items-end relative">
-                <BiSolidCheckCircle
-                  className={`absolute right-4 top-8 h-6 w-6 text-green-600 transition-opacity duration-200 ease-in-out ${
-                    clientSupplier ? "opacity-100" : "opacity-0"
-                  }`}
-                />
-                <input
-                  id="clientSupplierInput"
-                  name="clientSupplierInput"
-                  value={clientSupplier}
-                  className="w-full rounded-lg border border-black bg-gray-200 px-3 py-2"
-                  disabled
-                />
-                </div>
-              </div>
-              <div className="flex justify-end">
-                <button
-                  className="ml-2 rounded border border-red-400 p-2 text-xs font-bold text-red-500 shadow hover:bg-red-200"
-                  onClick={clearDateFilter}
+          <div className="flex w-full flex-col gap-1 md:w-1/4">
+            {/* Date Filter*/}
+            <div className="flex gap-1">
+              <div className="flex-1 gap-1">
+                <label
+                  htmlFor="inputDateFrom"
+                  className="mb-2 block text-sm font-bold"
                 >
-                  Limpiar cliente
-                </button>
+                  Desde:
+                </label>
+                <input
+                  id="inputDateFrom"
+                  onChange={(e) => setStartDate(e.target.value)}
+                  type="date"
+                  value={startDate}
+                  className="w-full rounded border border-gray-300 p-2"
+                />
+              </div>
+              <div className="flex-1">
+                <label
+                  htmlFor="inputDateTo"
+                  className="mb-2 block text-sm font-bold"
+                >
+                  Hasta:
+                </label>
+                <input
+                  id="inputDateTo"
+                  onChange={(e) => setEndDate(e.target.value)}
+                  type="date"
+                  value={endDate}
+                  className="w-full rounded border border-gray-300 p-2"
+                />
               </div>
             </div>
-          </div>
-
-          <div className="mb-4 flex flex-wrap items-center">
-            {/* Date Filter*/}
-            <div className="flex flex-col gap-1">
-              <div className="flex flex-wrap justify-center gap-1">
-                <div>
-                  <label
-                    htmlFor="inputDateFrom"
-                    className="mb-2 block text-sm font-bold"
-                  >
-                    Desde:
-                  </label>
-                  <input
-                    id="inputDateFrom"
-                    onChange={(e) => setDateFrom(e.target.value)}
-                    type="date"
-                    value={dateFrom}
-                    className="rounded border border-gray-300 p-2"
-                  />
-                </div>
-                <div>
-                  <label
-                    htmlFor="inputDateTo"
-                    className="mb-2 block text-sm font-bold"
-                  >
-                    Hasta:
-                  </label>
-                  <input
-                    id="inputDateTo"
-                    onChange={(e) => setDateTo(e.target.value)}
-                    type="date"
-                    value={dateTo}
-                    className="rounded border border-gray-300 p-2"
-                  />
-                </div>
-              </div>
-              <div className="flex">
-                <div className="flex flex-1 justify-end">
-                  <button
-                    className="rounded border border-ocean-green-400 p-2 text-xs font-bold text-ocean-green-500 shadow hover:bg-ocean-green-200"
-                    onClick={handleDateFilter}
-                  >
-                    Filtrar por fecha
-                  </button>
-                </div>
-                <button
-                  className="ml-2 rounded border border-red-400 p-2 text-xs font-bold text-red-500 shadow hover:bg-red-200"
-                  onClick={clearDateFilter}
-                >
-                  Limpiar fechas
-                </button>
-              </div>
+            <div className="flex justify-end">
+              <button
+                className="rounded border border-ocean-green-400 p-2 text-xs font-bold text-ocean-green-500 shadow hover:bg-ocean-green-200"
+                onClick={handleDate}
+              >
+                Filtrar por fecha
+              </button>
+              <button
+                className="ml-2 rounded border border-red-400 p-2 text-xs font-bold text-red-500 shadow hover:bg-red-200"
+                onClick={clearDateFilter}
+              >
+                Limpiar fechas
+              </button>
             </div>
           </div>
         </div>

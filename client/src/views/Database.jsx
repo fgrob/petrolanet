@@ -4,13 +4,37 @@ import { BiLoaderCircle } from "react-icons/bi";
 import FiltersBar from "../components/database/FiltersBar";
 import DatabaseTable from "../components/database/DatabaseTable";
 
-const Database = ({ dispatchSideBarState }) => {
+const Database = () => {
   const [eventLogs, setEventLogs] = useState([]);
   const [filters, setFilters] = useState();
   const [filteredEventLogs, setFilteredEventLogs] = useState([]);
   const [clientSupplierList, setClientSupplierList] = useState([]);
 
   const [isLoading, setIsLoading] = useState(true);
+
+  const fetchEventLogs = (startDate, endDate) => {
+    setIsLoading(true);
+    eventLogService
+      .getEventLogs(startDate, endDate)
+      .then((res) => {
+        console.log(res.data); // BORRAR
+        setEventLogs(res.data);
+        setFilteredEventLogs(res.data);
+
+        const { filters, clientSupplierList } =
+          createFiltersAndClientSupplierList(res.data);
+        setFilters(filters);
+        console.log(filters); // BORRAR
+        setClientSupplierList(clientSupplierList);
+      })
+      .catch((err) => {
+        console.log(err); // borrar ?
+        // error management *
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
+  };
 
   const createFiltersAndClientSupplierList = (eventLogs) => {
     const tankSet = new Set();
@@ -158,26 +182,7 @@ const Database = ({ dispatchSideBarState }) => {
   };
 
   useEffect(() => {
-    eventLogService
-      .getEventLogs()
-      .then((res) => {
-        console.log(res.data); // BORRAR
-        setEventLogs(res.data);
-        setFilteredEventLogs(res.data);
-
-        const { filters, clientSupplierList } =
-          createFiltersAndClientSupplierList(res.data);
-        setFilters(filters);
-        console.log(filters); // BORRAR
-        setClientSupplierList(clientSupplierList);
-      })
-      .catch((err) => {
-        console.log(err); // borrar ?
-        // error management *
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
+    fetchEventLogs();
   }, []);
 
   return (
@@ -194,6 +199,7 @@ const Database = ({ dispatchSideBarState }) => {
             setFilters={setFilters}
             generateFilteredEventLogs={generateFilteredEventLogs}
             clientSupplierList={clientSupplierList}
+            fetchEventLogs={fetchEventLogs}
           />
           <DatabaseTable filteredEventLogs={filteredEventLogs} />
         </>

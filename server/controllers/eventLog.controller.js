@@ -1,4 +1,6 @@
 const db = require("../models");
+const { Op } = require("sequelize");
+
 const {
   eventLog: EventLog,
   operation: Operation,
@@ -10,7 +12,46 @@ const {
 
 const getEventLogs = async (req, res) => {
   try {
+
+    let startDate;
+    let endDate;
+
+    if (req.query.startDate) {
+      startDate = new Date(req.query.startDate);
+    };
+
+    if (req.query.endDate) {
+      endDate = new Date(req.query.endDate);
+      endDate.setUTCHours(23,59,59,999) // (end of the day)
+    };
+
+    if (!startDate){
+      // fetching the current and last month for the initial data
+      const now = new Date();
+   
+      if (now.getMonth() === 0) { //JS january starts in 0
+        startDate = new Date(now.getFullYear() - 1, 11, 1);
+      } else {
+        startDate = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+      };
+    };
+    
+    if (!endDate) {
+      endDate = new Date();
+    };
+    
+    startDate.setUTCHours(0, 0, 0, 0);
+    endDate.setUTCHours(23,59,59,999);
+
+    console.log('ACAAAAAAAAAAAAAAA*****************') // BORRAR 
+    console.log(startDate)
+    console.log(endDate)
     const eventLogs = await EventLog.findAll({
+      where: {
+        createdAt: {
+          [Op.between]: [startDate, endDate],
+        },
+      },
       include: [
         {
           model: Operation,
