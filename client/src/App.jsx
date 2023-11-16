@@ -24,6 +24,7 @@ function App() {
       case "ICONS_MODE":
         if (action.value !== undefined) {
           // Enables manual input of the 'true' or 'false' value
+          // curently not in use
           return {
             open: state.open,
             onlyIcons: action.value,

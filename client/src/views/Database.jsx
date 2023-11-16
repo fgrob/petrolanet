@@ -11,9 +11,10 @@ const Database = () => {
   const [clientSupplierList, setClientSupplierList] = useState([]);
 
   const [isLoading, setIsLoading] = useState(true);
+  const [isTableReloading, setIsTableReloading] = useState(false); // for refetch eventlogs while keeping the currents filters
 
   const fetchEventLogs = (startDate, endDate) => {
-    setIsLoading(true);
+    // setIsLoading(true);
     eventLogService
       .getEventLogs(startDate, endDate)
       .then((res) => {
@@ -33,6 +34,7 @@ const Database = () => {
       })
       .finally(() => {
         setIsLoading(false);
+        setIsTableReloading(false);
       });
   };
 
@@ -200,8 +202,9 @@ const Database = () => {
             generateFilteredEventLogs={generateFilteredEventLogs}
             clientSupplierList={clientSupplierList}
             fetchEventLogs={fetchEventLogs}
+            setIsTableReloading={setIsTableReloading}
           />
-          <DatabaseTable filteredEventLogs={filteredEventLogs} />
+          <DatabaseTable filteredEventLogs={filteredEventLogs} isTableReloading={isTableReloading} />
         </>
       )}
     </div>
