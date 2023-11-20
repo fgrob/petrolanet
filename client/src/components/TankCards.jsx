@@ -64,7 +64,7 @@ const TankCards = () => {
         <div>cargando...</div>
       ) : (
         <>
-          <div className="m-2 flex w-[400px] flex-col flex-wrap justify-between rounded p-2 shadow-[0_3px_10px_rgb(0,0,0,0.2)]">
+          {/* <div className="m-2 flex w-[400px] flex-col flex-wrap justify-between rounded p-2 shadow-[0_3px_10px_rgb(0,0,0,0.2)]">
             <div>
               <h1 className="w-full text-2xl font-bold uppercase">
                 Balance Total
@@ -89,7 +89,7 @@ const TankCards = () => {
             {/* <div className="mt-2 flex w-full flex-wrap justify-between gap-4 border border-red-500">
               lista de alon algo algo sup!
             </div> */}
-          </div>
+          {/* </div> */} */}
           {tanks
             .sort((a, b) => a.id - b.id)
             .map((tank) => {

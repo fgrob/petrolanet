@@ -14,7 +14,6 @@ const Database = () => {
   const [isTableReloading, setIsTableReloading] = useState(false); // for refetch eventlogs while keeping the currents filters
 
   const fetchEventLogs = (startDate, endDate) => {
-    // setIsLoading(true);
     eventLogService
       .getEventLogs(startDate, endDate)
       .then((res) => {
@@ -39,21 +38,21 @@ const Database = () => {
   };
 
   const createFiltersAndClientSupplierList = (eventLogs) => {
-    const tankSet = new Set();
-    const operationSet = new Set();
-    const userSet = new Set();
-    const clientSupplierSet = new Set();
-    const documentTypeSet = new Set();
-    const typeSet = new Set();
-    const documentNumberSet = new Set();
-
     const preClientSupplierList = [];
+
+    const clientSupplierSet = new Set();
+    const userSet = new Set();
+    const operationSet = new Set();
+    const tankTypeSet = new Set();
+    const tankSet = new Set();
+    const documentTypeSet = new Set();
+    const documentNumberSet = new Set();
 
     eventLogs.forEach((eventLog) => {
       tankSet.add(eventLog.tank.name);
       operationSet.add(eventLog.operation.name);
       userSet.add(eventLog.user.username);
-      typeSet.add(eventLog.tank.type);
+      tankTypeSet.add(eventLog.tank.type);
 
       if (eventLog.client) {
         clientSupplierSet.add(eventLog.client.business_name);
@@ -81,8 +80,8 @@ const Database = () => {
       tankFilters: Object.fromEntries(
         [...tankSet].map((value) => [value, true]),
       ), // spread operator for make an array. A 'set' object is not an array
-      typeFilters: Object.fromEntries(
-        [...typeSet].map((value) => [value, true]),
+      tankTypeFilters: Object.fromEntries(
+        [...tankTypeSet].map((value) => [value, true]),
       ),
       operationFilters: Object.fromEntries(
         [...operationSet].map((value) => [value, true]),
@@ -131,12 +130,6 @@ const Database = () => {
       console.log(filters); // BORRAR
 
       const filteredData = eventLogs.filter((eventLog) => {
-        const isTankFiltered = filters.tankFilters[eventLog.tank.name];
-        const isTypeFiltered = filters.typeFilters[eventLog.tank.type];
-        const isOperationFiltered =
-          filters.operationFilters[eventLog.operation.name];
-        const isUserFiltered = filters.userFilters[eventLog.user.username];
-
         let isClientFiltered = true;
         let isSupplierFiltered = true;
 
@@ -150,6 +143,12 @@ const Database = () => {
           isClientFiltered = filters.clientSupplierFilters["(SIN DATA)"];
           isSupplierFiltered = filters.clientSupplierFilters["(SIN DATA)"];
         }
+
+        const isUserFiltered = filters.userFilters[eventLog.user.username];
+        const isOperationFiltered =
+          filters.operationFilters[eventLog.operation.name];
+        const isTankTypeFiltered = filters.tankTypeFilters[eventLog.tank.type];
+        const isTankFiltered = filters.tankFilters[eventLog.tank.name];
 
         let isDocumentTypeFiltered = true;
         if (eventLog.document_type) {
@@ -169,12 +168,12 @@ const Database = () => {
         }
 
         return (
-          isTankFiltered &&
-          isTypeFiltered &&
-          isOperationFiltered &&
-          isUserFiltered &&
           isClientFiltered &&
           isSupplierFiltered &&
+          isUserFiltered &&
+          isOperationFiltered &&
+          isTankTypeFiltered &&
+          isTankFiltered &&
           isDocumentTypeFiltered &&
           isDocumentNumberFiltered
         );
@@ -204,7 +203,10 @@ const Database = () => {
             fetchEventLogs={fetchEventLogs}
             setIsTableReloading={setIsTableReloading}
           />
-          <DatabaseTable filteredEventLogs={filteredEventLogs} isTableReloading={isTableReloading} />
+          <DatabaseTable
+            filteredEventLogs={filteredEventLogs}
+            isTableReloading={isTableReloading}
+          />
         </>
       )}
     </div>

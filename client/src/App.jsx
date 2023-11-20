@@ -64,7 +64,7 @@ function App() {
         <div className="flex flex-1 overflow-auto md:overflow-hidden">
           <div
             className={`${
-              sideBarState.onlyIcons ? "md:w-14 md:hover:w-1/8" : "w-0 md:w-1/8"
+              sideBarState.onlyIcons ? "md:w-14 md:hover:w-1/6" : "w-0 md:w-1/6"
             } transition-all duration-300 `}
           >
             <SideBar

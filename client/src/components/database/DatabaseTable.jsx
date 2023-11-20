@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import moment from "moment-timezone";
 import { BiLoaderCircle } from "react-icons/bi";
 
@@ -19,7 +19,7 @@ const DatabaseTable = ({ filteredEventLogs, isTableReloading }) => {
           <BiLoaderCircle className="animate-spin text-2xl text-blue-500" />
         </div>
       ) : (
-        <table className="w-full table-auto  divide-y divide-gray-200 overflow-scroll border-2 border-red-500">
+        <table className="w-full table-auto  divide-y divide-gray-200 overflow-scroll ">
           <thead className="sticky top-0 bg-gradient-to-r from-ocean-green-900 to-ocean-green-500 text-white">
             <tr className="text-xs uppercase tracking-wider">
               <th className="hidden px-6 py-3 md:block">ID</th>
