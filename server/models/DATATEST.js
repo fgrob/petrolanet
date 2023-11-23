@@ -8,7 +8,7 @@ const EventLog = db.eventLog;
 
 const initial = () => {
   Tank.create({
-    type: "estanque",
+    type: "ESTANQUE",
     name: "PRINCIPAL20M",
     capacity: 21000,
     current_quantity: 9000,
@@ -22,7 +22,7 @@ const initial = () => {
   });
 
   Tank.create({
-    type: "estanque",
+    type: "ESTANQUE",
     name: "SECUNDARIO50M",
     capacity: 50000,
     current_quantity: 45000,
@@ -33,7 +33,7 @@ const initial = () => {
   });
 
   Tank.create({
-    type: "estanque movil",
+    type: "ESTANQUE MOVIL",
     name: "bidon2000",
     capacity: 2000,
     current_quantity: 500,
@@ -44,7 +44,7 @@ const initial = () => {
   });
 
   Tank.create({
-    type: "camion",
+    type: "CAMION",
     name: "FAW",
     capacity: 6000,
     current_quantity: 5500,
@@ -55,11 +55,11 @@ const initial = () => {
   });
 
   Operation.create({
-    name: "CARGA",
+    name: "COMPRA",
   });
 
   Operation.create({
-    name: "DESCARGA",
+    name: "VENTA",
   });
 
   Operation.create({

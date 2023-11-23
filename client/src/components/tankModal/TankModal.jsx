@@ -65,7 +65,7 @@ const TankModal = ({ openModal, toggleModal, action, triggerTank }) => {
 
   return (
     <div
-      className={`fixed border inset-0 z-50 flex items-center justify-center transition-opacity duration-100 ease-in-out${
+      className={`fixed inset-0 z-50 flex items-center justify-center transition-opacity duration-100 ease-in-out${
         openModal
           ? "visible opacity-100"
           : "pointer-events-none invisible opacity-0"

@@ -3,7 +3,7 @@ import { Route, Routes } from "react-router-dom";
 import tankService from "./services/tank.service";
 import NavBar from "./components/NavBar";
 import SideBar from "./components/SideBar";
-import Backdrop from "./components/Backdrop";
+import Backdrop from "./components/common/Backdrop";
 import Home from "./views/Home";
 import Database from "./views/Database";
 
@@ -78,7 +78,7 @@ function App() {
               <Route
                 path="/database"
                 element={
-                  <Database dispatchSideBarState={dispatchSideBarState} />
+                  <Database />
                 }
               />
             </Routes>

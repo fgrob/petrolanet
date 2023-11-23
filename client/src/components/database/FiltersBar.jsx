@@ -1,10 +1,16 @@
 import React, { useEffect, useRef, useState } from "react";
 import Autocomplete from "../common/Autocomplete";
 import { BiSolidCheckCircle } from "react-icons/bi";
-import useMountStatus from "../common/useMountStatus";
 import { IoHomeSharp } from "react-icons/io5";
+import { MdOutlineKeyboardDoubleArrowDown } from "react-icons/md";
+import { MdOutlineKeyboardDoubleArrowUp } from "react-icons/md";
+import { PiProjectorScreenChartDuotone } from "react-icons/pi";
+import { BiLoaderCircle } from "react-icons/bi";
+import TotalsBox from "./totalsBox";
 
 import { Link } from "react-router-dom";
+
+const ALL_VALUES = "TODOS";
 
 const FiltersBar = ({
   filters,
@@ -12,10 +18,10 @@ const FiltersBar = ({
   clientSupplierList,
   eventLogs,
   generateFilteredEventLogs,
+  filteredEventLogs,
   fetchEventLogs,
   setIsTableReloading,
 }) => {
-  const isFirstRender = useMountStatus(); // añadir esta wea a notion
   const [openFiltersBar, setOpenFiltersBar] = useState(false);
   const [isAnyFilterApplied, setIsAnyFilterApplied] = useState(false);
 
@@ -24,23 +30,27 @@ const FiltersBar = ({
   const [selectedClientSupplier, setSelectedClientSupplier] = useState("");
   const [clientSupplierInputError, setClientSupplierInputError] = useState("");
 
-  const [selectedUser, setSelectedUser] = useState("TODOS");
+  const [selectedUser, setSelectedUser] = useState(ALL_VALUES);
   const prevSelectedUser = useRef(selectedUser);
-  const [selectedOperation, setSelectedOperation] = useState("TODOS");
+  const [selectedOperation, setSelectedOperation] = useState(ALL_VALUES);
   const prevSelectedOperation = useRef(selectedOperation);
 
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
 
-  const [selectedTankType, setSelectedTankType] = useState("TODOS");
+  const [selectedTankType, setSelectedTankType] = useState(ALL_VALUES);
   const prevSelectedTankType = useRef(selectedTankType);
-  const [selectedTank, setSelectedTank] = useState("TODOS");
+  const [selectedTank, setSelectedTank] = useState(ALL_VALUES);
   const prevSelectedTank = useRef(selectedTank);
 
-  const [selectedDocumentType, setSelectedDocumentType] = useState("TODOS");
+  const [selectedDocumentType, setSelectedDocumentType] = useState(ALL_VALUES);
   const prevSelectedDocumentType = useRef(selectedDocumentType);
   const [documentNumber, setDocumentNumber] = useState("");
   const prevDocumentNumber = useRef(documentNumber);
+
+  const [openTotals, setOpenTotals] = useState(false);
+  const [totalsCalculationComplete, setTotalsCalculationComplete] =
+    useState(false);
 
   const handleFilterSelector = (filterType, selectedValue) => {
     const newFilters = { ...filters };
@@ -59,7 +69,7 @@ const FiltersBar = ({
         }
       } else {
         newFilters[filterType][option] =
-          selectedValue === "TODOS" || selectedValue === option; // when TODOS is selected, it sets all options to 'true'
+          selectedValue === ALL_VALUES || selectedValue === option; // when TODOS is selected, it sets all options to 'true'
       }
     }
     setFilters(newFilters);
@@ -78,7 +88,7 @@ const FiltersBar = ({
     fetchEventLogs(startDate, endDate);
 
     // fetchEventLogs will create a new filters list (and client/supplier list) based on the response data.
-    // The response data will not have filteres applied
+    // The response data will not have filters applied
     clearFiltersWithoutEffect();
   };
 
@@ -90,19 +100,11 @@ const FiltersBar = ({
   const resetDocumentNumberFilter = () => {
     setDocumentNumber("");
   };
-
-  const resetDateAndFilters = () => {
-    defaultDate();
-    setIsTableReloading(true);
-    fetchEventLogs();
-    clearFiltersWithoutEffect();
-  };
-
+ 
   const resetFilters = () => {
     //this does not include the Date filter
 
     const newFilters = { ...filters };
-
     for (const key in newFilters) {
       for (const subKey in newFilters[key]) {
         newFilters[key][subKey] = true;
@@ -112,23 +114,30 @@ const FiltersBar = ({
     clearFiltersWithoutEffect();
   };
 
+  const resetDateAndFilters = () => {
+    defaultDate();
+    setIsTableReloading(true);
+    fetchEventLogs();
+    clearFiltersWithoutEffect();
+  };
+
   const clearFiltersWithoutEffect = () => {
     // this is to clear the selectors and inputs without triggering each handleFilter
     // this does not include the Date filter
     prevRut.current = "";
-    prevSelectedUser.current = "TODOS";
-    prevSelectedOperation.current = "TODOS";
-    prevSelectedTankType.current = "TODOS";
-    prevSelectedTank.current = "TODOS";
-    prevSelectedDocumentType.current = "TODOS";
+    prevSelectedUser.current = ALL_VALUES;
+    prevSelectedOperation.current = ALL_VALUES;
+    prevSelectedTankType.current = ALL_VALUES;
+    prevSelectedTank.current = ALL_VALUES;
+    prevSelectedDocumentType.current = ALL_VALUES;
     prevDocumentNumber.current = "";
     setRut("");
     setSelectedClientSupplier("");
-    setSelectedUser("TODOS");
-    setSelectedOperation("TODOS");
-    setSelectedTankType("TODOS");
-    setSelectedTank("TODOS");
-    setSelectedDocumentType("TODOS");
+    setSelectedUser(ALL_VALUES);
+    setSelectedOperation(ALL_VALUES);
+    setSelectedTankType(ALL_VALUES);
+    setSelectedTank(ALL_VALUES);
+    setSelectedDocumentType(ALL_VALUES);
     setDocumentNumber("");
 
     setIsAnyFilterApplied(false);
@@ -140,10 +149,10 @@ const FiltersBar = ({
 
     if (
       rut !== "" ||
-      selectedUser !== "TODOS" ||
-      selectedOperation !== "TODOS" ||
-      selectedTankType !== "TODOS" ||
-      selectedTank !== "TODOS" ||
+      selectedUser !== ALL_VALUES ||
+      selectedOperation !== ALL_VALUES ||
+      selectedTankType !== ALL_VALUES ||
+      selectedTank !== ALL_VALUES ||
       documentNumber !== ""
     ) {
       setIsAnyFilterApplied(true);
@@ -156,6 +165,10 @@ const FiltersBar = ({
     setDefaultStartDate = true,
     setDefaultEndDate = true,
   ) => {
+    //this function sets a default date for the startDate or endDate or both if necessary
+    // default startDate: the 1st day of the previous month, starting today
+    // default endDate: today
+
     let date = new Date().toLocaleDateString(); // for UTC differences management
     let [month, day, year] = date.split("/");
 
@@ -183,6 +196,14 @@ const FiltersBar = ({
       const endDate = `${year}-${month}-${day}`;
       setEndDate(endDate);
     }
+  };
+
+  const reorderDateString = (date) => {
+    // takes a date string in format 2023-01-31 and returns 31-01-2023
+
+    const [year, month, day] = date.split("-");
+    const formatedDate = [day, month, year].join("-");
+    return formatedDate;
   };
 
   useEffect(() => {
@@ -245,41 +266,122 @@ const FiltersBar = ({
     documentNumber,
   ]);
 
+  useEffect(() => {
+    const handleClickOutsideFiltersBar = (e) => {
+      const filtersBarElement = document.getElementById("filtersBar");
+      if (!filtersBarElement.contains(e.target) && openFiltersBar) {
+        filtersBarElement.scrollTo(0, 0); // horizontal screen on mobiles can have scrolling. And when the filter bar is hidden, it may be mispositioned
+        setOpenFiltersBar(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutsideFiltersBar);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutsideFiltersBar);
+    };
+  }, [openFiltersBar]);
+
+  useEffect(() => {
+    const handleClickOutsideTotals = (e) => {
+      const totalsElement = document.getElementById("totalsElement");
+      const totalButton = document.getElementById("totalsButton"); // To prevent double execution of setOpenTotals
+
+      if (
+        !totalsElement.contains(e.target) &&
+        !totalButton.contains(e.target)
+      ) {
+        setOpenTotals(false);
+      }
+    };
+    if (openTotals) {
+      document.addEventListener("mousedown", handleClickOutsideTotals);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutsideTotals);
+    };
+  }, [openTotals]);
+
   return (
     <div
+      id="filtersBar"
       className={`${
         openFiltersBar
           ? "h-5/6 overflow-auto md:h-3/5 lg:overflow-hidden"
           : "h-11 overflow-hidden"
       } bg-gray-50 transition-all duration-300`}
     >
-      <div className="flex justify-between p-1">
-        <div className="flex gap-1">
+      <div className="flex items-center p-1">
+        <div className="flex flex-1 gap-1">
           <button
-            className="rounded border border-black bg-blue-950 p-1 font-bold text-white shadow-lg hover:bg-blue-800"
+            className="flex items-stretch rounded border border-black bg-blue-950 p-1 font-bold text-white shadow-lg hover:bg-blue-900"
             onClick={() => setOpenFiltersBar(!openFiltersBar)}
           >
-            Filtros
-          </button>
-          <button
-            className="rounded border border-black bg-blue-400 p-1 font-bold shadow-lg hover:bg-blue-200"
-            onClick={resetFilters}
-          >
-            Limpiar Filtros
+            <span className="flex items-center">Filtros</span>
+            <div className="flex h-full items-center">
+              {openFiltersBar ? (
+                <MdOutlineKeyboardDoubleArrowUp />
+              ) : (
+                <MdOutlineKeyboardDoubleArrowDown />
+              )}
+            </div>
           </button>
           {isAnyFilterApplied && (
-            <div>HAY UN FILTRO ACTIVO!!</div>
+            <button
+              className="rounded border border-black bg-blue-400 p-1 font-bold shadow-lg hover:bg-blue-200"
+              onClick={resetFilters}
+            >
+              <span className="flex items-center">Limpiar filtros</span>
+            </button>
+          )}
+          <button
+            id="totalsButton"
+            className="relative flex items-center rounded border border-black bg-ocean-green-400 p-1 font-bold shadow-lg hover:bg-ocean-green-200"
+            onClick={() => setOpenTotals(!openTotals)}
+          >
+            {openTotals && !totalsCalculationComplete ? (
+              <BiLoaderCircle className="h-7 w-7 animate-spin" />
+            ) : (
+              <PiProjectorScreenChartDuotone className="h-7 w-7" />
+            )}
+            <span className="hidden md:block">Totales</span>
+          </button>
+          {openTotals && (
+            <TotalsBox
+              totalsCalculationComplete={totalsCalculationComplete}
+              setTotalsCalculationComplete={setTotalsCalculationComplete}
+              filteredEventLogs={filteredEventLogs}
+              selectedClientSupplier={selectedClientSupplier}
+              selectedUser={selectedUser}
+              selectedOperation={selectedOperation}
+              startDate={reorderDateString(startDate)}
+              endDate={reorderDateString(endDate)}
+              selectedTankType={selectedTankType}
+              selectedTank={selectedTank}
+              selectedDocumentType={selectedDocumentType}
+              documentNumber={documentNumber}
+            />
           )}
         </div>
-        <Link
-          to="/"
-          className="flex border border-yellow-500 text-black hover:text-gray-500"
-        >
-          <div className="h-full w-7 border border-black">
-            <IoHomeSharp className="h-full w-full" />
+        <div className="flex gap-2 md:gap-4">
+          <div className="flex h-fit flex-col text-xs md:flex-row md:gap-2 md:text-lg">
+            <div className="h-fit">
+              Desde:{" "}
+              <span className="font-bold">{reorderDateString(startDate)}</span>
+            </div>
+            <div className="h-fit">
+              Hasta:{" "}
+              <span className="font-bold">{reorderDateString(endDate)}</span>
+            </div>
           </div>
-          <div className="flex items-center border border-blue-500">Inicio</div>
-        </Link>
+          <Link to="/" className="flex text-black hover:text-gray-500">
+            <div className="h-full w-7">
+              <IoHomeSharp className="h-full w-full" />
+            </div>
+            <div className="flex items-center font-bold">Salir</div>
+          </Link>
+        </div>
       </div>
       <div className="flex flex-wrap gap-3 bg-gray-50 p-2 md:justify-evenly">
         {/* All Filters  */}
@@ -345,7 +447,7 @@ const FiltersBar = ({
               value={selectedUser}
               onChange={(e) => setSelectedUser(e.target.value)}
             >
-              <option value="TODOS">TODOS</option>
+              <option value={ALL_VALUES}>{ALL_VALUES}</option>
               {Object.keys(filters.userFilters).map((value) => (
                 <option value={value} key={value}>
                   {value}
@@ -367,7 +469,7 @@ const FiltersBar = ({
               value={selectedOperation}
               onChange={(e) => setSelectedOperation(e.target.value)}
             >
-              <option value="TODOS">TODOS</option>
+              <option value={ALL_VALUES}>{ALL_VALUES}</option>
               {Object.keys(filters.operationFilters).map((value) => (
                 <option value={value} key={value}>
                   {value}
@@ -393,7 +495,7 @@ const FiltersBar = ({
               value={selectedTankType}
               onChange={(e) => setSelectedTankType(e.target.value)}
             >
-              <option value="TODOS">TODOS</option>
+              <option value={ALL_VALUES}>{ALL_VALUES}</option>
               {Object.keys(filters.tankTypeFilters).map((value) => (
                 <option value={value} key={value}>
                   {value.toUpperCase()}
@@ -415,7 +517,7 @@ const FiltersBar = ({
               value={selectedTank}
               onChange={(e) => setSelectedTank(e.target.value)}
             >
-              <option value="TODOS">TODOS</option>
+              <option value={ALL_VALUES}>{ALL_VALUES}</option>
               {Object.keys(filters.tankFilters).map((value) => (
                 <option value={value} key={value}>
                   {value}
@@ -491,7 +593,7 @@ const FiltersBar = ({
               value={selectedDocumentType}
               onChange={(e) => setSelectedDocumentType(e.target.value)}
             >
-              <option value="TODOS">TODOS</option>
+              <option value={ALL_VALUES}>{ALL_VALUES}</option>
               {Object.keys(filters.documentTypeFilters).map((value) => (
                 <option value={value} key={value}>
                   {value}

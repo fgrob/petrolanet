@@ -31,7 +31,7 @@ const TankCards = () => {
       datasets: [
         {
           data: [companyCapacity, companyCapacity - companyBalance],
-          backgroundColor: ["#17653a", "#0c715150"],
+          backgroundColor: ["#052e19", "#0c715150"],
         },
       ],
     };
@@ -46,9 +46,9 @@ const TankCards = () => {
 
   const getBackgroundColor = (tankType) => {
     const typeToColor = {
-      estanque: "#17653a",
-      "estanque movil": "#17a254",
-      camion: "#0f2d5c",
+      "ESTANQUE": "#17653a",
+      "ESTANQUE MOVIL": "#17a254",
+      "CAMION": "#0f2d5c",
     };
     return typeToColor[tankType] || "#17653a";
   };
@@ -64,32 +64,39 @@ const TankCards = () => {
         <div>cargando...</div>
       ) : (
         <>
-          {/* <div className="m-2 flex w-[400px] flex-col flex-wrap justify-between rounded p-2 shadow-[0_3px_10px_rgb(0,0,0,0.2)]">
-            <div>
-              <h1 className="w-full text-2xl font-bold uppercase">
-                Balance Total
-              </h1>
-              <div className="flex w-full justify-between font-light capitalize">
-                <div>Compañía</div>
+          <div className="m-2 flex w-[400px] flex-wrap rounded p-2 shadow-[0_3px_10px_rgb(0,0,0,0.2)]">
+            <h1 className="w-full text-2xl font-bold uppercase">Total</h1>
+            <div className="flex w-full justify-between font-light capitalize">
+              <div>Compañía</div>
+            </div>
+            <hr className="divider" />
+              <div className="flex h-60 w-60">
+                <Doughnut data={dataForTotal.doughnut} />
               </div>
-              <hr className="divider" />
-            </div>
-            <div className="flex flex-1 justify-center items-center">
-              <Doughnut data={dataForTotal.doughnut} className="p-14" />
-            </div>
-              <hr className="divider" />
-            <div className="text-center ">
-              <div className="text-4xl font-bold">
+              <div className="flex-grow self-center text-center">
+              <div className="text-3xl font">
                 {dataForTotal.companyBalance.toLocaleString("es-CL")} Lts
               </div>
-              <div className="text-2xl">
+              <div className="text-xl">
                 / {dataForTotal.companyCapacity.toLocaleString("es-CL")}
               </div>
             </div>
-            {/* <div className="mt-2 flex w-full flex-wrap justify-between gap-4 border border-red-500">
-              lista de alon algo algo sup!
-            </div> */}
-          {/* </div> */} */}
+            <hr className="divider" />
+            <button
+              className="my-2 flex w-full flex-col items-center rounded bg-gray-200 shadow-md hover:bg-gray-300"
+              onClick={() => {
+                alert("poto!");
+              }}
+            >
+              <div className="text-xl font-bold text-red-500">100 Litros</div>
+              <div className="flex-grow-0 text-sm">Posible diferencia</div>
+            </button>
+            <div className="mt-2 flex w-full flex-wrap justify-between gap-4">
+              <button type="button" className="btn-success w-full">
+                Ajustar
+              </button>
+            </div>
+          </div>
           {tanks
             .sort((a, b) => a.id - b.id)
             .map((tank) => {
@@ -136,7 +143,7 @@ const TankCards = () => {
                     </div>
                   </div>
                   <hr className="divider" />
-                  {tank.type == "estanque" && (
+                  {tank.type == "ESTANQUE" && (
                     <button
                       className="my-2 flex w-full flex-col items-center rounded bg-gray-200 shadow-md hover:bg-gray-300"
                       onClick={() => {

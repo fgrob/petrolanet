@@ -1,7 +1,7 @@
 module.exports = (sequelize, Sequelize) => {
     const Tank = sequelize.define('Tank', {
         type: {
-            type: Sequelize.ENUM('estanque', 'estanque movil', 'camion'),
+            type: Sequelize.ENUM('ESTANQUE', 'ESTANQUE MOVIL', 'CAMION'),
             allowNull: false,
         },
         name: {
@@ -32,7 +32,7 @@ module.exports = (sequelize, Sequelize) => {
             defaultValue: false
         },
         tank_number: {
-            type: Sequelize.INTEGER,
+            type: Sequelize.INTEGER,     
             defaultValue: 0,
         },
         tank_speed: {

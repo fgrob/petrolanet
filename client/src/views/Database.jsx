@@ -178,6 +178,7 @@ const Database = () => {
           isDocumentNumberFiltered
         );
       });
+      console.log('Data Filtered: ', filteredData) // BORRAR
       setFilteredEventLogs(filteredData);
     }
   };
@@ -199,6 +200,7 @@ const Database = () => {
             filters={filters}
             setFilters={setFilters}
             generateFilteredEventLogs={generateFilteredEventLogs}
+            filteredEventLogs={filteredEventLogs}
             clientSupplierList={clientSupplierList}
             fetchEventLogs={fetchEventLogs}
             setIsTableReloading={setIsTableReloading}

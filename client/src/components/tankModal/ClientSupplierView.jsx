@@ -13,7 +13,7 @@ import { BiLoaderCircle } from "react-icons/bi";
 const ClientSupplierView = ({ action, triggerTank, toggleModal, isConfirmationVisible, setIsConfirmationVisible }) => {
   const { setTanks } = useContext(AppContext);
   const [clientSupplierList, setClientSupplierList] = useState("");
-  const documentOptions = ["Sin documento", "Guia", "Factura"];
+  const documentOptions = ["SIN DOCUMENTO", "GUIA", "FACTURA"];
   const [isLoading, setIsLoading] = useState(true);
 
   const [clientSupplierId, setClientSupplierId] = useState("");
