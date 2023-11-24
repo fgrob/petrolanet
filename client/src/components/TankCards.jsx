@@ -15,6 +15,8 @@ const TankCards = () => {
   const [dataForTotal, setDataForTotal] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
+  const [totalError, setTotalError] = useState(0);
+
   const companyCard = () => {
     let companyCapacity = 0;
     let companyBalance = 0;
@@ -38,23 +40,32 @@ const TankCards = () => {
     setDataForTotal(dataForTotal);
   };
 
+  const getBackgroundColor = (tankType) => {
+    const typeToColor = {
+      ESTANQUE: "#17653a",
+      "ESTANQUE MOVIL": "#17a254",
+      CAMION: "#0f2d5c",
+    };
+    return typeToColor[tankType] || "#17653a";
+  };
+
   const toggleModal = (tank) => {
     setTriggerTank(tank);
     setOpenModal(!openModal);
     setOpenBackdrop(!openBackdrop);
   };
 
-  const getBackgroundColor = (tankType) => {
-    const typeToColor = {
-      "ESTANQUE": "#17653a",
-      "ESTANQUE MOVIL": "#17a254",
-      "CAMION": "#0f2d5c",
-    };
-    return typeToColor[tankType] || "#17653a";
+  const calcError = () => {
+    const totalError = tanks.reduce(
+      (total, tank) => total + tank.error_quantity,
+      0,
+    );
+    setTotalError(totalError);
   };
 
   useEffect(() => {
     companyCard();
+    calcError();
     setIsLoading(false);
   }, [tanks]);
 
@@ -70,11 +81,11 @@ const TankCards = () => {
               <div>Compañía</div>
             </div>
             <hr className="divider" />
-              <div className="flex h-60 w-60">
-                <Doughnut data={dataForTotal.doughnut} />
-              </div>
-              <div className="flex-grow self-center text-center">
-              <div className="text-3xl font">
+            <div className="flex h-60 w-60">
+              <Doughnut data={dataForTotal.doughnut} />
+            </div>
+            <div className="flex-grow self-center text-center">
+              <div className="font text-3xl">
                 {dataForTotal.companyBalance.toLocaleString("es-CL")} Lts
               </div>
               <div className="text-xl">
@@ -82,17 +93,15 @@ const TankCards = () => {
               </div>
             </div>
             <hr className="divider" />
-            <button
-              className="my-2 flex w-full flex-col items-center rounded bg-gray-200 shadow-md hover:bg-gray-300"
-              onClick={() => {
-                alert("poto!");
-              }}
-            >
-              <div className="text-xl font-bold text-red-500">100 Litros</div>
+            <div className="my-2 flex w-full flex-col items-center rounded bg-gray-300 shadow-md">
+              <div className="text-xl font-bold text-red-500">{totalError.toLocaleString("es-CL")} Lts</div>
               <div className="flex-grow-0 text-sm">Posible diferencia</div>
-            </button>
+            </div>
             <div className="mt-2 flex w-full flex-wrap justify-between gap-4">
-              <button type="button" className="btn-success w-full">
+              <button type="button" className="btn-success w-full" onClick={() => {
+                setAction("adjustment");
+                toggleModal();
+              }}>
                 Ajustar
               </button>
             </div>

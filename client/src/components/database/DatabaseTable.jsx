@@ -3,7 +3,6 @@ import moment from "moment-timezone";
 import { BiLoaderCircle } from "react-icons/bi";
 
 const DatabaseTable = ({ filteredEventLogs, isTableReloading }) => {
-
   const operationColorMap = {
     1: "bg-red-400 font-semibold px-2 py-1 rounded text-center", // COMPRA
     2: "bg-green-400 font-semibold px-2 py-1 rounded text-center", // VENTA
@@ -30,6 +29,7 @@ const DatabaseTable = ({ filteredEventLogs, isTableReloading }) => {
               <th className="px-6 py-3 text-start">Movimiento</th>
               <th className="px-6 py-3 text-start">Saldo</th>
               <th className="px-6 py-3 text-start">Regla</th>
+              <th className="px-6 py-3 text-start">Diferencia</th>
               <th className="px-6 py-3 text-start">Numeral</th>
               <th className="px-6 py-3 text-start">Documento</th>
               <th className="px-6 py-3 text-start">Folio</th>
@@ -79,6 +79,22 @@ const DatabaseTable = ({ filteredEventLogs, isTableReloading }) => {
                       parseInt(eventlog.measured_balance).toLocaleString(
                         "es-CL",
                       )}
+                  </td>
+                  <td className="whitespace-nowrap px-6 text-end text-sm text-gray-900">
+                    <span
+                      className={`${
+                        eventlog.error_quantity < 0
+                          ? "text-red-500 font-bold"
+                          : "text-green-500 font-bold"
+                      }`}
+                    >
+                      {eventlog.error_quantity && (
+                        <span>{parseInt(eventlog.error_quantity).toLocaleString(
+                          "es-CL",
+                        )}</span>
+                      )}
+                      
+                    </span>
                   </td>
                   <td className="whitespace-nowrap px-6 text-end text-sm text-gray-900">
                     {eventlog.tank_number_to_date}

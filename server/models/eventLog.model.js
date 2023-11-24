@@ -23,6 +23,9 @@ module.exports = (sequelize, Sequelize) => {
         measured_balance: {
             type: Sequelize.INTEGER,
         },
+        error_quantity: {
+            type: Sequelize.INTEGER,
+        },
         tank_number_to_date: {
             type: Sequelize.INTEGER,
             allowNull: false,

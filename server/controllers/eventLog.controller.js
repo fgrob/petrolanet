@@ -43,9 +43,6 @@ const getEventLogs = async (req, res) => {
     startDate.setUTCHours(0, 0, 0, 0);
     endDate.setUTCHours(23,59,59,999);
 
-    console.log('ACAAAAAAAAAAAAAAA*****************') // BORRAR 
-    console.log(startDate)
-    console.log(endDate)
     const eventLogs = await EventLog.findAll({
       where: {
         createdAt: {

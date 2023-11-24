@@ -67,24 +67,26 @@ const transferOperation = async (req, res) => {
       await destinationTank.save({ transaction: t });
 
       //Event Logs Origin Tank
-      const originLog = await EventLog.create({
+      await EventLog.create({
         // operation_id: 2, // load
         operation_id: 3, // traspaso
         user_id: 1, // CORREGIR ESTO *********************************************
         tank_id: originTankId,
         transaction_quantity: intQuantity * -1,
         balance: originTank.current_quantity,
+        // error_quantity: originTank.error_quantity,
         tank_number_to_date: originTank.tank_number,
       });
 
       //Event logs Destination Tank
-      const destinationLog = await EventLog.create({
+      await EventLog.create({
         // operation_id: 1, // unload
         operation_id: 3,
         user_id: 1, // *********************************
         tank_id: destinationTankId,
         transaction_quantity: intQuantity,
         balance: destinationTank.current_quantity,
+        // error_quantity: destinationTank.error_quantity,
         tank_number_to_date: destinationTank.tank_number,
       });
     });
@@ -147,6 +149,7 @@ const sellOrSupplyOperation = async (req, res) => {
         tank_id: triggerTankId,
         transaction_quantity: intQuantity,
         balance: triggerTank.current_quantity,
+        // error_quantity: triggerTank.error_quantity,
         tank_number_to_date: triggerTank.tank_number,
         document_type: selectedDocument,
         document_number: parsedDocumentNumber,
@@ -175,6 +178,7 @@ const measurementOperation = async (req, res) => {
       const triggerTank = await Tank.findByPk(triggerTankId);
 
       triggerTank.measured_quantity = intQuantity;
+      triggerTank.error_quantity = intQuantity - triggerTank.current_quantity;
       triggerTank.timestamp_measured_quantity = new Date();
       await triggerTank.save({ transaction: t });
 
@@ -184,6 +188,7 @@ const measurementOperation = async (req, res) => {
         tank_id: triggerTankId,
         balance: triggerTank.current_quantity,
         measured_balance: intQuantity,
+        error_quantity: triggerTank.error_quantity,
         tank_number_to_date: triggerTank.tank_number,
         notes: notes,
       });

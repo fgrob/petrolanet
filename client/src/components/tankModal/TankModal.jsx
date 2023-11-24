@@ -5,6 +5,7 @@ import TransferView from "./TransferView";
 import SelectorView from "./SelectorView";
 import ClientSupplierView from "./ClientSupplierView";
 import MeasureStick from "./MeasureStick";
+import AdjustmentView from "./AdjustmentView";
 
 const TankModal = ({ openModal, toggleModal, action, triggerTank }) => {
   const modalView = {
@@ -13,6 +14,7 @@ const TankModal = ({ openModal, toggleModal, action, triggerTank }) => {
     REFILL: "REFILL",
     TRANSFER: "TRANSFER",
     MEASURE: "MEASURE",
+    ADJUSTMENT: "ADJUSTMENT"
   };
 
   const [selectedView, setSelectedView] = useState();
@@ -25,6 +27,8 @@ const TankModal = ({ openModal, toggleModal, action, triggerTank }) => {
 
     if (action === "measure") {
       setSelectedView(modalView.MEASURE);
+    } else if (action === "adjustment"){
+      setSelectedView(modalView.ADJUSTMENT);
     } else {
       setSelectedView(modalView.SELECTOR);
     }
@@ -82,7 +86,7 @@ const TankModal = ({ openModal, toggleModal, action, triggerTank }) => {
         >
           <IoClose className="h-full w-full" />
         </button>
-        {selectedView !== modalView.SELECTOR && selectedView !== modalView.MEASURE && (
+        {selectedView !== modalView.SELECTOR && selectedView !== modalView.MEASURE && selectedView !== modalView.ADJUSTMENT && (
           <button
             onClick={() => {
               isConfirmationVisible
@@ -130,6 +134,11 @@ const TankModal = ({ openModal, toggleModal, action, triggerTank }) => {
         {/* MODAL DE MEDICION DE ESTANQUE */}
         {openModal && selectedView === modalView.MEASURE && (
           <MeasureStick triggerTank={triggerTank} toggleModal={toggleModal} />
+        )}
+
+        {/* MODAL DE AJUSTE DE ESTANQUE */}
+        {openModal && selectedView === modalView.ADJUSTMENT && (
+          <AdjustmentView toggleModal={toggleModal} />
         )}
       </div>
     </div>
