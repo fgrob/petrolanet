@@ -68,7 +68,7 @@ const TankAdjustment = () => {
       };
     }
     console.log(inputStates);
-    
+
     setEditMode(editMode);
     setInputStates(inputStates);
   };
@@ -91,11 +91,17 @@ const TankAdjustment = () => {
   };
 
   const handleInputChange = (tankName, input, value) => {
-    const fixedValue = value.replace(/[.,]/g, "");
+    let fixedValue;
+    if (value === "true" || value === "false") {
+      fixedValue = value === "true"; // this sets fixedValue to a real boolean true or false (OJO, TAL VEZ NO ES NECESARIO A LA HORA DE LLAMAR A LA API)
+    } else {
+      fixedValue = value.replace(/[.,]/g, "");
+    }
+
     const newInputStates = { ...inputStates };
     newInputStates[tankName][input].updatedValue = fixedValue;
     setInputStates(newInputStates);
-    console.log('estados actualizados:', newInputStates) // BORRAR
+    console.log("estados actualizados:", newInputStates); // BORRAR
   };
 
   useEffect(() => {
@@ -330,19 +336,21 @@ const TankAdjustment = () => {
                         Medidor
                       </label>
                       <div className="relative w-1/2">
-                        {inputStates[tank.name]['tank_gauge'].originalValue !=
-                          inputStates[tank.name]['tank_gauge'].updatedValue && (
-                          <div className="absolute start-3 text-xs text-red-500 line-through ">
-                            {inputStates[tank.name]['tank_gauge'].originalValue}
-                          </div>
-                        )}
                         <select
                           id={`tankGauge${tank.id}`}
-                          value={inputStates[tank.name]['tank_gauge'].updatedValue}
+                          value={
+                            inputStates[tank.name]["tank_gauge"].updatedValue
+                          }
                           className="w-full border p-2"
-                          disabled={inputStates[tank.name]['tank_gauge'].disabled}
+                          disabled={
+                            inputStates[tank.name]["tank_gauge"].disabled
+                          }
                           onChange={(e) =>
-                            handleInputChange(tank.name, "tank_gauge", e.target.value)
+                            handleInputChange(
+                              tank.name,
+                              "tank_gauge",
+                              e.target.value,
+                            )
                           }
                         >
                           {tankGaugeOptions.map((option) => (
@@ -366,21 +374,48 @@ const TankAdjustment = () => {
                       </button>
                     </div>
 
-                    {tank.tank_gauge && (
+                    {inputStates[tank.name]["tank_gauge"].updatedValue && (
                       <div className="flex items-center justify-center gap-1 text-center">
+                        {/* tank_number Row  */}
                         <label
-                          htmlFor="tankNumeral"
+                          htmlFor={`tankNumber${tank.id}`}
                           className="mr-2 flex-1 text-end font-bold"
                         >
                           Numeral
                         </label>
-                        <input
-                          id="tankNumeral"
-                          value={tank.tank_number}
-                          className="border p-2"
-                          disabled
-                        />
-                        <button className="">
+                        <div className="relative w-1/2">
+                          {inputStates[tank.name]['tank_number'].originalValue !=
+                            inputStates[tank.name]['tank_number'].updatedValue && (
+                            <div className="absolute start-3 text-xs text-red-500">
+                              {inputStates[
+                                tank.name
+                              ]['tank_number'].originalValue}
+                            </div>
+                          )}
+                          <input
+                            id={`tankNumber${tank.id}`}
+                            value={inputStates[tank.name]['tank_number'].updatedValue}
+                            type="number"
+                            className="w-full border p-2"
+                            disabled={inputStates[tank.name]['tank_number'].disabled}
+                            onChange={(e) =>
+                              handleInputChange(
+                                tank.name,
+                                "tank_number",
+                                e.target.value,
+                              )
+                            }
+                          />
+                        </div>
+                        <button
+                          onClick={() =>
+                            handleEditMode(
+                              tank.name,
+                              "tank_number",
+                              `tankNumber${tank.id}`,
+                            )
+                          }
+                        >
                           <CiEdit className="h-7 w-7" />
                         </button>
                       </div>
