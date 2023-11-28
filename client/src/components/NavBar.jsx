@@ -6,7 +6,7 @@ const NavBar = ({ dispatchSideBarState }) => {
   return (
     <nav
       id="navbar"
-      className="flex h-full w-full items-center justify-between bg-gradient-to-r from-ocean-green-900 to-ocean-green-500 text-center text-white "
+      className="flex h-full w-full items-center justify-between bg-gradient-to-r from-ocean-green-900 to-ocean-green-500 text-center text-white"
     >
       <div className="flex items-center gap-1 pl-2 md:w-1/6 md:pl-4">
         <button onClick={() => dispatchSideBarState({ type: "TOGGLE_STATE" })}>

@@ -11,7 +11,7 @@ const SideBar = ({ sideBarState, dispatchSideBarState }) => {
     { title: "Inicio", icon: IoHomeSharp, link: "/" },
     { title: "Solicitudes", icon: RiMailSendFill },
     { title: "Base de datos", icon: AiFillDatabase, link: "/database" },
-    { title: "Recursos", icon: AiTwotoneSetting },
+    { title: "Recursos", icon: AiTwotoneSetting, link: "/adjustment" },
   ];
 
   const sidebarRef = useRef();
@@ -76,7 +76,7 @@ const SideBar = ({ sideBarState, dispatchSideBarState }) => {
         ref={sidebarRef}
         className={`${
           sideBarState.open ? "translate-x-0" : "-translate-x-full"
-        }  overflow-hidden fixed md:static top-0 z-40 md:z-20 h-full w-4/5 md:w-full shadow-[2px_3px_15px] shadow-gray-500 bg-gray-100 duration-200 md:top-auto md:block md:translate-x-0
+        } overflow-hidden fixed md:static top-0 z-40 md:z-20 h-full w-4/5 md:w-full shadow-[2px_3px_15px] shadow-gray-500 bg-gray-100 duration-200 md:top-auto md:block md:translate-x-0
         `}
       > 
         <div className="md:hidden text-4xl text-white h-14 text-center from-ocean-green-900 to-ocean-green-500 bg-gradient-to-r mb-5 flex items-center justify-center">

@@ -4,7 +4,7 @@ import { BiLoaderCircle } from "react-icons/bi";
 import FiltersBar from "../components/database/FiltersBar";
 import DatabaseTable from "../components/database/DatabaseTable";
 
-const Database = () => {
+const Database = ({setNavBarVisibility, setSideBarVisibility}) => {
   const [eventLogs, setEventLogs] = useState([]);
   const [filters, setFilters] = useState();
   const [filteredEventLogs, setFilteredEventLogs] = useState([]);
@@ -185,10 +185,18 @@ const Database = () => {
 
   useEffect(() => {
     fetchEventLogs();
+
+    setNavBarVisibility(false);
+    setSideBarVisibility(false);
+
+    return () => {
+      setNavBarVisibility(true);
+      setSideBarVisibility(true);
+    }
   }, []);
 
   return (
-    <div className="fixed left-0 top-0 flex h-full w-screen flex-col overflow-hidden bg-white">
+    <div className="flex h-full flex-col overflow-hidden bg-white">
       {isLoading ? (
         <div className="flex h-screen items-center justify-center ">
           <BiLoaderCircle className="animate-spin text-2xl text-blue-500" />

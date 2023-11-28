@@ -1,8 +1,25 @@
-import React from "react";
+import React, { useContext, useState } from "react";
 import moment from "moment-timezone";
 import { BiLoaderCircle } from "react-icons/bi";
+import { MdOutlineComment } from "react-icons/md";
+import { AppContext } from "../../App";
+import Modal from "../common/Modal";
 
 const DatabaseTable = ({ filteredEventLogs, isTableReloading }) => {
+  const { openBackdrop, setOpenBackdrop } = useContext(AppContext);
+  const [openNotesModal, setOpenNotesModal] = useState(false);
+  const [selectedNote, setSelectedNote] = useState("");
+
+  const handleOpenNote = (note) => {
+    setSelectedNote(note);
+    toggleModal();
+  };
+
+  const toggleModal = () => {
+    setOpenNotesModal(!openNotesModal);
+    setOpenBackdrop(!openBackdrop);
+  };
+
   const operationColorMap = {
     1: "bg-red-400 font-semibold px-2 py-1 rounded text-center", // COMPRA
     2: "bg-green-400 font-semibold px-2 py-1 rounded text-center", // VENTA
@@ -84,16 +101,17 @@ const DatabaseTable = ({ filteredEventLogs, isTableReloading }) => {
                     <span
                       className={`${
                         eventlog.error_quantity < 0
-                          ? "text-red-500 font-bold"
-                          : "text-green-500 font-bold"
+                          ? "font-bold text-red-500"
+                          : "font-bold text-green-500"
                       }`}
                     >
                       {eventlog.error_quantity && (
-                        <span>{parseInt(eventlog.error_quantity).toLocaleString(
-                          "es-CL",
-                        )}</span>
+                        <span>
+                          {parseInt(eventlog.error_quantity).toLocaleString(
+                            "es-CL",
+                          )}
+                        </span>
                       )}
-                      
                     </span>
                   </td>
                   <td className="whitespace-nowrap px-6 text-end text-sm text-gray-900">
@@ -110,14 +128,25 @@ const DatabaseTable = ({ filteredEventLogs, isTableReloading }) => {
                       ? eventlog.client.business_name
                       : eventlog.supplier && eventlog.supplier.business_name}
                   </td>
-                  <td className="whitespace-nowrap px-6 text-sm text-gray-900">
-                    {eventlog.notes}
+                  <td className="whitespace-nowrap text-gray-900">
+                    {eventlog.notes && (
+                      <div className="flex items-center justify-center">
+                        <button onClick={() => handleOpenNote(eventlog.notes)}>
+                          <MdOutlineComment />
+                        </button>
+                      </div>
+                    )}
                   </td>
                 </tr>
               ))}
           </tbody>
         </table>
       )}
+      <Modal openModal={openNotesModal} toggleModal={toggleModal} height="auto">
+        <div className="overflow-hidden whitespace-normal break-words">
+          {selectedNote}
+        </div>
+      </Modal>
     </div>
   );
 };
