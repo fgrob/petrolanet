@@ -196,11 +196,73 @@ const measurementOperation = async (req, res) => {
 
     const updatedTanks = await Tank.findAll();
     return res.status(200).json(updatedTanks);
-
   } catch (err) {
     return res
       .status(500)
       .json({ err: "Error in the measurement operation: " + err.message });
+  }
+};
+
+const adjustmentOperation = async (req, res) => {
+  const tankId = req.body.tankId;
+  const changedData = req.body.changedData;
+
+  console.log(changedData);
+
+  try {
+    //Start a transaction
+
+    await db.sequelize.transaction(async (t) => {
+      const targetTank = await Tank.findByPk(tankId);
+
+      let old_current_quantity = targetTank.current_quantity;
+      let new_current_quantity = old_current_quantity;
+      let transaction_quantity = 0;
+      if (changedData.hasOwnProperty("current_quantity")) {
+        new_current_quantity = changedData["current_quantity"];
+        transaction_quantity = new_current_quantity - old_current_quantity;
+      }
+
+      // let old_error_quantity = targetTank.error_quantity;
+      let new_error_quantity = targetTank.error_quantity;
+      if (changedData.hasOwnProperty("error_quantity")) {
+        new_error_quantity = changedData["error_quantity"];
+      }
+
+      // let old_tank_number_to_date = targetTank.tank_number_to_date;
+      let new_tank_number_to_date = 0;
+      if (changedData.hasOwnProperty("tank_number")) {
+        new_tank_number_to_date = changedData["tank_number"];
+      }
+
+      Object.entries(changedData).map(([key, value]) => {
+        targetTank[key] = value;
+      });
+      await targetTank.save({ transaction: t });
+
+      if (
+        changedData.hasOwnProperty("current_quantity") ||
+        changedData.hasOwnProperty("error_quantity") ||
+        changedData.hasOwnProperty("tank_number")
+      ) {
+        await EventLog.create({
+          operation_id: 4, // adjustment
+          user_id: 1, // ********************
+          tank_id: tankId,
+          transaction_quantity: transaction_quantity,
+          balance: new_current_quantity,
+          error_quantity: new_error_quantity,
+          tank_number_to_date: new_tank_number_to_date,
+        });
+      }
+    });
+
+    const updatedTanks = await Tank.findAll();
+    return res.status(200).json(updatedTanks);
+  } catch (err) {
+    return res
+      .status(500)
+      .json({ err: "Error in the adjustment: " + err.message });
   }
 };
 
@@ -210,6 +272,7 @@ const tankController = {
   transferOperation,
   sellOrSupplyOperation,
   measurementOperation,
+  adjustmentOperation,
 };
 
 module.exports = tankController;

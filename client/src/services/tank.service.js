@@ -53,11 +53,20 @@ const tankMeasurement = (
   .catch((err) => console.log(err));
 }
 
+const adjustment = (tankId, changedData) => {
+
+  return axios.put(API_URL + "adjustment", {tankId,
+    changedData
+  })
+  .catch((err) => console.log(err));
+};
+
 const tankService = {
   getTanks,
   transfer,
   sellOrSupply,
   tankMeasurement,
+  adjustment,
 };
 
 export default tankService;

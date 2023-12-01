@@ -115,7 +115,9 @@ const DatabaseTable = ({ filteredEventLogs, isTableReloading }) => {
                     </span>
                   </td>
                   <td className="whitespace-nowrap px-6 text-end text-sm text-gray-900">
-                    {eventlog.tank_number_to_date}
+                    {eventlog.tank_number_to_date != 0 && (
+                      <span>{eventlog.tank_number_to_date}</span>
+                    )}
                   </td>
                   <td className="whitespace-nowrap px-6 text-sm text-gray-900">
                     {eventlog.document_type}

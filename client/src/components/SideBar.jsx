@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { IoHomeSharp } from "react-icons/io5";
 import { RiMailSendFill } from "react-icons/ri";
 import { AiFillDatabase } from "react-icons/ai";
@@ -6,13 +6,35 @@ import { AiTwotoneSetting } from "react-icons/ai";
 import { IoClose } from "react-icons/io5";
 
 const SideBar = ({ sideBarState, dispatchSideBarState }) => {
+  const [openSubmenus, setOpenSubmenus] = useState({
+    Ajustes: false,
+  });
 
   const Menus = [
     { title: "Inicio", icon: IoHomeSharp, link: "/" },
     { title: "Solicitudes", icon: RiMailSendFill },
     { title: "Base de datos", icon: AiFillDatabase, link: "/database" },
-    { title: "Recursos", icon: AiTwotoneSetting, link: "/adjustment" },
+    {
+      title: "Ajustes",
+      icon: AiTwotoneSetting,
+      submenus: [
+        {
+          title: "Ajustar Estanques",
+          icon: AiFillDatabase,
+          link: "/adjustment",
+        },
+        { title: "Clientes", icon: AiFillDatabase, link: "/adjustment" },
+        { title: "Proveedores", icon: AiFillDatabase, link: "/adjustment" },
+      ],
+    },
   ];
+
+  const handleSubmenuClick = (title) => {
+    setOpenSubmenus((prevSubmenus) => {
+      const isSubmenuOpen = prevSubmenus[title];
+      return { ...prevSubmenus, [title]: !isSubmenuOpen };
+    });
+  };
 
   const sidebarRef = useRef();
   const startX = useRef(null);
@@ -34,7 +56,7 @@ const SideBar = ({ sideBarState, dispatchSideBarState }) => {
         const deltaY = Math.abs(startY.current - currentY);
 
         if (deltaX > 50 && deltaY < 30) {
-          dispatchSideBarState({ type: "TOGGLE_STATE"});
+          dispatchSideBarState({ type: "TOGGLE_STATE" });
           startX.current = null;
           startY.current = null;
         }
@@ -45,7 +67,7 @@ const SideBar = ({ sideBarState, dispatchSideBarState }) => {
       if (sideBarState.open) {
         if (!sidebarRef.current.contains(e.target)) {
           // return true if the event.target is inside of the sidebarRef
-          dispatchSideBarState({ type: "TOGGLE_STATE"});
+          dispatchSideBarState({ type: "TOGGLE_STATE" });
         }
       }
     };
@@ -59,7 +81,7 @@ const SideBar = ({ sideBarState, dispatchSideBarState }) => {
       document.removeEventListener("touchmove", handleTouchMove);
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [sideBarState]); 
+  }, [sideBarState]);
 
   useEffect(() => {
     // disables vertical scrolling (for movile)
@@ -71,36 +93,69 @@ const SideBar = ({ sideBarState, dispatchSideBarState }) => {
   }, [sideBarState]);
 
   return (
-      <aside
-        id="sidebar"
-        ref={sidebarRef}
-        className={`${
-          sideBarState.open ? "translate-x-0" : "-translate-x-full"
-        } overflow-hidden fixed md:static top-0 z-40 md:z-20 h-full w-4/5 md:w-full shadow-[2px_3px_15px] shadow-gray-500 bg-gray-100 duration-200 md:top-auto md:block md:translate-x-0
+    <aside
+      id="sidebar"
+      ref={sidebarRef}
+      className={`${
+        sideBarState.open ? "translate-x-0" : "-translate-x-full"
+      } fixed top-0 z-40 h-full w-4/5 overflow-hidden bg-gray-100 shadow-[2px_3px_15px] shadow-gray-500 duration-200 md:static md:top-auto md:z-20 md:block md:w-full md:translate-x-0
         `}
-      > 
-        <div className="md:hidden text-4xl text-white h-14 text-center from-ocean-green-900 to-ocean-green-500 bg-gradient-to-r mb-5 flex items-center justify-center">
-          <button onClick={() => dispatchSideBarState({ type: "TOGGLE_STATE"})} className="absolute left-1 ">
-            <IoClose className="text-white h-14 w-11"/>
-          </button>
-          <div>PETROLANET</div>
-        </div>
+    >
+      <div className="mb-5 flex h-14 items-center justify-center bg-gradient-to-r from-ocean-green-900 to-ocean-green-500 text-center text-4xl text-white md:hidden">
+        <button
+          onClick={() => dispatchSideBarState({ type: "TOGGLE_STATE" })}
+          className="absolute left-1 "
+        >
+          <IoClose className="h-14 w-11 text-white" />
+        </button>
+        <div>PETROLANET</div>
+      </div>
 
-        <div className=" flex flex-col gap-3 mt-5">
-          {Menus.map((Menu, index) => (
-            <a
-              href={Menu.link}
-              key={index}
-              className="group rounded-lg hover:bg-gray-200 flex py-2 px-4 whitespace-nowrap"
-            >
-              <Menu.icon className="h-7 w-7 md:h-6 md:w-6 flex-shrink-0 text-gray-500 transition duration-100 group-hover:text-gray-900" />
-              <span className="text-2xl md:text-base md:font-bold ml-4">
-                {Menu.title}
-              </span>
-            </a>
-          ))}
-        </div>
-      </aside>
+      <div className=" mt-5 flex flex-col gap-3">
+        {Menus.map((Menu, index) => (
+          <div key={Menu.title}>
+            {Menu.submenus ? (
+              <div className="group flex whitespace-nowrap rounded-lg px-4 py-2 hover:bg-gray-200">
+                <Menu.icon className="h-7 w-7 flex-shrink-0 text-gray-500 transition duration-100 group-hover:text-gray-900 md:h-6 md:w-6" />
+                <span className="ml-4 text-2xl md:text-base md:font-bold">
+                  <button onClick={() => handleSubmenuClick(Menu.title)}>
+                    {Menu.title}
+                  </button>
+                </span>
+              </div>
+            ) : (
+              <a
+                href={Menu.link}
+                // key={index}
+                className="group flex whitespace-nowrap rounded-lg px-4 py-2 hover:bg-gray-200"
+              >
+                <Menu.icon className="h-7 w-7 flex-shrink-0 text-gray-500 transition duration-100 group-hover:text-gray-900 md:h-6 md:w-6" />
+                <span className="ml-4 text-2xl md:text-base md:font-bold">
+                  {Menu.title}
+                </span>
+              </a>
+            )}
+
+            {/* Submenus */}
+            {Menu.submenus && openSubmenus[Menu.title] && (
+              <div className="ml-8">
+                {Menu.submenus.map((submenu, subIndex) => (
+                  <a
+                    key={subIndex}
+                    href={submenu.link}
+                    className="group flex whitespace-nowrap rounded-lg px-4 py-2 hover:bg-gray-200"
+                  >
+                    <span className="ml-4 text-2xl md:text-base md:font-bold">
+                      {submenu.title}
+                    </span>
+                  </a>
+                ))}
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+    </aside>
   );
 };
 

@@ -1,13 +1,20 @@
 import React, { useContext, useEffect, useState } from "react";
-import { AppContext } from "../App";
 import { CiEdit } from "react-icons/ci";
 import { BiLoaderCircle } from "react-icons/bi";
+import { AppContext } from "../App";
+import Modal from "../components/common/Modal";
+import ConfirmationModal from "../components/tankAdjustment/confirmationModal";
 
 const TankAdjustment = () => {
   const { tanks } = useContext(AppContext);
   const [isLoading, setIsLoading] = useState(true);
   const [inputStates, setInputStates] = useState({});
   const [editMode, setEditMode] = useState({});
+
+  const { openBackdrop, setOpenBackdrop } = useContext(AppContext);
+  const [openConfirmationModal, setOpenConfirmationModal] = useState(false);
+  const [selectedTankIdentifiers, setSelectedTankIdentifiers] = useState({});
+  const [selectedTankData, setSelectedTankData] = useState({});
 
   const getBackgroundColor = (tankType) => {
     switch (tankType) {
@@ -29,7 +36,9 @@ const TankAdjustment = () => {
   ];
 
   const initializeEditStates = () => {
-    const editMode = {};
+    // This creates an object containing all the values and current state of the inputs
+
+    const editMode = {}; // handles the visualization of the actions buttons
     const inputStates = {};
 
     for (const tank of tanks) {
@@ -45,7 +54,7 @@ const TankAdjustment = () => {
           originalValue: tank.capacity,
           updatedValue: tank.capacity,
         },
-        balance: {
+        current_quantity: {
           disabled: true,
           originalValue: tank.current_quantity,
           updatedValue: tank.current_quantity,
@@ -67,8 +76,6 @@ const TankAdjustment = () => {
         },
       };
     }
-    console.log(inputStates);
-
     setEditMode(editMode);
     setInputStates(inputStates);
   };
@@ -101,7 +108,58 @@ const TankAdjustment = () => {
     const newInputStates = { ...inputStates };
     newInputStates[tankName][input].updatedValue = fixedValue;
     setInputStates(newInputStates);
-    console.log("estados actualizados:", newInputStates); // BORRAR
+  };
+
+  const adjustErrorAndCurrentQuantity = (tankName) => {
+    // Adjusts the current quantity by summing the error quantity
+
+    console.log("ejecutnado el neteo");
+    const newInputStates = { ...inputStates };
+
+    newInputStates[tankName]["current_quantity"].disabled = false;
+    newInputStates[tankName]["error_quantity"].disabled = false;
+
+    newInputStates[tankName]["current_quantity"].updatedValue =
+      parseInt(newInputStates[tankName]["current_quantity"].updatedValue) +
+      parseInt(newInputStates[tankName]["error_quantity"].updatedValue);
+    newInputStates[tankName]["error_quantity"].updatedValue = 0;
+
+    setInputStates(newInputStates);
+  };
+
+  const cancelEdition = (tankName) => {
+    const originalInputStates = { ...inputStates };
+    const exitEditMode = { ...editMode };
+
+    for (const key in originalInputStates[tankName]) {
+      originalInputStates[tankName][key].disabled = true;
+      originalInputStates[tankName][key].updatedValue =
+        originalInputStates[tankName][key].originalValue;
+    }
+
+    setInputStates(originalInputStates);
+
+    exitEditMode[tankName] = false;
+    setEditMode(exitEditMode);
+  };
+
+  const handleConfirmationButton = (tankId, tankName) => {
+
+    const identifiers = {
+      id: tankId,
+      name: tankName
+    };
+    setSelectedTankIdentifiers(identifiers);
+
+    const data = { ...inputStates[tankName] };
+    setSelectedTankData(data);
+
+    toggleConfirmationModal();
+  };
+
+  const toggleConfirmationModal = () => {
+    setOpenConfirmationModal(!openConfirmationModal);
+    setOpenBackdrop(!openBackdrop);
   };
 
   useEffect(() => {
@@ -151,14 +209,15 @@ const TankAdjustment = () => {
                       <div className="relative w-1/2">
                         {inputStates[tank.name].type.originalValue !=
                           inputStates[tank.name].type.updatedValue && (
-                          <div className="absolute start-3 text-xs text-red-500 line-through ">
+                          <div className="absolute start-2 top-0.5 text-xs text-red-500">
+                            Valor actual:{" "}
                             {inputStates[tank.name].type.originalValue}
                           </div>
                         )}
                         <select
                           id={`tankType${tank.id}`}
                           value={inputStates[tank.name].type.updatedValue}
-                          className="w-full border p-2"
+                          className="w-full border p-3"
                           disabled={inputStates[tank.name].type.disabled}
                           onChange={(e) =>
                             handleInputChange(tank.name, "type", e.target.value)
@@ -196,7 +255,8 @@ const TankAdjustment = () => {
                       <div className="relative w-1/2">
                         {inputStates[tank.name].capacity.originalValue !=
                           inputStates[tank.name].capacity.updatedValue && (
-                          <div className="absolute start-3 text-xs text-red-500">
+                          <div className="absolute start-2 top-0.5 text-xs text-red-500">
+                            Valor actual:{" "}
                             {inputStates[
                               tank.name
                             ].capacity.originalValue.toLocaleString("es-CL")}
@@ -206,7 +266,7 @@ const TankAdjustment = () => {
                           id={`tankCapacity${tank.id}`}
                           value={inputStates[tank.name].capacity.updatedValue}
                           type="number"
-                          className="w-full border p-2"
+                          className="w-full border p-3"
                           disabled={inputStates[tank.name].capacity.disabled}
                           onChange={(e) =>
                             handleInputChange(
@@ -231,32 +291,33 @@ const TankAdjustment = () => {
                     </div>
 
                     <div className="flex items-center justify-center gap-1 text-center">
-                      {/* balance Row  */}
+                      {/* current_quantity Row  */}
                       <label
-                        htmlFor={`tankBalance${tank.id}`}
+                        htmlFor={`tankCurrentQuantity${tank.id}`}
                         className="mr-2 flex-1 text-end font-bold"
                       >
                         Saldo
                       </label>
                       <div className="relative w-1/2">
-                        {inputStates[tank.name].balance.originalValue !=
-                          inputStates[tank.name].balance.updatedValue && (
-                          <div className="absolute start-3 text-xs text-red-500">
+                        {inputStates[tank.name]['current_quantity'].originalValue !=
+                          inputStates[tank.name]['current_quantity'].updatedValue && (
+                          <div className="absolute start-2 top-0.5 text-xs text-red-500">
+                            Valor actual:{" "}
                             {inputStates[
                               tank.name
-                            ].balance.originalValue.toLocaleString("es-CL")}
+                            ]['current_quantity'].originalValue.toLocaleString("es-CL")}
                           </div>
                         )}
                         <input
-                          id={`tankBalance${tank.id}`}
-                          value={inputStates[tank.name].balance.updatedValue}
+                          id={`tankCurrentQuantity${tank.id}`}
+                          value={inputStates[tank.name]['current_quantity'].updatedValue}
                           type="number"
-                          className="w-full border p-2"
-                          disabled={inputStates[tank.name].balance.disabled}
+                          className="w-full border p-3"
+                          disabled={inputStates[tank.name]['current_quantity'].disabled}
                           onChange={(e) =>
                             handleInputChange(
                               tank.name,
-                              "balance",
+                              "current_quantity",
                               e.target.value,
                             )
                           }
@@ -266,8 +327,8 @@ const TankAdjustment = () => {
                         onClick={() =>
                           handleEditMode(
                             tank.name,
-                            "balance",
-                            `tankBalance${tank.id}`,
+                            "current_quantity",
+                            `tankCurrentQuantity${tank.id}`,
                           )
                         }
                       >
@@ -288,7 +349,8 @@ const TankAdjustment = () => {
                           .originalValue !=
                           inputStates[tank.name]["error_quantity"]
                             .updatedValue && (
-                          <div className="absolute start-3 text-xs text-red-500">
+                          <div className="absolute start-2 top-0.5 text-xs text-red-500">
+                            Valor actual:{" "}
                             {inputStates[tank.name][
                               "error_quantity"
                             ].originalValue.toLocaleString("es-CL")}
@@ -301,7 +363,7 @@ const TankAdjustment = () => {
                               .updatedValue
                           }
                           type="number"
-                          className="w-full border p-2"
+                          className="w-full border p-3"
                           disabled={
                             inputStates[tank.name]["error_quantity"].disabled
                           }
@@ -341,7 +403,7 @@ const TankAdjustment = () => {
                           value={
                             inputStates[tank.name]["tank_gauge"].updatedValue
                           }
-                          className="w-full border p-2"
+                          className="w-full border p-3"
                           disabled={
                             inputStates[tank.name]["tank_gauge"].disabled
                           }
@@ -384,20 +446,28 @@ const TankAdjustment = () => {
                           Numeral
                         </label>
                         <div className="relative w-1/2">
-                          {inputStates[tank.name]['tank_number'].originalValue !=
-                            inputStates[tank.name]['tank_number'].updatedValue && (
-                            <div className="absolute start-3 text-xs text-red-500">
-                              {inputStates[
-                                tank.name
-                              ]['tank_number'].originalValue}
+                          {inputStates[tank.name]["tank_number"]
+                            .originalValue !=
+                            inputStates[tank.name]["tank_number"]
+                              .updatedValue && (
+                            <div className="absolute start-2 top-0.5 text-xs text-red-500">
+                              Valor actual:{" "}
+                              {
+                                inputStates[tank.name]["tank_number"]
+                                  .originalValue
+                              }
                             </div>
                           )}
                           <input
                             id={`tankNumber${tank.id}`}
-                            value={inputStates[tank.name]['tank_number'].updatedValue}
+                            value={
+                              inputStates[tank.name]["tank_number"].updatedValue
+                            }
                             type="number"
-                            className="w-full border p-2"
-                            disabled={inputStates[tank.name]['tank_number'].disabled}
+                            className="w-full border p-3"
+                            disabled={
+                              inputStates[tank.name]["tank_number"].disabled
+                            }
                             onChange={(e) =>
                               handleInputChange(
                                 tank.name,
@@ -423,14 +493,35 @@ const TankAdjustment = () => {
                   </div>
 
                   <hr className="divider" />
-                  <hr className="divider" />
+                  {inputStates[tank.name]["error_quantity"].updatedValue != 0 &&
+                    editMode[tank.name] && (
+                      <>
+                        <div className="flex w-full justify-center p-2">
+                          <button
+                            className="rounded-lg border border-black bg-blue-100 px-2 italic hover:bg-blue-200 "
+                            onClick={() => adjustErrorAndCurrentQuantity(tank.name)}
+                          >
+                            Ajustar Saldo según diferencia
+                          </button>
+                        </div>
+                        <hr className="divider" />
+                      </>
+                    )}
                   {editMode[tank.name] && (
                     <div className=" flex w-full justify-center gap-3">
-                      <button className="btn-error-small h-fit w-1/3 py-1">
+                      <button
+                        className="btn-error-small h-fit w-1/3 py-1"
+                        onClick={() => cancelEdition(tank.name)}
+                      >
                         Cancelar
                       </button>
-                      <button className="btn-success-small h-fit w-1/3 py-1">
-                        Guardar Cambios
+                      <button
+                        className="btn-success-small h-fit w-1/3 py-1"
+                        onClick={() =>
+                          handleConfirmationButton(tank.id, tank.name)
+                        }
+                      >
+                        Actualizar
                       </button>
                     </div>
                   )}
@@ -439,6 +530,20 @@ const TankAdjustment = () => {
             })}
         </>
       )}
+
+      <Modal
+        openModal={openConfirmationModal}
+        toggleModal={toggleConfirmationModal}
+        height="auto"
+      >
+        {selectedTankData.hasOwnProperty("type") && (
+          <ConfirmationModal
+            selectedTankIdentifiers={selectedTankIdentifiers}
+            selectedTankData={selectedTankData}
+            toggleModal={toggleConfirmationModal}
+          />
+        )}
+      </Modal>
     </div>
   );
 };
