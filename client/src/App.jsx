@@ -77,7 +77,7 @@ function App() {
               dispatchSideBarState={dispatchSideBarState}
             />
           </div>
-          <div className="flex-1 overflow-y-scroll">
+          <div className="flex-1 overflow-y-auto">
             <Routes>
               <Route path="/" element={<Home />} />
               <Route

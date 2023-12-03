@@ -4,6 +4,7 @@ import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { Doughnut } from "react-chartjs-2";
 import moment from "moment-timezone";
 import TankModal from "./tankModal/TankModal";
+import { Link } from "react-router-dom";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -100,16 +101,7 @@ const TankCards = () => {
               <div className="flex-grow-0 text-sm">Posible diferencia</div>
             </div>
             <div className="mt-2 flex w-full flex-wrap justify-between gap-4">
-              <button
-                type="button"
-                className="btn-success w-full"
-                onClick={() => {
-                  setAction("adjustment");
-                  toggleModal();
-                }}
-              >
-                Ajustar Estanques
-              </button>
+              <Link className="btn-success w-full text-center" to="/adjustment">Ajustar Estanques</Link>
             </div>
           </div>
           {tanks

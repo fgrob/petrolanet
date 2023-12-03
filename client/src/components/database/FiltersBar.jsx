@@ -2,8 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import Autocomplete from "../common/Autocomplete";
 import { BiSolidCheckCircle } from "react-icons/bi";
 import { IoHomeSharp } from "react-icons/io5";
-import { MdOutlineKeyboardDoubleArrowDown } from "react-icons/md";
-import { MdOutlineKeyboardDoubleArrowUp } from "react-icons/md";
+import { MdOutlineFilterAlt } from "react-icons/md";
 import { PiProjectorScreenChartDuotone } from "react-icons/pi";
 import { BiLoaderCircle } from "react-icons/bi";
 import TotalsBox from "./totalsBox";
@@ -100,7 +99,7 @@ const FiltersBar = ({
   const resetDocumentNumberFilter = () => {
     setDocumentNumber("");
   };
- 
+
   const resetFilters = () => {
     //this does not include the Date filter
 
@@ -193,6 +192,7 @@ const FiltersBar = ({
 
     if (setDefaultEndDate) {
       month = month.padStart(2, "0"); // add a leading zero if it is less than 10 (required):
+      day = day.padStart(2, "0"); 
       const endDate = `${year}-${month}-${day}`;
       setEndDate(endDate);
     }
@@ -310,77 +310,80 @@ const FiltersBar = ({
         openFiltersBar
           ? "h-5/6 overflow-auto md:h-3/5 lg:overflow-hidden"
           : "h-11 overflow-hidden"
-      } bg-gray-50 transition-all duration-300`}
+      } border bg-gray-50 transition-all duration-300`}
     >
-      <div className="flex items-center p-1">
-        <div className="flex flex-1 gap-1">
-          <button
-            className="flex items-stretch rounded border border-black bg-blue-950 p-1 font-bold text-white shadow-lg hover:bg-blue-900"
-            onClick={() => setOpenFiltersBar(!openFiltersBar)}
+      <div className="flex items-center">
+        <div className="mr-2 flex flex-1 md:gap-4">
+          <Link
+            to="/"
+            className="flex text-gray-500 hover:text-gray-900 border border-gray-500 mr-11 px-1 rounded shadow"
           >
-            <span className="flex items-center">Filtros</span>
-            <div className="flex h-full items-center">
-              {openFiltersBar ? (
-                <MdOutlineKeyboardDoubleArrowUp />
-              ) : (
-                <MdOutlineKeyboardDoubleArrowDown />
-              )}
-            </div>
-          </button>
-          {isAnyFilterApplied && (
-            <button
-              className="rounded border border-black bg-blue-400 p-1 font-bold shadow-lg hover:bg-blue-200"
-              onClick={resetFilters}
-            >
-              <span className="flex items-center">Limpiar filtros</span>
-            </button>
-          )}
-          <button
-            id="totalsButton"
-            className="relative flex items-center rounded border border-black bg-ocean-green-400 p-1 font-bold shadow-lg hover:bg-ocean-green-200"
-            onClick={() => setOpenTotals(!openTotals)}
-          >
-            {openTotals && !totalsCalculationComplete ? (
-              <BiLoaderCircle className="h-7 w-7 animate-spin" />
-            ) : (
-              <PiProjectorScreenChartDuotone className="h-7 w-7" />
-            )}
-            <span className="hidden md:block">Totales</span>
-          </button>
-          {openTotals && (
-            <TotalsBox
-              totalsCalculationComplete={totalsCalculationComplete}
-              setTotalsCalculationComplete={setTotalsCalculationComplete}
-              filteredEventLogs={filteredEventLogs}
-              selectedClientSupplier={selectedClientSupplier}
-              selectedUser={selectedUser}
-              selectedOperation={selectedOperation}
-              startDate={reorderDateString(startDate)}
-              endDate={reorderDateString(endDate)}
-              selectedTankType={selectedTankType}
-              selectedTank={selectedTank}
-              selectedDocumentType={selectedDocumentType}
-              documentNumber={documentNumber}
-            />
-          )}
-        </div>
-        <div className="flex gap-2 md:gap-4">
-          <div className="flex h-fit flex-col text-xs md:flex-row md:gap-2 md:text-lg">
-            <div className="h-fit">
-              Desde:{" "}
-              <span className="font-bold">{reorderDateString(startDate)}</span>
-            </div>
-            <div className="h-fit">
-              Hasta:{" "}
-              <span className="font-bold">{reorderDateString(endDate)}</span>
-            </div>
-          </div>
-          <Link to="/" className="flex text-black hover:text-gray-500">
             <div className="h-full w-7">
               <IoHomeSharp className="h-full w-full" />
             </div>
-            <div className="flex items-center font-bold">Salir</div>
+            {/* <div className="flex items-center font-bold">
+              Inicio
+            </div> */}
           </Link>
+          <div className="flex gap-1">
+            <button
+              id="totalsButton"
+              className="relative flex items-center rounded border border-black bg-ocean-green-400 p-1 font-bold shadow-lg hover:bg-ocean-green-200"
+              onClick={() => setOpenTotals(!openTotals)}
+            >
+              {openTotals && !totalsCalculationComplete ? (
+                <BiLoaderCircle className="h-7 w-7 animate-spin" />
+              ) : (
+                <PiProjectorScreenChartDuotone className="h-7 w-7" />
+              )}
+              <span className="hidden md:block">Totales</span>
+            </button>
+            <button
+              className="flex items-stretch rounded border border-black bg-blue-950 p-1 font-bold text-white shadow-lg hover:bg-blue-900"
+              onClick={() => setOpenFiltersBar(!openFiltersBar)}
+            >
+              <div className="flex h-full items-center">
+                <MdOutlineFilterAlt />
+              </div>
+              <span className="flex items-center">Filtros</span>
+            </button>
+            {isAnyFilterApplied && (
+              <button
+                className="rounded border border-black bg-blue-400 p-1 font-bold shadow-lg hover:bg-blue-200"
+                onClick={resetFilters}
+              >
+                <span className="flex items-center">Limpiar filtros</span>
+              </button>
+            )}
+
+            {openTotals && (
+              <TotalsBox
+                totalsCalculationComplete={totalsCalculationComplete}
+                setTotalsCalculationComplete={setTotalsCalculationComplete}
+                filteredEventLogs={filteredEventLogs}
+                selectedClientSupplier={selectedClientSupplier}
+                selectedUser={selectedUser}
+                selectedOperation={selectedOperation}
+                startDate={reorderDateString(startDate)}
+                endDate={reorderDateString(endDate)}
+                selectedTankType={selectedTankType}
+                selectedTank={selectedTank}
+                selectedDocumentType={selectedDocumentType}
+                documentNumber={documentNumber}
+              />
+            )}
+          </div>
+        </div>
+
+        <div className="flex h-fit flex-col text-xs md:flex-row md:gap-2 md:text-lg">
+          <div className="h-fit">
+            Desde:{" "}
+            <span className="font-bold">{reorderDateString(startDate)}</span>
+          </div>
+          <div className="h-fit">
+            Hasta:{" "}
+            <span className="font-bold">{reorderDateString(endDate)}</span>
+          </div>
         </div>
       </div>
       <div className="flex flex-wrap gap-3 bg-gray-50 p-2 md:justify-evenly">

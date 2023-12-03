@@ -4,6 +4,8 @@ import { RiMailSendFill } from "react-icons/ri";
 import { AiFillDatabase } from "react-icons/ai";
 import { AiTwotoneSetting } from "react-icons/ai";
 import { IoClose } from "react-icons/io5";
+import { Link } from "react-router-dom";
+
 
 const SideBar = ({ sideBarState, dispatchSideBarState }) => {
   const [openSubmenus, setOpenSubmenus] = useState({
@@ -12,7 +14,7 @@ const SideBar = ({ sideBarState, dispatchSideBarState }) => {
 
   const Menus = [
     { title: "Inicio", icon: IoHomeSharp, link: "/" },
-    { title: "Solicitudes", icon: RiMailSendFill },
+    { title: "Solicitudes", icon: RiMailSendFill, link: "/" },
     { title: "Base de datos", icon: AiFillDatabase, link: "/database" },
     {
       title: "Ajustes",
@@ -111,44 +113,48 @@ const SideBar = ({ sideBarState, dispatchSideBarState }) => {
         <div>PETROLANET</div>
       </div>
 
-      <div className=" mt-5 flex flex-col gap-3">
-        {Menus.map((Menu, index) => (
+      <div className="mt-5 flex flex-col">
+        {Menus.map((Menu) => (
           <div key={Menu.title}>
             {Menu.submenus ? (
-              <div className="group flex whitespace-nowrap rounded-lg px-4 py-2 hover:bg-gray-200">
-                <Menu.icon className="h-7 w-7 flex-shrink-0 text-gray-500 transition duration-100 group-hover:text-gray-900 md:h-6 md:w-6" />
-                <span className="ml-4 text-2xl md:text-base md:font-bold">
-                  <button onClick={() => handleSubmenuClick(Menu.title)}>
-                    {Menu.title}
-                  </button>
-                </span>
-              </div>
-            ) : (
-              <a
-                href={Menu.link}
-                // key={index}
-                className="group flex whitespace-nowrap rounded-lg px-4 py-2 hover:bg-gray-200"
+              <button
+                className="group w-full flex whitespace-nowrap rounded-lg p-4 hover:bg-gray-200"
+                onClick={() => handleSubmenuClick(Menu.title)}
               >
                 <Menu.icon className="h-7 w-7 flex-shrink-0 text-gray-500 transition duration-100 group-hover:text-gray-900 md:h-6 md:w-6" />
                 <span className="ml-4 text-2xl md:text-base md:font-bold">
                   {Menu.title}
                 </span>
-              </a>
+              </button>
+            ) : (
+              <Link
+              to={Menu.link}
+              className="group flex whitespace-nowrap rounded-lg p-4 hover:bg-gray-200"
+            >
+              <Menu.icon className="h-7 w-7 flex-shrink-0 text-gray-500 transition duration-100 group-hover:text-gray-900 md:h-6 md:w-6" />
+              <span className="ml-4 text-2xl md:text-base md:font-bold">
+                {Menu.title}
+              </span>
+            </Link>
             )}
 
             {/* Submenus */}
-            {Menu.submenus && openSubmenus[Menu.title] && (
-              <div className="ml-8">
+            {Menu.submenus && (
+              <div
+                className={`ml-8 overflow-hidden ${
+                  openSubmenus[Menu.title] ? "max-h-60" : "invisible max-h-0"
+                } transition-all duration-300 ease-in-out`}
+              >
                 {Menu.submenus.map((submenu, subIndex) => (
-                  <a
+                  <Link
                     key={subIndex}
-                    href={submenu.link}
+                    to={submenu.link}
                     className="group flex whitespace-nowrap rounded-lg px-4 py-2 hover:bg-gray-200"
                   >
                     <span className="ml-4 text-2xl md:text-base md:font-bold">
                       {submenu.title}
                     </span>
-                  </a>
+                  </Link>
                 ))}
               </div>
             )}

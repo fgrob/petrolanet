@@ -196,7 +196,7 @@ const Database = ({setNavBarVisibility, setSideBarVisibility}) => {
   }, []);
 
   return (
-    <div className="flex h-full flex-col overflow-hidden bg-white">
+    <div className="flex border flex-col overflow-hidden bg-white h-screen pt-1">
       {isLoading ? (
         <div className="flex h-screen items-center justify-center ">
           <BiLoaderCircle className="animate-spin text-2xl text-blue-500" />

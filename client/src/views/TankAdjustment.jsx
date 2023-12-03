@@ -363,7 +363,8 @@ const TankAdjustment = () => {
                               .updatedValue
                           }
                           type="number"
-                          className="w-full border p-3"
+                          className={`w-full border font-bold p-3 ${inputStates[tank.name]["error_quantity"]
+                          .updatedValue < 0 ? "text-red-500" : "text-ocean-green-500"}`}
                           disabled={
                             inputStates[tank.name]["error_quantity"].disabled
                           }
