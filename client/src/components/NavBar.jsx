@@ -1,8 +1,24 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { FaUserCircle } from "react-icons/fa";
 import { HiOutlineMenuAlt2 } from "react-icons/hi";
+import { useLocation } from "react-router-dom";
 
 const NavBar = ({ dispatchSideBarState }) => {
+  const [header, setHeader] = useState("");
+  const location = useLocation();
+
+  const getHeader = () => {
+    if (location.pathname === "/"){
+      setHeader("Inicio")
+    } else if (location.pathname === "/adjustment"){
+      setHeader("Ajuste de Estanque")
+    }
+  };
+
+  useEffect(() => {
+    getHeader();
+  }, [location])
+
   return (
     <nav
       id="navbar"
@@ -15,7 +31,7 @@ const NavBar = ({ dispatchSideBarState }) => {
         <span className="hidden text-3xl md:block">PETROLANET</span>
       </div>
       <div className="text-3xl">
-        BASE DE DATOS*
+        {header}
       </div>
       <div className="md:w-1/6">
         <a

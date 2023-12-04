@@ -26,6 +26,13 @@ function App() {
           onlyIcons: state.onlyIcons,
         };
 
+      case "CLOSE_STATE":
+        setOpenBackdrop(false);
+        return {
+          open: false,
+          onlyIcons: state.onlyIcons,
+        };
+
       case "ICONS_MODE":
         if (action.value !== undefined) {
           // Enables manual input of the 'true' or 'false' value
@@ -63,7 +70,7 @@ function App() {
     >
       <div className="flex h-auto flex-col md:h-screen">
         <Backdrop />
-        <div className={`sticky top-0 h-14 flex-shrink-0 md:static md:top-auto ${navBarVisibility ? "block" : "hidden"}`}>
+        <div className={`sticky z-30 top-0 h-14 flex-shrink-0 md:static md:top-auto ${navBarVisibility ? "block" : "hidden"}`}>
           <NavBar dispatchSideBarState={dispatchSideBarState} />
         </div>
         <div className="flex flex-1 overflow-auto md:overflow-hidden">

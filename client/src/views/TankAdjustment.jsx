@@ -214,6 +214,7 @@ const TankAdjustment = () => {
                             {inputStates[tank.name].type.originalValue}
                           </div>
                         )}
+                        {/* <div className="border border-red-500 absolute"> */}
                         <select
                           id={`tankType${tank.id}`}
                           value={inputStates[tank.name].type.updatedValue}
@@ -229,6 +230,7 @@ const TankAdjustment = () => {
                             </option>
                           ))}
                         </select>
+                        {/* </div> */}
                       </div>
                       <button
                         className=""

@@ -5,16 +5,18 @@ import { AiFillDatabase } from "react-icons/ai";
 import { AiTwotoneSetting } from "react-icons/ai";
 import { IoClose } from "react-icons/io5";
 import { Link } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 
 
 const SideBar = ({ sideBarState, dispatchSideBarState }) => {
   const [openSubmenus, setOpenSubmenus] = useState({
     Ajustes: false,
   });
+  const location = useLocation();
 
   const Menus = [
     { title: "Inicio", icon: IoHomeSharp, link: "/" },
-    { title: "Solicitudes", icon: RiMailSendFill, link: "/" },
+    // { title: "Solicitudes", icon: RiMailSendFill, link: "/" },
     { title: "Base de datos", icon: AiFillDatabase, link: "/database" },
     {
       title: "Ajustes",
@@ -93,6 +95,11 @@ const SideBar = ({ sideBarState, dispatchSideBarState }) => {
       document.body.style.overflow = "auto";
     }
   }, [sideBarState]);
+
+  useEffect(() => {
+    // For mobile screens: If the location changes, close the sidebar and backdrop
+    dispatchSideBarState({ type: "CLOSE_STATE" });
+  }, [location])
 
   return (
     <aside

@@ -4,7 +4,7 @@ import TransferView from "./TransferView";
 import SelectorView from "./SelectorView";
 import ClientSupplierView from "./ClientSupplierView";
 import MeasureStick from "./MeasureStick";
-import AdjustmentView from "./AdjustmentView";
+import ErrorsView from "./ErrorsView";
 import Modal from "../common/Modal";
 
 const TankModal = ({ openModal, toggleModal, action, triggerTank }) => {
@@ -14,7 +14,7 @@ const TankModal = ({ openModal, toggleModal, action, triggerTank }) => {
     REFILL: "REFILL",
     TRANSFER: "TRANSFER",
     MEASURE: "MEASURE",
-    ADJUSTMENT: "ADJUSTMENT",
+    ERRORS: "ERRORS",
   };
 
   const [selectedView, setSelectedView] = useState();
@@ -25,8 +25,8 @@ const TankModal = ({ openModal, toggleModal, action, triggerTank }) => {
 
     if (action === "measure") {
       setSelectedView(modalView.MEASURE);
-    } else if (action === "adjustment") {
-      setSelectedView(modalView.ADJUSTMENT);
+    } else if (action === "errors") {
+      setSelectedView(modalView.ERRORS);
     } else {
       setSelectedView(modalView.SELECTOR);
     }
@@ -38,7 +38,7 @@ const TankModal = ({ openModal, toggleModal, action, triggerTank }) => {
       {/* Back Arrow */}
       {selectedView !== modalView.SELECTOR &&
         selectedView !== modalView.MEASURE &&
-        selectedView !== modalView.ADJUSTMENT && (
+        selectedView !== modalView.ERRORS && (
           <button
           onClick={() => {
             isConfirmationVisible
@@ -88,9 +88,9 @@ const TankModal = ({ openModal, toggleModal, action, triggerTank }) => {
         <MeasureStick triggerTank={triggerTank} toggleModal={toggleModal} />
       )}
 
-      {/* MODAL DE AJUSTE DE ESTANQUE */}
-      {openModal && selectedView === modalView.ADJUSTMENT && (
-        <AdjustmentView toggleModal={toggleModal} />
+      {/* MODAL DE VISUALIZACION DE DIFERENCIAS */}
+      {openModal && selectedView === modalView.ERRORS && (
+        <ErrorsView toggleModal={toggleModal} />
       )}
     </Modal>
   );

@@ -94,14 +94,22 @@ const TankCards = () => {
               </div>
             </div>
             <hr className="divider" />
-            <div className="my-2 flex w-full flex-col items-center rounded bg-gray-300 shadow-md">
+            <button
+              className="my-2 flex w-full flex-col items-center rounded bg-gray-300 shadow-md"
+              onClick={() => {
+                setAction("errors");
+                toggleModal();
+              }}
+            >
               <div className="text-xl font-bold text-red-500">
                 {totalError.toLocaleString("es-CL")} Lts
               </div>
               <div className="flex-grow-0 text-sm">Posible diferencia</div>
-            </div>
+            </button>
             <div className="mt-2 flex w-full flex-wrap justify-between gap-4">
-              <Link className="btn-success w-full text-center" to="/adjustment">Ajustar Estanques</Link>
+              <Link className="btn-success w-full text-center" to="/adjustment">
+                Ajustar Estanques
+              </Link>
             </div>
           </div>
           {tanks
@@ -194,7 +202,7 @@ const TankCards = () => {
                       Descargar
                     </button>
                     <button type="button" className="btn-success w-full">
-                      Ver últimos movimientos
+                      Ver movimientos del día
                     </button>
                   </div>
                 </div>

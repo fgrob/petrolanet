@@ -12,36 +12,36 @@ const {
 
 const getEventLogs = async (req, res) => {
   try {
-
     let startDate;
     let endDate;
 
     if (req.query.startDate) {
       startDate = new Date(req.query.startDate);
-    };
+    }
 
     if (req.query.endDate) {
       endDate = new Date(req.query.endDate);
-      endDate.setUTCHours(23,59,59,999) // (end of the day)
-    };
+      endDate.setUTCHours(23, 59, 59, 999); // (end of the day)
+    }
 
-    if (!startDate){
+    if (!startDate) {
       // fetching the current and last month for the initial data
       const now = new Date();
-   
-      if (now.getMonth() === 0) { //JS january starts in 0
+
+      if (now.getMonth() === 0) {
+        //JS january starts in 0
         startDate = new Date(now.getFullYear() - 1, 11, 1);
       } else {
         startDate = new Date(now.getFullYear(), now.getMonth() - 1, 1);
-      };
-    };
-    
+      }
+    }
+
     if (!endDate) {
       endDate = new Date();
-    };
-    
+    }
+
     startDate.setUTCHours(0, 0, 0, 0);
-    endDate.setUTCHours(23,59,59,999);
+    endDate.setUTCHours(23, 59, 59, 999);
 
     const eventLogs = await EventLog.findAll({
       where: {
@@ -77,7 +77,14 @@ const getEventLogs = async (req, res) => {
         },
       ],
       attributes: {
-        exclude: ["operation_id", "client_id", "supplier_id", "tank_id", "updatedAt", "user_id"],
+        exclude: [
+          "operation_id",
+          "client_id",
+          "supplier_id",
+          "tank_id",
+          "updatedAt",
+          "user_id",
+        ],
       },
     });
     res.json(eventLogs);
@@ -87,8 +94,34 @@ const getEventLogs = async (req, res) => {
   }
 };
 
+const getLastErrorEvents = async (req, res) => {
+  try {
+    const tanks = await Tank.findAll();
+    const eventLogs = [];
+
+    for (const tank of tanks) {
+      if (tank.error_quantity !== 0) {
+        const lastEvent = await EventLog.findOne({
+          where: {
+            operation_id: 5, // MEDICION
+            tank_id: tank.id,
+          },
+          order: [["createdAt", "DESC"]],
+          limit: 1,
+        });
+
+        lastEvent && eventLogs.push(lastEvent);
+      }
+    }
+    res.status(200).json(eventLogs);
+  } catch {
+    res.status(500).json({ err: "Internal server error" });
+  }
+};
+
 const eventLogController = {
   getEventLogs,
+  getLastErrorEvents,
 };
 
 module.exports = eventLogController;
