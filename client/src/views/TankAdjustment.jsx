@@ -4,6 +4,7 @@ import { BiLoaderCircle } from "react-icons/bi";
 import { AppContext } from "../App";
 import Modal from "../components/common/Modal";
 import ConfirmationModal from "../components/tankAdjustment/confirmationModal";
+import AddTankModal from "../components/tankAdjustment/AddTankModal";
 
 const TankAdjustment = () => {
   const { tanks } = useContext(AppContext);
@@ -12,9 +13,12 @@ const TankAdjustment = () => {
   const [editMode, setEditMode] = useState({});
 
   const { openBackdrop, setOpenBackdrop } = useContext(AppContext);
+
   const [openConfirmationModal, setOpenConfirmationModal] = useState(false);
   const [selectedTankIdentifiers, setSelectedTankIdentifiers] = useState({});
   const [selectedTankData, setSelectedTankData] = useState({});
+
+  const [openAddTankModal, setOpenAddTankModal] = useState(false);
 
   const getBackgroundColor = (tankType) => {
     switch (tankType) {
@@ -162,6 +166,11 @@ const TankAdjustment = () => {
     setOpenBackdrop(!openBackdrop);
   };
 
+  const toggleAddTankModal = () => {
+    setOpenAddTankModal(!openAddTankModal);
+    setOpenBackdrop(!openBackdrop);
+  };
+
   useEffect(() => {
     if (tanks.length === 0) {
       // Guard clause. We need the tanks first
@@ -180,6 +189,11 @@ const TankAdjustment = () => {
         </div>
       ) : (
         <>
+        <div className="w-5/6 mx-4 my-3 justify-center  flex">
+          <button className="btn-success-small font-bold px-4" onClick={toggleAddTankModal}>
+            Añadir Estanque
+          </button>
+        </div>
           {tanks
             .sort((a, b) => a.id - b.id)
             .map((tank) => {
@@ -533,7 +547,7 @@ const TankAdjustment = () => {
             })}
         </>
       )}
-
+      {openConfirmationModal && (
       <Modal
         openModal={openConfirmationModal}
         toggleModal={toggleConfirmationModal}
@@ -547,6 +561,16 @@ const TankAdjustment = () => {
           />
         )}
       </Modal>
+      )}
+      {openAddTankModal && (
+        <Modal
+          openModal={openAddTankModal}
+          toggleModal={toggleAddTankModal}
+          height="auto"
+        >
+          <AddTankModal typeOptions={typeOptions} tankGaugeOptions={tankGaugeOptions}/>
+        </Modal>
+      )}
     </div>
   );
 };

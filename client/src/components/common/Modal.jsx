@@ -43,6 +43,13 @@ const Modal = ({ openModal, toggleModal, height, children }) => {
     }
   }, [openModal]);
 
+  useEffect(() => {
+    console.log('montando el <Modal')
+    return (() => {
+      console.log('desmontando el <Modal')
+    })
+  }, [])
+
   return (
     <div
       className={`fixed inset-0 z-50 flex items-center justify-center transition-opacity duration-200 ease-in-out${
@@ -55,14 +62,14 @@ const Modal = ({ openModal, toggleModal, height, children }) => {
         ref={tankModalRef}
         className={`relative mx-2 flex ${
           height ? `h-${height}` : "h-5/6"
-        } max-h-full w-full justify-center rounded-lg bg-white p-5 shadow-[rgba(0,_0,_0,_0.24)_0px_3px_8px] md:h-auto md:w-auto`}
+        } max-h-full w-full justify-center rounded-lg bg-white p-5 shadow-[rgba(0,_0,_0,_0.24)_0px_3px_8px] md:h-auto md:max-w-fit`}
         id="modal"
       >
         <button
           onClick={toggleModal}
           className="absolute right-1 top-1 z-50 h-9 w-9"
         >
-          <IoClose className="h-full w-full" />
+          <IoClose className="h-full w-full" /> 
         </button>
         {children}
       </div>

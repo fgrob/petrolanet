@@ -3,7 +3,7 @@ import API_BASE_URL from "./apiConfig";
 
 const API_URL = `${API_BASE_URL}/eventlog/`;
 
-const getEventLogs = (startDate, endDate) => {
+const getEventLogs = (startDate, endDate, tankId) => {
   let url = API_URL + "all";
 
   if (startDate) {
@@ -11,6 +11,9 @@ const getEventLogs = (startDate, endDate) => {
   }
   if (endDate) {
     url += (startDate ? "&" : "?") + `endDate=${endDate}`;
+  }
+  if (tankId !== undefined && tankId !== null) {
+    url += (startDate || endDate ? "&" : "?") + `tankId=${tankId}`;
   }
 
   return axios.get(url).catch((err) => console.log(err));

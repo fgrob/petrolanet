@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
 import eventLogService from "../../services/eventLog.service";
 import moment from "moment-timezone";
-import { MdOutlineComment } from "react-icons/md";
 import { BiLoaderCircle } from "react-icons/bi";
+import { operationColorMap } from "../common/formatting";
 import ModalSimple from "../common/ModalSimple";
+import { MdOutlineComment } from "react-icons/md";
 
-const ErrorsView = ({ setHeight }) => {
+const EventsView = ({ triggerTank, setHeight }) => {
   const [eventLogs, setEventLogs] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -13,7 +14,9 @@ const ErrorsView = ({ setHeight }) => {
   const [selectedNote, setSelectedNote] = useState("");
 
   const getEventLogs = () => {
-    eventLogService.getLastErrorEvents().then((res) => {
+    let date = new Date().toLocaleDateString();
+    eventLogService.getEventLogs(date, date, triggerTank.id).then((res) => {
+      console.log("kiipa", res.data);
       setEventLogs(res.data);
       setIsLoading(false);
     });
@@ -29,15 +32,16 @@ const ErrorsView = ({ setHeight }) => {
   };
 
   useEffect(() => {
+    console.log(triggerTank);
     setHeight("auto");
     getEventLogs();
+    console.log("ESTANQUEDETONADOR: ", triggerTank); // boorrar
   }, []);
 
   return (
     <div className="overflow-hidden text-center">
-      <div className="mb-2 text-2xl text-ocean-green-500">
-        Mediciones de estanque
-      </div>
+      <div className="text-2xl text-ocean-green-500">Movimientos del día</div>
+      <div className="mb-2 font-bold">{triggerTank.name}</div>
       {isLoading ? (
         <div className="flex justify-center">
           <BiLoaderCircle className="animate-spin text-2xl text-blue-500" />
@@ -47,14 +51,11 @@ const ErrorsView = ({ setHeight }) => {
           <table className="table-auto divide-y divide-gray-200">
             <thead className="sticky top-0 bg-gradient-to-r from-ocean-green-900 to-ocean-green-500 text-white">
               <tr className="text-xs uppercase tracking-wider">
-                <th className="px-14 py-3 text-start">FECHA</th>
-                <th className="px-14 py-3 text-start">ESTANQUE</th>
-                <th className="whitespace-nowrap px-6 py-3 text-start">
-                  SALDO A LA FECHA
-                </th>
-                <th className="px-6 py-3 text-start">REGLA</th>
-                <th className="px-6 py-3 text-start">DIFERENCIA</th>
-                <th className="px-6 py-3 text-start">NOTAS</th>
+                <th className="px-3 py-3">FECHA</th>
+                <th className="px-3 py-3">OPERACIÓN</th>
+                <th className="whitespace-nowrap px-3 py-3">MOVIMIENTO</th>
+                <th className="px-3 py-3">CLIENTE / PROVEEDOR</th>
+                <th className="px-3 py-3">NOTAS</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200 bg-white">
@@ -63,22 +64,25 @@ const ErrorsView = ({ setHeight }) => {
                   key={eventLog.id}
                   className={index % 2 === 0 ? "" : "bg-gray-100"}
                 >
-                  <td>
+                  <td className=" whitespace-nowrap">
                     {moment(eventLog.createdAt)
                       .tz("America/Santiago")
                       .format("DD/MM/yyyy - HH:mm")}
                   </td>
-                  <td>{eventLog.tank.name}</td>
-                  <td>{eventLog.balance.toLocaleString("es-CL")}</td>
-                  <td>{eventLog.measured_balance.toLocaleString("es-CL")}</td>
                   <td
                     className={`${
-                      eventLog.error_quantity < 0
-                        ? "text-red-500"
-                        : "text-ocean-green-500"
-                    } font-bold`}
+                      operationColorMap[eventLog.operation.id]
+                    } whitespace-nowrap px-6 text-sm text-gray-900`}
                   >
-                    {eventLog.error_quantity.toLocaleString("es-CL")}
+                    {eventLog.operation.name}
+                  </td>
+                  <td>
+                    {eventLog.transaction_quantity.toLocaleString("es-CL")}
+                  </td>
+                  <td className="whitespace-nowrap px-6 text-sm text-gray-900">
+                    {eventLog.client
+                      ? eventLog.client.business_name
+                      : eventLog.supplier && eventLog.supplier.business_name}
                   </td>
                   <td>
                     {eventLog.notes && (
@@ -102,4 +106,4 @@ const ErrorsView = ({ setHeight }) => {
   );
 };
 
-export default ErrorsView;
+export default EventsView;

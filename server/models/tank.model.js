@@ -40,7 +40,7 @@ module.exports = (sequelize, Sequelize) => {
             defaultValue: 0,
         },
         status: {
-            type: Sequelize.ENUM('DISPONIBLE', 'NO DISPONIBLE', 'EN CARGA', 'CARGA EN PAUSA', 'EN DESCARGA'),
+            type: Sequelize.ENUM('DISPONIBLE', 'NO DISPONIBLE', 'EN CARGA', 'CARGA EN PAUSA', 'EN DESCARGA', 'DESHABILITADO'),
             defaultValue: 'DISPONIBLE'
         },
         timestamp_current_quantity: {

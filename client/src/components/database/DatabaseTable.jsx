@@ -4,6 +4,7 @@ import { BiLoaderCircle } from "react-icons/bi";
 import { MdOutlineComment } from "react-icons/md";
 import { AppContext } from "../../App";
 import Modal from "../common/Modal";
+import { operationColorMap } from "../common/formatting";
 
 const DatabaseTable = ({ filteredEventLogs, isTableReloading }) => {
   const { openBackdrop, setOpenBackdrop } = useContext(AppContext);
@@ -18,14 +19,6 @@ const DatabaseTable = ({ filteredEventLogs, isTableReloading }) => {
   const toggleModal = () => {
     setOpenNotesModal(!openNotesModal);
     setOpenBackdrop(!openBackdrop);
-  };
-
-  const operationColorMap = {
-    1: "bg-red-400 font-semibold px-2 py-1 rounded text-center", // COMPRA
-    2: "bg-green-400 font-semibold px-2 py-1 rounded text-center", // VENTA
-    3: "bg-purple-400 font-semibold px-2 py-1 rounded text-center", // TRASPASO
-    4: "bg-yellow-400 text-gray-900 font-semibold px-2 py-1 rounded text-center", // AJUSTE
-    5: "bg-blue-400 font-semibold px-2 py-1 rounded text-center", // MEDICION
   };
 
   return (
@@ -57,57 +50,57 @@ const DatabaseTable = ({ filteredEventLogs, isTableReloading }) => {
           <tbody className="divide-y divide-gray-200 bg-white">
             {filteredEventLogs
               .sort((a, b) => b.id - a.id)
-              .map((eventlog, index) => (
+              .map((eventLog, index) => (
                 <tr
-                  key={eventlog.id}
+                  key={eventLog.id}
                   className={index % 2 === 0 ? "" : "bg-gray-100"}
                 >
                   <td className="hidden whitespace-nowrap px-6 text-sm text-gray-900 md:block">
-                    {eventlog.id}
+                    {eventLog.id}
                   </td>
                   <td className="whitespace-nowrap px-6 text-sm text-gray-900">
-                    {moment(eventlog.createdAt)
+                    {moment(eventLog.createdAt)
                       .tz("America/Santiago")
                       .format("DD/MM/yyyy - HH:mm")}
                   </td>
                   <td
                     className={`${
-                      operationColorMap[eventlog.operation.id]
+                      operationColorMap[eventLog.operation.id]
                     } whitespace-nowrap px-6 text-sm text-gray-900`}
                   >
-                    {eventlog.operation.name}
+                    {eventLog.operation.name}
                   </td>
                   <td className="whitespace-nowrap px-6 text-sm text-gray-900">
-                    {eventlog.user.username}
+                    {eventLog.user.username}
                   </td>
                   <td className="whitespace-nowrap px-6 text-sm font-bold text-gray-900">
-                    {eventlog.tank.name}
+                    {eventLog.tank.name}
                   </td>
                   <td className="whitespace-nowrap px-6 text-end text-sm text-gray-900">
-                    {parseInt(eventlog.transaction_quantity).toLocaleString(
+                    {parseInt(eventLog.transaction_quantity).toLocaleString(
                       "es-CL",
                     )}
                   </td>
                   <td className="whitespace-nowrap px-6 text-end text-sm text-gray-900">
-                    {parseInt(eventlog.balance).toLocaleString("es-CL")}
+                    {parseInt(eventLog.balance).toLocaleString("es-CL")}
                   </td>
                   <td className="whitespace-nowrap px-6 text-end text-sm text-gray-900">
-                    {eventlog.measured_balance &&
-                      parseInt(eventlog.measured_balance).toLocaleString(
+                    {eventLog.measured_balance &&
+                      parseInt(eventLog.measured_balance).toLocaleString(
                         "es-CL",
                       )}
                   </td>
                   <td className="whitespace-nowrap px-6 text-end text-sm text-gray-900">
                     <span
                       className={`${
-                        eventlog.error_quantity < 0
+                        eventLog.error_quantity < 0
                           ? "font-bold text-red-500"
                           : "font-bold text-green-500"
                       }`}
                     >
-                      {eventlog.error_quantity && (
+                      {eventLog.error_quantity && (
                         <span>
-                          {parseInt(eventlog.error_quantity).toLocaleString(
+                          {parseInt(eventLog.error_quantity).toLocaleString(
                             "es-CL",
                           )}
                         </span>
@@ -115,25 +108,25 @@ const DatabaseTable = ({ filteredEventLogs, isTableReloading }) => {
                     </span>
                   </td>
                   <td className="whitespace-nowrap px-6 text-end text-sm text-gray-900">
-                    {eventlog.tank_number_to_date != 0 && (
-                      <span>{eventlog.tank_number_to_date}</span>
+                    {eventLog.tank_number_to_date != 0 && (
+                      <span>{eventLog.tank_number_to_date}</span>
                     )}
                   </td>
                   <td className="whitespace-nowrap px-6 text-sm text-gray-900">
-                    {eventlog.document_type}
+                    {eventLog.document_type}
                   </td>
                   <td className="whitespace-nowrap px-6 text-end text-sm text-gray-900">
-                    {eventlog.document_number}
+                    {eventLog.document_number}
                   </td>
                   <td className="whitespace-nowrap px-6 text-sm text-gray-900">
-                    {eventlog.client
-                      ? eventlog.client.business_name
-                      : eventlog.supplier && eventlog.supplier.business_name}
+                    {eventLog.client
+                      ? eventLog.client.business_name
+                      : eventLog.supplier && eventLog.supplier.business_name}
                   </td>
                   <td className="whitespace-nowrap text-gray-900">
-                    {eventlog.notes && (
+                    {eventLog.notes && (
                       <div className="flex items-center justify-center">
-                        <button onClick={() => handleOpenNote(eventlog.notes)}>
+                        <button onClick={() => handleOpenNote(eventLog.notes)}>
                           <MdOutlineComment />
                         </button>
                       </div>

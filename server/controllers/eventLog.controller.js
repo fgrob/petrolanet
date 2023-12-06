@@ -14,14 +14,20 @@ const getEventLogs = async (req, res) => {
   try {
     let startDate;
     let endDate;
+    let tankIdFilter = null; // null is for events in all tanks
 
     if (req.query.startDate) {
+      console.log(req.query.startDate)
       startDate = new Date(req.query.startDate);
     }
 
     if (req.query.endDate) {
       endDate = new Date(req.query.endDate);
       endDate.setUTCHours(23, 59, 59, 999); // (end of the day)
+    }
+
+    if (req.query.tankId){
+      tankIdFilter = parseInt(req.query.tankId);
     }
 
     if (!startDate) {
@@ -48,6 +54,7 @@ const getEventLogs = async (req, res) => {
         createdAt: {
           [Op.between]: [startDate, endDate],
         },
+        ...(tankIdFilter !== null && { tank_id: tankIdFilter }),
       },
       include: [
         {
@@ -108,6 +115,13 @@ const getLastErrorEvents = async (req, res) => {
           },
           order: [["createdAt", "DESC"]],
           limit: 1,
+          include: [
+            {
+              model: Tank,
+              as: "tank",
+              attributes: ["name", "type"],
+            },
+          ]
         });
 
         lastEvent && eventLogs.push(lastEvent);

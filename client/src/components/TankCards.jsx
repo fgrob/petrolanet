@@ -54,6 +54,10 @@ const TankCards = () => {
     setTriggerTank(tank);
     setOpenModal(!openModal);
     setOpenBackdrop(!openBackdrop);
+
+    if (openModal) {
+      setAction(""); // if the toggling is to turn off the modal, then reset the action value
+    }
   };
 
   const calcError = () => {
@@ -201,7 +205,14 @@ const TankCards = () => {
                     >
                       Descargar
                     </button>
-                    <button type="button" className="btn-success w-full">
+                    <button
+                      type="button"
+                      className="btn-success w-full"
+                      onClick={() => {
+                        setAction("eventlogs");
+                        toggleModal(tank);
+                      }}
+                    >
                       Ver movimientos del día
                     </button>
                   </div>
