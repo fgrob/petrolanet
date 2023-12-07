@@ -12,6 +12,10 @@ const NavBar = ({ dispatchSideBarState }) => {
       setHeader("Inicio")
     } else if (location.pathname === "/adjustment"){
       setHeader("Ajuste de Estanque")
+    } else if (location.pathname === "/clientlist"){
+      setHeader("Lista de Clientes")
+    } else if (location.pathname === "/supplierlist"){
+      setHeader("Lista de Proveeedores")
     }
   };
 

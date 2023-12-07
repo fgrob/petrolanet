@@ -27,8 +27,8 @@ const SideBar = ({ sideBarState, dispatchSideBarState }) => {
           icon: AiFillDatabase,
           link: "/adjustment",
         },
-        { title: "Clientes", icon: AiFillDatabase, link: "/adjustment" },
-        { title: "Proveedores", icon: AiFillDatabase, link: "/adjustment" },
+        { title: "Clientes", icon: AiFillDatabase, link: "/clientlist" },
+        { title: "Proveedores", icon: AiFillDatabase, link: "/supplierlist" },
       ],
     },
   ];

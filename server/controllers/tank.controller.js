@@ -13,16 +13,24 @@ const getTanks = async (req, res) => {
 
 const createTank = async (req, res) => {
   try {
-    const { type, name, capacity, tank_number, tank_speed } = req.body;
-    const newTank = await Tank.create({
-      type,
-      name,
-      capacity,
-      tank_number,
-      tank_speed,
-    });
+    const { tankName, tankType, tankCapacity, tankGauge, tankNumber } = req.body;
 
-    res.status(201).json(newTank);
+    const tankData = {
+      name: tankName,
+      type: tankType,
+      capacity: parseInt(tankCapacity),
+      tank_gauge: tankGauge,
+      tank_number: tankNumber,
+    };
+
+    if (tankNumber === ""){ // the model defaults to 0 for non-provided keys
+      delete tankData.tank_number;
+    };
+
+    await Tank.create(tankData);
+
+    const updatedTanks = await Tank.findAll();
+    return res.status(200).json(updatedTanks);
   } catch (err) {
     console.error("Error creating a tank", err);
     res.status(500).json({ error: "Internal server error" });

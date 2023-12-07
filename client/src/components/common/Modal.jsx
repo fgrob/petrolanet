@@ -36,11 +36,18 @@ const Modal = ({ openModal, toggleModal, height, children }) => {
 
   useEffect(() => {
     // disables vertical scrolling (for movile)
+    
     if (openModal) {
       document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "auto";
     }
+    //  else {
+    //   document.body.style.overflow = "auto";
+    //   console.log('autooooooooooooooo')
+    // }
+
+    return (() => {
+      document.body.style.overflow = "auto";
+    })
   }, [openModal]);
 
   useEffect(() => {

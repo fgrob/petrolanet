@@ -7,6 +7,7 @@ import Backdrop from "./components/common/Backdrop";
 import Home from "./views/Home";
 import Database from "./views/Database";
 import TankAdjustment from "./views/TankAdjustment";
+import ClientSupplierLists from "./views/ClientSupplierLists";
 
 export const AppContext = createContext();
 
@@ -94,6 +95,8 @@ function App() {
                 }
               />
               <Route path="/adjustment" element={<TankAdjustment />} />
+              <Route path="/clientlist" element={<ClientSupplierLists target="clients"/>} />
+              <Route path="/supplierlist" element={<ClientSupplierLists target="suppliers"/>} />
             </Routes>
           </div>
         </div>

@@ -7,8 +7,18 @@ const getClients = () => {
     return axios.get(API_URL + "all").catch((err) => console.log(err));
 }
 
+const createClient = (rut, businessName, alias) => {
+    return axios.post(API_URL + "create", {
+        rut,
+        businessName,
+        alias
+    })
+    .catch((err) => console.log(err));
+}
+
 const clientService = {
     getClients,
+    createClient,
 };
 
 export default clientService;

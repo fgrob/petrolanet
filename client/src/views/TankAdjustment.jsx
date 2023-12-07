@@ -189,11 +189,13 @@ const TankAdjustment = () => {
         </div>
       ) : (
         <>
-        <div className="w-5/6 mx-4 my-3 justify-center  flex">
-          <button className="btn-success-small font-bold px-4" onClick={toggleAddTankModal}>
+        <div className="w-5/6 mx-4 my-3 justify-center flex">
+          <button className="btn-success-small font-bold px-4 bg-yellow-400" onClick={toggleAddTankModal}>
             Añadir Estanque
           </button>
         </div>
+        <hr className="divider" />
+
           {tanks
             .sort((a, b) => a.id - b.id)
             .map((tank) => {
@@ -568,7 +570,7 @@ const TankAdjustment = () => {
           toggleModal={toggleAddTankModal}
           height="auto"
         >
-          <AddTankModal typeOptions={typeOptions} tankGaugeOptions={tankGaugeOptions}/>
+          <AddTankModal toggleModal={toggleAddTankModal} typeOptions={typeOptions} tankGaugeOptions={tankGaugeOptions} setIsLoading={setIsLoading}/>
         </Modal>
       )}
     </div>
