@@ -69,15 +69,15 @@ function App() {
     <AppContext.Provider
       value={{ tanks, setTanks, openBackdrop, setOpenBackdrop }}
     >
-      <div className="flex h-auto flex-col md:h-screen">
+      <div className="flex h-auto flex-col lg:h-screen">
         <Backdrop />
-        <div className={`sticky z-30 top-0 h-14 flex-shrink-0 md:static md:top-auto ${navBarVisibility ? "block" : "hidden"}`}>
+        <div className={`sticky z-30 top-0 h-14 flex-shrink-0 lg:static lg:top-auto ${navBarVisibility ? "block" : "hidden"}`}>
           <NavBar dispatchSideBarState={dispatchSideBarState} />
         </div>
-        <div className="flex flex-1 overflow-auto md:overflow-hidden">
+        <div className="flex flex-1 overflow-auto lg:overflow-hidden">
           <div
             className={`${
-              sideBarState.onlyIcons ? "md:w-14 md:hover:w-1/6" : "w-0 md:w-1/6"
+              sideBarState.onlyIcons ? "lg:w-14 lg:hover:w-1/6" : "w-0 lg:w-1/6"
             } transition-all duration-300 ${sideBarVisibility ? "block" : "hidden"}`}
           >
             <SideBar

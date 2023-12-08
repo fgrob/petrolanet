@@ -127,6 +127,7 @@ const getLastErrorEvents = async (req, res) => {
         lastEvent && eventLogs.push(lastEvent);
       }
     }
+    console.log('a ver q ondaaa: ', eventLogs)
     res.status(200).json(eventLogs);
   } catch {
     res.status(500).json({ err: "Internal server error" });

@@ -29,7 +29,7 @@ const ErrorsView = ({ setHeight }) => {
   };
 
   useEffect(() => {
-    setHeight("auto");
+    setHeight("h-auto");
     getEventLogs();
   }, []);
 

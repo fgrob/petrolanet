@@ -107,10 +107,10 @@ const SideBar = ({ sideBarState, dispatchSideBarState }) => {
       ref={sidebarRef}
       className={`${
         sideBarState.open ? "translate-x-0" : "-translate-x-full"
-      } fixed top-0 z-40 h-full w-4/5 overflow-hidden bg-gray-100 shadow-[2px_3px_15px] shadow-gray-500 duration-200 md:static md:top-auto md:z-20 md:block md:w-full md:translate-x-0
+      } fixed top-0 z-40 h-full w-4/5 overflow-auto bg-gray-100 shadow-[2px_3px_15px] shadow-gray-500 duration-200 lg:static lg:top-auto lg:z-20 lg:block lg:w-full lg:translate-x-0
         `}
     >
-      <div className="mb-5 flex h-14 items-center justify-center bg-gradient-to-r from-ocean-green-900 to-ocean-green-500 text-center text-4xl text-white md:hidden">
+      <div className="mb-5 flex h-14 items-center justify-center bg-gradient-to-r from-ocean-green-900 to-ocean-green-500 text-center text-4xl text-white lg:hidden">
         <button
           onClick={() => dispatchSideBarState({ type: "TOGGLE_STATE" })}
           className="absolute left-1 "
@@ -128,8 +128,8 @@ const SideBar = ({ sideBarState, dispatchSideBarState }) => {
                 className="group w-full flex whitespace-nowrap rounded-lg p-4 hover:bg-gray-200"
                 onClick={() => handleSubmenuClick(Menu.title)}
               >
-                <Menu.icon className="h-7 w-7 flex-shrink-0 text-gray-500 transition duration-100 group-hover:text-gray-900 md:h-6 md:w-6" />
-                <span className="ml-4 text-2xl md:text-base md:font-bold">
+                <Menu.icon className="h-7 w-7 flex-shrink-0 text-gray-500 transition duration-100 group-hover:text-gray-900 lg:h-6 lg:w-6" />
+                <span className="ml-4 text-2xl lg:text-base lg:font-bold">
                   {Menu.title}
                 </span>
               </button>
@@ -138,8 +138,8 @@ const SideBar = ({ sideBarState, dispatchSideBarState }) => {
               to={Menu.link}
               className="group flex whitespace-nowrap rounded-lg p-4 hover:bg-gray-200"
             >
-              <Menu.icon className="h-7 w-7 flex-shrink-0 text-gray-500 transition duration-100 group-hover:text-gray-900 md:h-6 md:w-6" />
-              <span className="ml-4 text-2xl md:text-base md:font-bold">
+              <Menu.icon className="h-7 w-7 flex-shrink-0 text-gray-500 transition duration-100 group-hover:text-gray-900 lg:h-6 lg:w-6" />
+              <span className="ml-4 text-2xl lg:text-base lg:font-bold">
                 {Menu.title}
               </span>
             </Link>
@@ -158,7 +158,7 @@ const SideBar = ({ sideBarState, dispatchSideBarState }) => {
                     to={submenu.link}
                     className="group flex whitespace-nowrap rounded-lg px-4 py-2 hover:bg-gray-200"
                   >
-                    <span className="ml-4 text-2xl md:text-base md:font-bold">
+                    <span className="ml-4 text-2xl lg:text-base lg:font-bold">
                       {submenu.title}
                     </span>
                   </Link>

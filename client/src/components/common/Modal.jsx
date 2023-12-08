@@ -1,7 +1,8 @@
 import React, { useEffect, useRef } from "react";
 import { IoClose } from "react-icons/io5";
 
-const Modal = ({ openModal, toggleModal, height, children }) => {
+const Modal = ({ height, weight, openModal, toggleModal, children }) => {
+  // height, weight: for manual setting
   // openModal: true/false
   // toggleModal: function that handles openModal
   // children: all the inners divs you need
@@ -36,7 +37,7 @@ const Modal = ({ openModal, toggleModal, height, children }) => {
 
   useEffect(() => {
     // disables vertical scrolling (for movile)
-    
+
     if (openModal) {
       document.body.style.overflow = "hidden";
     }
@@ -45,17 +46,17 @@ const Modal = ({ openModal, toggleModal, height, children }) => {
     //   console.log('autooooooooooooooo')
     // }
 
-    return (() => {
+    return () => {
       document.body.style.overflow = "auto";
-    })
+    };
   }, [openModal]);
 
   useEffect(() => {
-    console.log('montando el <Modal')
-    return (() => {
-      console.log('desmontando el <Modal')
-    })
-  }, [])
+    console.log("montando el <Modal");
+    return () => {
+      console.log("desmontando el <Modal");
+    };
+  }, []);
 
   return (
     <div
@@ -68,15 +69,17 @@ const Modal = ({ openModal, toggleModal, height, children }) => {
       <div
         ref={tankModalRef}
         className={`relative mx-2 flex ${
-          height ? `h-${height}` : "h-5/6"
-        } max-h-full w-full justify-center rounded-lg bg-white p-5 shadow-[rgba(0,_0,_0,_0.24)_0px_3px_8px] md:h-auto md:max-w-fit`}
+          weight ? weight : "w-full md:max-w-fit"
+        } ${
+          height ? height : "h-5/6 max-h-full  md:h-auto"
+        } justify-center rounded-lg bg-white p-5 shadow-[rgba(0,_0,_0,_0.24)_0px_3px_8px] `}
         id="modal"
       >
         <button
           onClick={toggleModal}
           className="absolute right-1 top-1 z-50 h-9 w-9"
         >
-          <IoClose className="h-full w-full" /> 
+          <IoClose className="h-full w-full" />
         </button>
         {children}
       </div>

@@ -14,7 +14,8 @@ const EventsView = ({ triggerTank, setHeight }) => {
   const [selectedNote, setSelectedNote] = useState("");
 
   const getEventLogs = () => {
-    let date = new Date().toLocaleDateString();
+    let date = new Date();
+    console.log('ACAAAA', date)
     eventLogService.getEventLogs(date, date, triggerTank.id).then((res) => {
       console.log("kiipa", res.data);
       setEventLogs(res.data);
@@ -33,7 +34,7 @@ const EventsView = ({ triggerTank, setHeight }) => {
 
   useEffect(() => {
     console.log(triggerTank);
-    setHeight("auto");
+    setHeight("h-auto");
     getEventLogs();
     console.log("ESTANQUEDETONADOR: ", triggerTank); // boorrar
   }, []);
@@ -59,7 +60,7 @@ const EventsView = ({ triggerTank, setHeight }) => {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200 bg-white">
-              {eventLogs.map((eventLog, index) => (
+              {eventLogs.sort((a, b) => b.id - a.id).map((eventLog, index) => (
                 <tr
                   key={eventLog.id}
                   className={index % 2 === 0 ? "" : "bg-gray-100"}

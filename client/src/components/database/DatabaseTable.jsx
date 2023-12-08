@@ -137,7 +137,7 @@ const DatabaseTable = ({ filteredEventLogs, isTableReloading }) => {
           </tbody>
         </table>
       )}
-      <Modal openModal={openNotesModal} toggleModal={toggleModal} height="auto">
+      <Modal openModal={openNotesModal} toggleModal={toggleModal} height="h-auto">
         <div className="overflow-hidden whitespace-normal break-words p-5">
           {selectedNote}
         </div>

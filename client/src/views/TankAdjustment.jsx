@@ -553,7 +553,7 @@ const TankAdjustment = () => {
       <Modal
         openModal={openConfirmationModal}
         toggleModal={toggleConfirmationModal}
-        height="auto"
+        height="h-auto"
       >
         {selectedTankData.hasOwnProperty("type") && (
           <ConfirmationModal
@@ -568,7 +568,7 @@ const TankAdjustment = () => {
         <Modal
           openModal={openAddTankModal}
           toggleModal={toggleAddTankModal}
-          height="auto"
+          height="h-auto"
         >
           <AddTankModal toggleModal={toggleAddTankModal} typeOptions={typeOptions} tankGaugeOptions={tankGaugeOptions} setIsLoading={setIsLoading}/>
         </Modal>
