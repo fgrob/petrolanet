@@ -22,8 +22,24 @@ const createClient = async (req, res) => {
 
     const updatedClients = await Client.findAll();
     res.status(200).json(updatedClients);
-  } catch {
+  } catch (err){
     console.log("Error creating client", err);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+const editClient = async (req, res) => {
+  try {
+    const client = await Client.findByPk(req.body.id);
+    client.rut = req.body.rut;
+    client.business_name = req.body.businessName;
+    client.alias = req.body.alias;
+    await client.save();
+
+    const updatedClients = await Client.findAll();
+    res.status(200).json(updatedClients);
+  } catch (err){
+    console.log("Error editing client", err);
     res.status(500).json({ error: "Internal server error" });
   }
 };
@@ -31,6 +47,7 @@ const createClient = async (req, res) => {
 const clientController = {
   getClients,
   createClient,
+  editClient,
 };
 
 module.exports = clientController;

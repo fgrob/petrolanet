@@ -3,7 +3,7 @@ import { AppContext } from "../App";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { Doughnut } from "react-chartjs-2";
 import moment from "moment-timezone";
-import TankModal from "../components/home/TankModal";
+import TankModal from "./Home/TankModal";
 import { Link } from "react-router-dom";
 
 ChartJS.register(ArcElement, Tooltip, Legend);

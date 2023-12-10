@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import eventLogService from "../services/eventLog.service";
 import { BiLoaderCircle } from "react-icons/bi";
-import FiltersBar from "../components/database/FiltersBar";
-import DatabaseTable from "../components/database/DatabaseTable";
+import FiltersBar from "./Database/FiltersBar";
+import DatabaseTable from "./Database/DatabaseTable";
 
 const Database = ({setNavBarVisibility, setSideBarVisibility}) => {
   const [eventLogs, setEventLogs] = useState([]);

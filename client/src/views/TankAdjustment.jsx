@@ -2,9 +2,9 @@ import React, { useContext, useEffect, useState } from "react";
 import { CiEdit } from "react-icons/ci";
 import { BiLoaderCircle } from "react-icons/bi";
 import { AppContext } from "../App";
-import Modal from "../components/common/Modal";
-import ConfirmationModal from "../components/tankAdjustment/confirmationModal";
-import AddTankModal from "../components/tankAdjustment/AddTankModal";
+import Modal from "../components/Modal";
+import ConfirmationModal from "./TankAdjustment/confirmationModal";
+import AddTankModal from "./TankAdjustment/AddTankModal";
 
 const TankAdjustment = () => {
   const { tanks } = useContext(AppContext);

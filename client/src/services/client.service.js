@@ -16,9 +16,20 @@ const createClient = (rut, businessName, alias) => {
     .catch((err) => console.log(err));
 }
 
+const editClient = (id, rut, businessName, alias) => {
+    return axios.put(API_URL + "edit", {
+        id,
+        rut,
+        businessName,
+        alias
+    })
+    .catch((err) => console.log(err));
+}
+
 const clientService = {
     getClients,
     createClient,
+    editClient,
 };
 
 export default clientService;

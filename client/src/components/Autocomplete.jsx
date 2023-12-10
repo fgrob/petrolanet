@@ -16,7 +16,7 @@
     const handleInputChange = (e) => {
       setInputValue(e.target.value);
       setClientSupplier("");
-      e.target.setCustomValidity("");
+      e.target.setCustomValidity(""); 
 
       const inputValue = e.target.value.toLowerCase().replace(/[.-]/g, ""); 
 

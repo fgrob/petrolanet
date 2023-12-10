@@ -3,11 +3,11 @@ import { Route, Routes } from "react-router-dom";
 import tankService from "./services/tank.service";
 import NavBar from "./components/NavBar";
 import SideBar from "./components/SideBar";
-import Backdrop from "./components/common/Backdrop";
+import Backdrop from "./components/Backdrop";
 import Home from "./views/Home";
 import Database from "./views/Database";
 import TankAdjustment from "./views/TankAdjustment";
-import ClientSupplierLists from "./views/ClientSupplierLists";
+import ClientSupplierAdjustment from "./views/ClientSupplierAdjustment";
 
 export const AppContext = createContext();
 
@@ -95,8 +95,8 @@ function App() {
                 }
               />
               <Route path="/adjustment" element={<TankAdjustment />} />
-              <Route path="/clientlist" element={<ClientSupplierLists target="clients"/>} />
-              <Route path="/supplierlist" element={<ClientSupplierLists target="suppliers"/>} />
+              <Route path="/clientlist" element={<ClientSupplierAdjustment target="clients"/>} />
+              <Route path="/supplierlist" element={<ClientSupplierAdjustment target="suppliers"/>} />
             </Routes>
           </div>
         </div>

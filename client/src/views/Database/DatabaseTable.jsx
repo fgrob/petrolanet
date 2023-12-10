@@ -3,8 +3,8 @@ import moment from "moment-timezone";
 import { BiLoaderCircle } from "react-icons/bi";
 import { MdOutlineComment } from "react-icons/md";
 import { AppContext } from "../../App";
-import Modal from "../common/Modal";
-import { operationColorMap } from "../common/formatting";
+import Modal from "../../components/Modal";
+import { operationColorMap } from "../../components/formatting";
 
 const DatabaseTable = ({ filteredEventLogs, isTableReloading }) => {
   const { openBackdrop, setOpenBackdrop } = useContext(AppContext);

@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import eventLogService from "../../services/eventLog.service";
 import moment from "moment-timezone";
 import { BiLoaderCircle } from "react-icons/bi";
-import { operationColorMap } from "../common/formatting";
-import ModalSimple from "../common/ModalSimple";
+import { operationColorMap } from "../../components/formatting";
+import ModalSimple from "../../components/ModalSimple"
 import { MdOutlineComment } from "react-icons/md";
 
 const EventsView = ({ triggerTank, setHeight }) => {

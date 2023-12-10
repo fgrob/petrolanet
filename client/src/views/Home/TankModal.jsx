@@ -5,7 +5,7 @@ import SelectorView from "./SelectorView";
 import ClientSupplierView from "./ClientSupplierView";
 import MeasureStick from "./MeasureStick";
 import ErrorsView from "./ErrorsView";
-import Modal from "../common/Modal";
+import Modal from "../../components/Modal";
 import EventsView from "./EventsView";
 
 const TankModal = ({ openModal, toggleModal, action, triggerTank }) => {

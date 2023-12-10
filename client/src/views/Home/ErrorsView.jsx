@@ -3,7 +3,8 @@ import eventLogService from "../../services/eventLog.service";
 import moment from "moment-timezone";
 import { MdOutlineComment } from "react-icons/md";
 import { BiLoaderCircle } from "react-icons/bi";
-import ModalSimple from "../common/ModalSimple";
+import ModalSimple from "../../components/ModalSimple";
+
 
 const ErrorsView = ({ setHeight }) => {
   const [eventLogs, setEventLogs] = useState([]);

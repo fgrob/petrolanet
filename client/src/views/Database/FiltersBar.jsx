@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import Autocomplete from "../common/Autocomplete";
+import Autocomplete from "../../components/Autocomplete";
 import { BiSolidCheckCircle } from "react-icons/bi";
 import { IoHomeSharp } from "react-icons/io5";
 import { MdOutlineFilterAlt } from "react-icons/md";
