@@ -27,13 +27,14 @@ const Home = () => {
       companyBalance += parseInt(tank.current_quantity);
     });
     const dataForTotal = {};
+    
     dataForTotal.companyCapacity = companyCapacity;
     dataForTotal.companyBalance = companyBalance;
     dataForTotal.doughnut = {
       labels: [],
       datasets: [
         {
-          data: [companyCapacity, companyCapacity - companyBalance],
+          data: [companyBalance, companyCapacity - companyBalance],
           backgroundColor: ["#052e19", "#0c715150"],
         },
       ],

@@ -4,6 +4,8 @@ const { tank: Tank, eventLog: EventLog } = db;
 const getTanks = async (req, res) => {
   try {
     const tanks = await Tank.findAll();
+    console.log('ACA VAN LAS VARIABLES DE ENTORNOOOOOOOOOOOOOOOOOO QLAO')
+    console.log(process.env.PUERTO)
     res.json(tanks);
   } catch (err) {
     console.error("Error fetching tanks: ", err);

@@ -1,8 +1,8 @@
+require('dotenv').config();
 const express = require('express');
 const app = express();
 const cors = require('cors');
 const db = require('./models');
-const initial = require('./models/DATATEST');
 
 app.use(express.json());
 app.use(cors());
@@ -16,7 +16,6 @@ require('./routes/eventLog.routes')(app);
 db.sequelize.sync({})
 // db.sequelize.sync({force: true })
     .then(() => {
-        // initial();
         console.log('Database ready for use')})
     .catch(() => {
         console.log('Database Error')
