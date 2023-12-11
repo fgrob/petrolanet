@@ -10,6 +10,9 @@ import CreateAndEditModal from "./ClientSupplierAdjustment/CreateAndEditModal";
 const ClientSupplierAdjustment = ({ target }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [clientSupplierList, setClientSupplierList] = useState([]);
+  const [filteredClientSupplierList, setFilteredClientSupplierList] = useState(
+    [],
+  );
 
   const [openModal, setOpenModal] = useState(false);
   const { openBackdrop, setOpenBackdrop } = useContext(AppContext);
@@ -21,12 +24,13 @@ const ClientSupplierAdjustment = ({ target }) => {
   const [editMode, setEditMode] = useState(false);
   const [idToEdit, setIdToEdit] = useState();
 
+  const [searchValue, setSearchValue] = useState("");
+
   const getData = () => {
     if (target === "clients") {
       clientService.getClients().then((res) => {
         setClientSupplierList(res.data);
         setIsLoading(false);
-        console.log(res.data);
       });
     } else if (target === "suppliers") {
       supplierService.getSuppliers().then((res) => {
@@ -59,20 +63,59 @@ const ClientSupplierAdjustment = ({ target }) => {
     toggleModal();
   };
 
+  const handleSearch = (e) => {
+    let value;
+    if (e) {
+      value = e.target.value;
+    } else {
+      value = searchValue;
+    }
+    value = value.toUpperCase();
+    const result = [];
+    for (const clientSupplier of clientSupplierList) {
+      console.log(clientSupplier);
+      if (
+        clientSupplier.business_name.includes(value) ||
+        clientSupplier.rut.includes(value) ||
+        clientSupplier.alias.includes(value)
+      ) {
+        result.push(clientSupplier);
+      }
+    }
+    setSearchValue(value);
+    setFilteredClientSupplierList(result);
+  };
+
+  const cleanSearchInput = () => {
+    setSearchValue("");
+    setFilteredClientSupplierList([...clientSupplierList]);
+  };
+
   useEffect(() => {
     getData();
   }, [target]);
 
+  useEffect(() => {
+    if (clientSupplierList.length > 0) {
+      setFilteredClientSupplierList(clientSupplierList);
+      handleSearch();
+    }
+  }, [clientSupplierList]);
+
   return (
-    <div className="overflow-hidden border-4 border-yellow-500 text-center">
+    // <div className="h-full border-2 border-yellow-500 text-center">
+    <>
       {isLoading ? (
         <div className="fixed left-0 top-0 z-50 flex h-screen w-screen items-center justify-center">
           <BiLoaderCircle className="animate-spin text-2xl text-blue-500" />
         </div>
       ) : (
-        <div className="flex w-full flex-wrap justify-center border border-red-500 shadow-md lg:p-3">
-          <div className="flex w-full justify-end border border-orange-500">
-            <button className="border border-black" onClick={toggleModal}>
+        <div className="flex flex-col lg:h-full h-screen w-full text-center overflow-hidden shadow-md lg:p-3">
+          <div className="flex flex-wrap justify-center p-1">
+            <button
+              className="btn-success-small my-2 whitespace-nowrap bg-yellow-400 px-4 font-bold md:my-auto"
+              onClick={toggleModal}
+            >
               Añadir{" "}
               {target === "clients" ? (
                 <span>Cliente</span>
@@ -80,14 +123,23 @@ const ClientSupplierAdjustment = ({ target }) => {
                 <span>Proveedor</span>
               )}
             </button>
-            <div className="flex flex-1 justify-end border border-pink-500">
-              <label>Buscar</label>
-              <input className="border border-black " />
-              <button className="btn-error-small">Limpiar</button>
+            <div className="ml-auto flex flex-1 justify-end gap-1 md:ml-10">
+              <label className="font-bold" htmlFor="searchInput">
+                Buscar
+              </label>
+              <input
+                id="searchInput"
+                className="flex-1 rounded-lg border border-gray-400 md:w-1/2 lg:flex-initial"
+                value={searchValue}
+                onChange={handleSearch}
+              />
+              <button className="btn-error-small" onClick={cleanSearchInput}>
+                Limpiar
+              </button>
             </div>
           </div>
 
-          <div className="w-full overflow-auto border-2 border-purple-500">
+          <div className="w-full flex-1 overflow-auto">
             <table className="w-full table-auto divide-y divide-gray-200">
               <thead className="sticky top-0 bg-gradient-to-r from-gray-400 to-gray-300 ">
                 <tr className="text-xs uppercase tracking-wider">
@@ -98,7 +150,7 @@ const ClientSupplierAdjustment = ({ target }) => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200 bg-white">
-                {clientSupplierList
+                {filteredClientSupplierList
                   .sort((a, b) => a.id - b.id)
                   .map((clientSupplier, index) => (
                     <tr
@@ -160,7 +212,8 @@ const ClientSupplierAdjustment = ({ target }) => {
           />
         </Modal>
       )}
-    </div>
+    {/* </div> */}
+    </>
   );
 };
 

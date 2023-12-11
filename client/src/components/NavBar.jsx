@@ -43,7 +43,7 @@ const NavBar = ({ dispatchSideBarState }) => {
           className="group mr-2 flex items-center justify-end gap-1 lg:mr-4"
         >
           <span className="hidden transition duration-100 group-hover:text-gray-200 lg:block">
-            fgrobc*
+            Usuario
           </span>
           <FaUserCircle className="h-7 w-7 transition duration-100 group-hover:text-gray-200" />
         </a>

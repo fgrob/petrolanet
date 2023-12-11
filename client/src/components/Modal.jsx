@@ -77,7 +77,7 @@ const Modal = ({ height, weight, openModal, toggleModal, children }) => {
       >
         <button
           onClick={toggleModal}
-          className="absolute right-1 top-1 z-50 h-9 w-9"
+          className="absolute right-1 top-1 md:top-2 z-50 h-9 w-9"
         >
           <IoClose className="h-full w-full" />
         </button>
