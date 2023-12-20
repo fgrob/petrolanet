@@ -192,7 +192,7 @@ const FiltersBar = ({
 
     if (setDefaultEndDate) {
       month = month.padStart(2, "0"); // add a leading zero if it is less than 10 (required):
-      day = day.padStart(2, "0"); 
+      day = day.padStart(2, "0");
       const endDate = `${year}-${month}-${day}`;
       setEndDate(endDate);
     }
@@ -316,7 +316,7 @@ const FiltersBar = ({
         <div className="mr-2 flex flex-1 md:gap-4">
           <Link
             to="/"
-            className="flex text-gray-500 hover:text-gray-900 border border-gray-500 mr-11 px-1 rounded shadow"
+            className="mr-11 flex rounded border border-gray-500 px-1 text-gray-500 shadow hover:text-gray-900"
           >
             <div className="h-full w-7">
               <IoHomeSharp className="h-full w-full" />

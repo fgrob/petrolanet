@@ -3,7 +3,7 @@ import eventLogService from "../../services/eventLog.service";
 import moment from "moment-timezone";
 import { BiLoaderCircle } from "react-icons/bi";
 import { operationColorMap } from "../../components/formatting";
-import ModalSimple from "../../components/ModalSimple"
+import ModalSimple from "../../components/ModalSimple";
 import { MdOutlineComment } from "react-icons/md";
 
 const EventsView = ({ triggerTank, setHeight }) => {
@@ -15,9 +15,7 @@ const EventsView = ({ triggerTank, setHeight }) => {
 
   const getEventLogs = () => {
     let date = new Date();
-    console.log('ACAAAA', date)
     eventLogService.getEventLogs(date, date, triggerTank.id).then((res) => {
-      console.log("kiipa", res.data);
       setEventLogs(res.data);
       setIsLoading(false);
     });
@@ -33,10 +31,8 @@ const EventsView = ({ triggerTank, setHeight }) => {
   };
 
   useEffect(() => {
-    console.log(triggerTank);
     setHeight("h-auto");
     getEventLogs();
-    console.log("ESTANQUEDETONADOR: ", triggerTank); // boorrar
   }, []);
 
   return (
@@ -60,42 +56,46 @@ const EventsView = ({ triggerTank, setHeight }) => {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200 bg-white">
-              {eventLogs.sort((a, b) => b.id - a.id).map((eventLog, index) => (
-                <tr
-                  key={eventLog.id}
-                  className={index % 2 === 0 ? "" : "bg-gray-100"}
-                >
-                  <td className=" whitespace-nowrap">
-                    {moment(eventLog.createdAt)
-                      .tz("America/Santiago")
-                      .format("DD/MM/yyyy - HH:mm")}
-                  </td>
-                  <td
-                    className={`${
-                      operationColorMap[eventLog.operation.id]
-                    } whitespace-nowrap px-6 text-sm text-gray-900`}
+              {eventLogs
+                .sort((a, b) => b.id - a.id)
+                .map((eventLog, index) => (
+                  <tr
+                    key={eventLog.id}
+                    className={index % 2 === 0 ? "" : "bg-gray-100"}
                   >
-                    {eventLog.operation.name}
-                  </td>
-                  <td>
-                    {eventLog.transaction_quantity.toLocaleString("es-CL")}
-                  </td>
-                  <td className="whitespace-nowrap px-6 text-sm text-gray-900">
-                    {eventLog.client
-                      ? eventLog.client.business_name
-                      : eventLog.supplier && eventLog.supplier.business_name}
-                  </td>
-                  <td>
-                    {eventLog.notes && (
-                      <div className="flex items-center justify-center">
-                        <button onClick={() => handleOpenNote(eventLog.notes)}>
-                          <MdOutlineComment />
-                        </button>
-                      </div>
-                    )}
-                  </td>
-                </tr>
-              ))}
+                    <td className=" whitespace-nowrap">
+                      {moment(eventLog.createdAt)
+                        .tz("America/Santiago")
+                        .format("DD/MM/yyyy - HH:mm")}
+                    </td>
+                    <td
+                      className={`${
+                        operationColorMap[eventLog.operation.id]
+                      } whitespace-nowrap px-6 text-sm text-gray-900`}
+                    >
+                      {eventLog.operation.name}
+                    </td>
+                    <td>
+                      {eventLog.transaction_quantity.toLocaleString("es-CL")}
+                    </td>
+                    <td className="whitespace-nowrap px-6 text-sm text-gray-900">
+                      {eventLog.client
+                        ? eventLog.client.business_name
+                        : eventLog.supplier && eventLog.supplier.business_name}
+                    </td>
+                    <td>
+                      {eventLog.notes && (
+                        <div className="flex items-center justify-center">
+                          <button
+                            onClick={() => handleOpenNote(eventLog.notes)}
+                          >
+                            <MdOutlineComment />
+                          </button>
+                        </div>
+                      )}
+                    </td>
+                  </tr>
+                ))}
             </tbody>
           </table>
         </div>

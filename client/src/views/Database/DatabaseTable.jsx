@@ -71,7 +71,7 @@ const DatabaseTable = ({ filteredEventLogs, isTableReloading }) => {
                     {eventLog.operation.name}
                   </td>
                   <td className="whitespace-nowrap px-6 text-sm text-gray-900">
-                    {eventLog.user.username}
+                    {eventLog.user}
                   </td>
                   <td className="whitespace-nowrap px-6 text-sm font-bold text-gray-900">
                     {eventLog.tank.name}
@@ -137,7 +137,11 @@ const DatabaseTable = ({ filteredEventLogs, isTableReloading }) => {
           </tbody>
         </table>
       )}
-      <Modal openModal={openNotesModal} toggleModal={toggleModal} height="h-auto">
+      <Modal
+        openModal={openNotesModal}
+        toggleModal={toggleModal}
+        height="h-auto"
+      >
         <div className="overflow-hidden whitespace-normal break-words p-5">
           {selectedNote}
         </div>

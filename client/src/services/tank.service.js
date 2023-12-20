@@ -1,21 +1,28 @@
 import axios from "axios";
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 const API_URL = `${API_BASE_URL}/tank/`;
 
+const accessToken = localStorage.getItem("accessToken");
+const config = (additionalHeaders = {}) => ({
+  headers: { authorization: `Bearer ${accessToken}`, ...additionalHeaders },
+});
+
 const getTanks = () => {
-  return axios.get(API_URL + "all").catch((err) => console.log(err));
+  return axios.get(API_URL + "all", config(accessToken));
 };
 
 const transfer = (action, triggerTankId, selectedTankId, quantity) => {
-  return axios
-    .put(API_URL + "transfer", {
+  return axios.put(
+    API_URL + "transfer",
+    {
       action,
       triggerTankId,
       selectedTankId,
       quantity,
-    })
-    .catch((err) => console.log(err));
+    },
+    config(accessToken),
+  );
 };
 
 const sellOrSupply = (
@@ -27,8 +34,9 @@ const sellOrSupply = (
   quantity,
   notes,
 ) => {
-  return axios
-    .put(API_URL + "sellorsupply", {
+  return axios.put(
+    API_URL + "sellorsupply",
+    {
       action,
       triggerTankId,
       clientSupplierId,
@@ -36,41 +44,50 @@ const sellOrSupply = (
       documentNumber,
       quantity,
       notes,
-    })
-    .catch((err) => console.log(err));
+    },
+    config(accessToken),
+  );
 };
 
-const tankMeasurement = (
-  triggerTankId,
-  quantity,
-  notes
-) => {
-  return axios.put(API_URL + "measurement", {
-    triggerTankId,
-    quantity,
-    notes
-  })
-  .catch((err) => console.log(err));
-}
+const tankMeasurement = (triggerTankId, quantity, notes) => {
+  return axios.put(
+    API_URL + "measurement",
+    {
+      triggerTankId,
+      quantity,
+      notes,
+    },
+    config(accessToken),
+  );
+};
 
 const adjustment = (tankId, changedData) => {
-
-  return axios.put(API_URL + "adjustment", {tankId,
-    changedData
-  })
-  .catch((err) => console.log(err));
+  return axios.put(
+    API_URL + "adjustment",
+    { tankId, changedData },
+    config(accessToken),
+  );
 };
 
-const createTank = (tankName, tankType, tankCapacity, tankGauge, tankNumber) => {
-  return axios.post(API_URL + "create", {
-    tankName,
-    tankType,
-    tankCapacity,
-    tankGauge,
-    tankNumber,
-  })
-  .catch((err) => console.log(err));
-}
+const createTank = (
+  tankName,
+  tankType,
+  tankCapacity,
+  tankGauge,
+  tankNumber,
+) => {
+  return axios.post(
+    API_URL + "create",
+    {
+      tankName,
+      tankType,
+      tankCapacity,
+      tankGauge,
+      tankNumber,
+    },
+    config(accessToken),
+  );
+};
 
 const tankService = {
   getTanks,

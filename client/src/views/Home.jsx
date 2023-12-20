@@ -5,13 +5,25 @@ import { Doughnut } from "react-chartjs-2";
 import moment from "moment-timezone";
 import TankModal from "./Home/TankModal";
 import { Link } from "react-router-dom";
+import { BiLoaderCircle } from "react-icons/bi";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 const Home = () => {
+  const modalViewOptions = {
+    SELECTOR: "SELECTOR",
+    SALE: "SALE",
+    REFILL: "REFILL",
+    TRANSFER: "TRANSFER",
+    MEASURE: "MEASURE",
+    ERRORS: "ERRORS",
+    EVENTLOGS: "EVENTLOGS",
+  };
+
   const { tanks, openBackdrop, setOpenBackdrop } = useContext(AppContext);
   const [openModal, setOpenModal] = useState(false);
   const [action, setAction] = useState("");
+  const [modalView, setModalView] = useState();
   const [triggerTank, setTriggerTank] = useState(null);
   const [dataForTotal, setDataForTotal] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -27,7 +39,7 @@ const Home = () => {
       companyBalance += parseInt(tank.current_quantity);
     });
     const dataForTotal = {};
-    
+
     dataForTotal.companyCapacity = companyCapacity;
     dataForTotal.companyBalance = companyBalance;
     dataForTotal.doughnut = {
@@ -58,6 +70,7 @@ const Home = () => {
 
     if (openModal) {
       setAction(""); // if the toggling is to turn off the modal, then reset the action value
+      setModalView(null);
     }
   };
 
@@ -70,15 +83,19 @@ const Home = () => {
   };
 
   useEffect(() => {
-    companyCard();
-    calcError();
-    setIsLoading(false);
+    if (tanks.length > 0) {
+      companyCard();
+      calcError();
+      setIsLoading(false);
+    }
   }, [tanks]);
 
   return (
     <div className="flex flex-wrap content-between justify-evenly">
       {isLoading ? (
-        <div>cargando...</div>
+        <div className="fixed left-0 top-0 z-50 flex h-screen w-screen items-center justify-center bg-white font-bold">
+          <BiLoaderCircle className="animate-spin text-2xl text-blue-500" />
+        </div>
       ) : (
         <>
           <div className="m-2 flex w-[400px] flex-wrap rounded p-2 shadow-[0_3px_10px_rgb(0,0,0,0.2)]">
@@ -103,6 +120,7 @@ const Home = () => {
               className="my-2 flex w-full flex-col items-center rounded bg-gray-300 shadow-md"
               onClick={() => {
                 setAction("errors");
+                setModalView(modalViewOptions.ERRORS);
                 toggleModal();
               }}
             >
@@ -168,6 +186,7 @@ const Home = () => {
                       className="my-2 flex w-full flex-col items-center rounded bg-gray-200 shadow-md hover:bg-gray-300"
                       onClick={() => {
                         setAction("measure");
+                        setModalView(modalViewOptions.MEASURE);
                         toggleModal(tank);
                       }}
                     >
@@ -191,6 +210,7 @@ const Home = () => {
                       className="btn-success flex-1"
                       onClick={() => {
                         setAction("load");
+                        setModalView(modalViewOptions.SELECTOR);
                         toggleModal(tank);
                       }}
                     >
@@ -201,6 +221,8 @@ const Home = () => {
                       className="btn-success flex-1"
                       onClick={() => {
                         setAction("unload");
+                        // setModalView(modalViewOptions.SALE)
+                        setModalView(modalViewOptions.SELECTOR);
                         toggleModal(tank);
                       }}
                     >
@@ -211,6 +233,7 @@ const Home = () => {
                       className="btn-success w-full"
                       onClick={() => {
                         setAction("eventlogs");
+                        setModalView(modalViewOptions.EVENTLOGS);
                         toggleModal(tank);
                       }}
                     >
@@ -224,6 +247,9 @@ const Home = () => {
             openModal={openModal}
             toggleModal={toggleModal}
             action={action}
+            modalView={modalView}
+            setModalView={setModalView}
+            modalViewOptions={modalViewOptions}
             triggerTank={triggerTank}
           />
         </>
@@ -232,4 +258,4 @@ const Home = () => {
   );
 };
 
-export default Home
+export default Home;

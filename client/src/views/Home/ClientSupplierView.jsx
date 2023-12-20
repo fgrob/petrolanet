@@ -10,7 +10,13 @@ import { BiLoaderCircle } from "react-icons/bi";
 
 // revisar con ia si conviene usar un useReducer
 
-const ClientSupplierView = ({ action, triggerTank, toggleModal, isConfirmationVisible, setIsConfirmationVisible }) => {
+const ClientSupplierView = ({
+  action,
+  triggerTank,
+  toggleModal,
+  isConfirmationVisible,
+  setIsConfirmationVisible,
+}) => {
   const { setTanks } = useContext(AppContext);
   const [clientSupplierList, setClientSupplierList] = useState("");
   const documentOptions = ["SIN DOCUMENTO", "GUIA", "FACTURA"];
@@ -27,6 +33,8 @@ const ClientSupplierView = ({ action, triggerTank, toggleModal, isConfirmationVi
   const [errorMessage, setErrorMessage] = useState("");
   const [autocompleteError, setAutocompleteError] = useState("");
 
+  const [apiError, setApiError] = useState("");
+
   useEffect(() => {
     setClientSupplierId("");
     setRut("");
@@ -38,18 +46,33 @@ const ClientSupplierView = ({ action, triggerTank, toggleModal, isConfirmationVi
 
     setErrorMessage("");
     setAutocompleteError("");
+    setApiError("");
 
     setIsLoading(true);
 
     action === "load"
-      ? supplierService.getSuppliers().then((res) => {
-          setClientSupplierList(res.data);
-          setIsLoading(false);
-        })
-      : clientService.getClients().then((res) => {
-          setClientSupplierList(res.data);
-          setIsLoading(false);
-        });
+      ? supplierService
+          .getSuppliers("inputs")
+          .then((res) => {
+            setClientSupplierList(res.data);
+          })
+          .catch((err) => {
+            setApiError(err.message);
+          })
+          .finally(() => {
+            setIsLoading(false);
+          })
+      : clientService
+          .getClients("inputs")
+          .then((res) => {
+            setClientSupplierList(res.data);
+          })
+          .catch((err) => {
+            setApiError(err.message);
+          })
+          .finally(() => {
+            setIsLoading(false);
+          });
   }, []);
 
   useEffect(() => {
@@ -90,10 +113,8 @@ const ClientSupplierView = ({ action, triggerTank, toggleModal, isConfirmationVi
         setTanks(res.data);
         toggleModal();
       })
-      .catch(() => {
-        setErrorMessage(
-          "Se produjo un error al intentar realizar la transferencia",
-        );
+      .catch((err) => {
+        setErrorMessage(err.message);
       });
   };
 
@@ -174,12 +195,14 @@ const ClientSupplierView = ({ action, triggerTank, toggleModal, isConfirmationVi
                   className="w-full rounded-lg border border-gray-400 px-3 py-2"
                   onChange={(e) => {
                     setDocumentNumber(e.target.value);
-                    e.target.setCustomValidity('');
+                    e.target.setCustomValidity("");
                   }}
                   required
                   pattern="[0-9]*"
                   autoComplete="off"
-                  onInvalid={e => e.target.setCustomValidity("Debes ingresar un folio válido")}
+                  onInvalid={(e) =>
+                    e.target.setCustomValidity("Debes ingresar un folio válido")
+                  }
                 />
               </div>
             )}
@@ -198,13 +221,15 @@ const ClientSupplierView = ({ action, triggerTank, toggleModal, isConfirmationVi
                   if (e.target.value <= 100000) {
                     setQuantity(e.target.value);
                   }
-                  e.target.setCustomValidity('');
+                  e.target.setCustomValidity("");
                 }}
                 className="w-full rounded-lg border border-gray-400 px-3 py-2"
                 required
                 pattern="[0-9]*"
                 autoComplete="off"
-                onInvalid={e => e.target.setCustomValidity("Debes ingresar una cantidad")}
+                onInvalid={(e) =>
+                  e.target.setCustomValidity("Debes ingresar una cantidad")
+                }
               />
             </div>
 
@@ -227,6 +252,7 @@ const ClientSupplierView = ({ action, triggerTank, toggleModal, isConfirmationVi
               </button>
             </div>
             <div className="text-center text-red-600">{errorMessage}</div>
+            <div className="text-center text-red-600">{apiError}</div>
           </form>
         )
       ) : (

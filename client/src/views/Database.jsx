@@ -4,7 +4,7 @@ import { BiLoaderCircle } from "react-icons/bi";
 import FiltersBar from "./Database/FiltersBar";
 import DatabaseTable from "./Database/DatabaseTable";
 
-const Database = ({setNavBarVisibility, setSideBarVisibility}) => {
+const Database = ({ setNavBarVisibility, setSideBarVisibility }) => {
   const [eventLogs, setEventLogs] = useState([]);
   const [filters, setFilters] = useState();
   const [filteredEventLogs, setFilteredEventLogs] = useState([]);
@@ -12,24 +12,22 @@ const Database = ({setNavBarVisibility, setSideBarVisibility}) => {
 
   const [isLoading, setIsLoading] = useState(true);
   const [isTableReloading, setIsTableReloading] = useState(false); // for refetch eventlogs while keeping the currents filters
+  const [apiError, setApiError] = useState("");
 
   const fetchEventLogs = (startDate, endDate) => {
     eventLogService
       .getEventLogs(startDate, endDate)
       .then((res) => {
-        console.log(res.data); // BORRAR
         setEventLogs(res.data);
         setFilteredEventLogs(res.data);
 
         const { filters, clientSupplierList } =
           createFiltersAndClientSupplierList(res.data);
         setFilters(filters);
-        console.log(filters); // BORRAR
         setClientSupplierList(clientSupplierList);
       })
       .catch((err) => {
-        console.log(err); // borrar ?
-        // error management *
+        setApiError(err.message);
       })
       .finally(() => {
         setIsLoading(false);
@@ -51,7 +49,7 @@ const Database = ({setNavBarVisibility, setSideBarVisibility}) => {
     eventLogs.forEach((eventLog) => {
       tankSet.add(eventLog.tank.name);
       operationSet.add(eventLog.operation.name);
-      userSet.add(eventLog.user.username);
+      userSet.add(eventLog.user);
       tankTypeSet.add(eventLog.tank.type);
 
       if (eventLog.client) {
@@ -127,8 +125,6 @@ const Database = ({setNavBarVisibility, setSideBarVisibility}) => {
     // Filters the 'eventLogs' data based on selected filters and stores the result in the 'filteredEventLogs' state, which is used to construct the table.
 
     if (filters !== undefined) {
-      console.log(filters); // BORRAR
-
       const filteredData = eventLogs.filter((eventLog) => {
         let isClientFiltered = true;
         let isSupplierFiltered = true;
@@ -144,7 +140,7 @@ const Database = ({setNavBarVisibility, setSideBarVisibility}) => {
           isSupplierFiltered = filters.clientSupplierFilters["(SIN DATA)"];
         }
 
-        const isUserFiltered = filters.userFilters[eventLog.user.username];
+        const isUserFiltered = filters.userFilters[eventLog.user];
         const isOperationFiltered =
           filters.operationFilters[eventLog.operation.name];
         const isTankTypeFiltered = filters.tankTypeFilters[eventLog.tank.type];
@@ -178,7 +174,6 @@ const Database = ({setNavBarVisibility, setSideBarVisibility}) => {
           isDocumentNumberFiltered
         );
       });
-      console.log('Data Filtered: ', filteredData) // BORRAR
       setFilteredEventLogs(filteredData);
     }
   };
@@ -192,31 +187,37 @@ const Database = ({setNavBarVisibility, setSideBarVisibility}) => {
     return () => {
       setNavBarVisibility(true);
       setSideBarVisibility(true);
-    }
+    };
   }, []);
 
   return (
-    <div className="flex border flex-col overflow-hidden bg-white h-screen pt-1">
+    <div className="flex h-screen flex-col overflow-hidden border bg-white pt-1">
       {isLoading ? (
         <div className="flex h-screen items-center justify-center ">
           <BiLoaderCircle className="animate-spin text-2xl text-blue-500" />
         </div>
       ) : (
         <>
-          <FiltersBar
-            eventLogs={eventLogs}
-            filters={filters}
-            setFilters={setFilters}
-            generateFilteredEventLogs={generateFilteredEventLogs}
-            filteredEventLogs={filteredEventLogs}
-            clientSupplierList={clientSupplierList}
-            fetchEventLogs={fetchEventLogs}
-            setIsTableReloading={setIsTableReloading}
-          />
-          <DatabaseTable
-            filteredEventLogs={filteredEventLogs}
-            isTableReloading={isTableReloading}
-          />
+          {!apiError ? (
+            <>
+              <FiltersBar
+                eventLogs={eventLogs}
+                filters={filters}
+                setFilters={setFilters}
+                generateFilteredEventLogs={generateFilteredEventLogs}
+                filteredEventLogs={filteredEventLogs}
+                clientSupplierList={clientSupplierList}
+                fetchEventLogs={fetchEventLogs}
+                setIsTableReloading={setIsTableReloading}
+              />
+              <DatabaseTable
+                filteredEventLogs={filteredEventLogs}
+                isTableReloading={isTableReloading}
+              />
+            </>
+          ) : (
+            <div className="text-center font-bold text-red-500">{apiError}</div>
+          )}
         </>
       )}
     </div>

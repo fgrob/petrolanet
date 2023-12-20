@@ -4,18 +4,16 @@ const { tank: Tank, eventLog: EventLog } = db;
 const getTanks = async (req, res) => {
   try {
     const tanks = await Tank.findAll();
-    console.log('ACA VAN LAS VARIABLES DE ENTORNOOOOOOOOOOOOOOOOOO QLAO')
-    console.log(process.env.PUERTO)
     res.json(tanks);
   } catch (err) {
-    console.error("Error fetching tanks: ", err);
     res.status(500).json({ err: "Internal server error" });
   }
 };
 
 const createTank = async (req, res) => {
   try {
-    const { tankName, tankType, tankCapacity, tankGauge, tankNumber } = req.body;
+    const { tankName, tankType, tankCapacity, tankGauge, tankNumber } =
+      req.body;
 
     const tankData = {
       name: tankName,
@@ -25,22 +23,23 @@ const createTank = async (req, res) => {
       tank_number: tankNumber,
     };
 
-    if (tankNumber === ""){ // the model defaults to 0 for non-provided keys
+    if (tankNumber === "") {
+      // the model defaults to 0 for non-provided keys
       delete tankData.tank_number;
-    };
+    }
 
     await Tank.create(tankData);
 
     const updatedTanks = await Tank.findAll();
     return res.status(200).json(updatedTanks);
   } catch (err) {
-    console.error("Error creating a tank", err);
     res.status(500).json({ error: "Internal server error" });
   }
 };
 
 const transferOperation = async (req, res) => {
   const { action, triggerTankId, selectedTankId, quantity } = req.body;
+  const username = req.auth.payload.username;
   const intQuantity = parseInt(quantity);
 
   try {
@@ -78,25 +77,21 @@ const transferOperation = async (req, res) => {
 
       //Event Logs Origin Tank
       await EventLog.create({
-        // operation_id: 2, // load
         operation_id: 3, // traspaso
-        user_id: 1, // CORREGIR ESTO *********************************************
+        user: username,
         tank_id: originTankId,
         transaction_quantity: intQuantity * -1,
         balance: originTank.current_quantity,
-        // error_quantity: originTank.error_quantity,
         tank_number_to_date: originTank.tank_number,
       });
 
       //Event logs Destination Tank
       await EventLog.create({
-        // operation_id: 1, // unload
         operation_id: 3,
-        user_id: 1, // *********************************
+        user: username,
         tank_id: destinationTankId,
         transaction_quantity: intQuantity,
         balance: destinationTank.current_quantity,
-        // error_quantity: destinationTank.error_quantity,
         tank_number_to_date: destinationTank.tank_number,
       });
     });
@@ -121,6 +116,7 @@ const sellOrSupplyOperation = async (req, res) => {
     notes,
   } = req.body;
 
+  const username = req.auth.payload.username;
   let operationId;
   let clientId;
   let supplierId;
@@ -155,11 +151,10 @@ const sellOrSupplyOperation = async (req, res) => {
 
       await EventLog.create({
         operation_id: operationId,
-        user_id: 1, // CORREGIR ESTO *****************
+        user: username,
         tank_id: triggerTankId,
         transaction_quantity: intQuantity,
         balance: triggerTank.current_quantity,
-        // error_quantity: triggerTank.error_quantity,
         tank_number_to_date: triggerTank.tank_number,
         document_type: selectedDocument,
         document_number: parsedDocumentNumber,
@@ -180,6 +175,7 @@ const sellOrSupplyOperation = async (req, res) => {
 
 const measurementOperation = async (req, res) => {
   const { triggerTankId, quantity, notes } = req.body;
+  const username = req.auth.payload.username;
   const intQuantity = parseInt(quantity);
   const operationId = 5;
 
@@ -194,7 +190,7 @@ const measurementOperation = async (req, res) => {
 
       await EventLog.create({
         operation_id: operationId,
-        user_id: 1, // CORREGIR ESTO ********
+        user: username,
         tank_id: triggerTankId,
         balance: triggerTank.current_quantity,
         measured_balance: intQuantity,
@@ -215,9 +211,8 @@ const measurementOperation = async (req, res) => {
 
 const adjustmentOperation = async (req, res) => {
   const tankId = req.body.tankId;
+  const username = req.auth.payload.username;
   const changedData = req.body.changedData;
-
-  console.log(changedData);
 
   try {
     //Start a transaction
@@ -257,7 +252,7 @@ const adjustmentOperation = async (req, res) => {
       ) {
         await EventLog.create({
           operation_id: 4, // adjustment
-          user_id: 1, // ********************
+          user: username,
           tank_id: tankId,
           transaction_quantity: transaction_quantity,
           balance: new_current_quantity,

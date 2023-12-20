@@ -84,7 +84,6 @@ const TotalsBox = ({
         const supplier = eventLog.supplier.business_name;
 
         const transaction_quantity = parseInt(eventLog.transaction_quantity);
-        console.log(supplier);
         supplierMap[supplier] =
           (supplierMap[supplier] || 0) + transaction_quantity;
       }

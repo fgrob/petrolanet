@@ -1,34 +1,54 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useContext } from "react";
 import { IoHomeSharp } from "react-icons/io5";
-import { RiMailSendFill } from "react-icons/ri";
 import { AiFillDatabase } from "react-icons/ai";
 import { AiTwotoneSetting } from "react-icons/ai";
 import { IoClose } from "react-icons/io5";
 import { Link } from "react-router-dom";
 import { useLocation } from "react-router-dom";
-
+import { AppContext } from "../App";
 
 const SideBar = ({ sideBarState, dispatchSideBarState }) => {
   const [openSubmenus, setOpenSubmenus] = useState({
     Ajustes: false,
   });
   const location = useLocation();
+  const { userPermissions } = useContext(AppContext);
+  const hasAdminPermissions = userPermissions.some((permission) =>
+    permission.startsWith("admin:"),
+  );
 
   const Menus = [
-    { title: "Inicio", icon: IoHomeSharp, link: "/" },
-    // { title: "Solicitudes", icon: RiMailSendFill, link: "/" },
-    { title: "Base de datos", icon: AiFillDatabase, link: "/database" },
+    { title: "Inicio", icon: IoHomeSharp, link: "/", visible: true },
+    // { title: "Solicitudes", icon: RiMailSendFill, link: "/", visible: true },
+    {
+      title: "Base de datos",
+      icon: AiFillDatabase,
+      link: "/database",
+      visible: true,
+    },
     {
       title: "Ajustes",
       icon: AiTwotoneSetting,
+      visible: hasAdminPermissions,
       submenus: [
         {
           title: "Ajustar Estanques",
           icon: AiFillDatabase,
           link: "/adjustment",
+          visible: userPermissions.includes("admin:tanks_adjustments"),
         },
-        { title: "Clientes", icon: AiFillDatabase, link: "/clientlist" },
-        { title: "Proveedores", icon: AiFillDatabase, link: "/supplierlist" },
+        {
+          title: "Clientes",
+          icon: AiFillDatabase,
+          link: "/clientlist",
+          visible: userPermissions.includes("admin:clients_adjustments"),
+        },
+        {
+          title: "Proveedores",
+          icon: AiFillDatabase,
+          link: "/supplierlist",
+          visible: userPermissions.includes("admin:suppliers_adjustments"),
+        },
       ],
     },
   ];
@@ -99,7 +119,7 @@ const SideBar = ({ sideBarState, dispatchSideBarState }) => {
   useEffect(() => {
     // For mobile screens: If the location changes, close the sidebar and backdrop
     dispatchSideBarState({ type: "CLOSE_STATE" });
-  }, [location])
+  }, [location]);
 
   return (
     <aside
@@ -121,52 +141,60 @@ const SideBar = ({ sideBarState, dispatchSideBarState }) => {
       </div>
 
       <div className="mt-5 flex flex-col">
-        {Menus.map((Menu) => (
-          <div key={Menu.title}>
-            {Menu.submenus ? (
-              <button
-                className="group w-full flex whitespace-nowrap rounded-lg p-4 hover:bg-gray-200"
-                onClick={() => handleSubmenuClick(Menu.title)}
-              >
-                <Menu.icon className="h-7 w-7 flex-shrink-0 text-gray-500 transition duration-100 group-hover:text-gray-900 lg:h-6 lg:w-6" />
-                <span className="ml-4 text-2xl lg:text-base lg:font-bold">
-                  {Menu.title}
-                </span>
-              </button>
-            ) : (
-              <Link
-              to={Menu.link}
-              className="group flex whitespace-nowrap rounded-lg p-4 hover:bg-gray-200"
-            >
-              <Menu.icon className="h-7 w-7 flex-shrink-0 text-gray-500 transition duration-100 group-hover:text-gray-900 lg:h-6 lg:w-6" />
-              <span className="ml-4 text-2xl lg:text-base lg:font-bold">
-                {Menu.title}
-              </span>
-            </Link>
-            )}
-
-            {/* Submenus */}
-            {Menu.submenus && (
-              <div
-                className={`ml-8 overflow-hidden ${
-                  openSubmenus[Menu.title] ? "max-h-60" : "invisible max-h-0"
-                } transition-all duration-300 ease-in-out`}
-              >
-                {Menu.submenus.map((submenu, subIndex) => (
-                  <Link
-                    key={subIndex}
-                    to={submenu.link}
-                    className="group flex whitespace-nowrap rounded-lg px-4 py-2 hover:bg-gray-200"
+        {Menus.map(
+          (Menu) =>
+            Menu.visible && (
+              <div key={Menu.title}>
+                {Menu.submenus ? (
+                  <button
+                    className="group flex w-full whitespace-nowrap rounded-lg p-4 hover:bg-gray-200"
+                    onClick={() => handleSubmenuClick(Menu.title)}
                   >
+                    <Menu.icon className="h-7 w-7 flex-shrink-0 text-gray-500 transition duration-100 group-hover:text-gray-900 lg:h-6 lg:w-6" />
                     <span className="ml-4 text-2xl lg:text-base lg:font-bold">
-                      {submenu.title}
+                      {Menu.title}
+                    </span>
+                  </button>
+                ) : (
+                  <Link
+                    to={Menu.link}
+                    className="group flex whitespace-nowrap rounded-lg p-4 hover:bg-gray-200"
+                  >
+                    <Menu.icon className="h-7 w-7 flex-shrink-0 text-gray-500 transition duration-100 group-hover:text-gray-900 lg:h-6 lg:w-6" />
+                    <span className="ml-4 text-2xl lg:text-base lg:font-bold">
+                      {Menu.title}
                     </span>
                   </Link>
-                ))}
+                )}
+
+                {/* Submenus */}
+                {Menu.submenus && (
+                  <div
+                    className={`ml-8 overflow-hidden ${
+                      openSubmenus[Menu.title]
+                        ? "max-h-60"
+                        : "invisible max-h-0"
+                    } transition-all duration-300 ease-in-out`}
+                  >
+                    {Menu.submenus.map(
+                      (submenu, subIndex) =>
+                        submenu.visible && (
+                          <Link
+                            key={subIndex}
+                            to={submenu.link}
+                            className="group flex whitespace-nowrap rounded-lg px-4 py-2 hover:bg-gray-200"
+                          >
+                            <span className="ml-4 text-2xl lg:text-base lg:font-bold">
+                              {submenu.title}
+                            </span>
+                          </Link>
+                        ),
+                    )}
+                  </div>
+                )}
               </div>
-            )}
-          </div>
-        ))}
+            ),
+        )}
       </div>
     </aside>
   );

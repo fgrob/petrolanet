@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import clientService from "../../services/client.service";
 import supplierService from "../../services/supplier.service";
 
@@ -14,8 +14,10 @@ const CreateAndEditModal = ({
   businessName,
   setBusinessName,
   alias,
-  setAlias
+  setAlias,
 }) => {
+  const [apiError, setApiError] = useState("");
+
   const handleKeyDown = (e) => {
     if (e.key === "Enter") {
       e.preventDefault();
@@ -91,15 +93,21 @@ const CreateAndEditModal = ({
 
     const handleSubmitCreation = () => {
       if (target === "clients") {
-        clientService.createClient(rut, businessName, alias).then((res) => {
-          setClientSupplierList(res.data);
-          toggleModal();
-        });
+        clientService
+          .createClient(rut, businessName, alias)
+          .then((res) => {
+            setClientSupplierList(res.data);
+            toggleModal();
+          })
+          .catch((err) => setApiError(err.message));
       } else if (target === "suppliers") {
-        supplierService.createSupplier(rut, businessName, alias).then((res) => {
-          setClientSupplierList(res.data);
-          toggleModal();
-        });
+        supplierService
+          .createSupplier(rut, businessName, alias)
+          .then((res) => {
+            setClientSupplierList(res.data);
+            toggleModal();
+          })
+          .catch((err) => setApiError(err.message));
       }
     };
 
@@ -108,17 +116,18 @@ const CreateAndEditModal = ({
         clientService
           .editClient(idToEdit, rut, businessName, alias)
           .then((res) => {
-            console.log(res.data);
             setClientSupplierList(res.data);
             toggleModal();
-          });
+          })
+          .catch((err) => setApiError(err.message));
       } else if (target === "suppliers") {
         supplierService
           .editSupplier(idToEdit, rut, businessName, alias)
           .then((res) => {
             setClientSupplierList(res.data);
             toggleModal();
-          });
+          })
+          .catch((err) => setApiError(err.message));
       }
     };
 
@@ -126,7 +135,7 @@ const CreateAndEditModal = ({
       return;
     }
     if (!editMode) {
-        handleSubmitCreation();
+      handleSubmitCreation();
     } else {
       handleSubmitEdition();
     }
@@ -209,6 +218,7 @@ const CreateAndEditModal = ({
           </button>
         </div>
       </form>
+      <div className="text-center font-bold text-red-500">{apiError}</div>
     </div>
   );
 };

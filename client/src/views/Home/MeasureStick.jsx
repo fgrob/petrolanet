@@ -8,18 +8,19 @@ const MeasureStick = ({ triggerTank, toggleModal }) => {
   const [quantity, setQuantity] = useState("");
   const [notes, setNotes] = useState("");
 
+  const [apiError, setApiError] = useState("");
+
   const handleMeasure = (e) => {
     e.preventDefault();
 
     tankService
       .tankMeasurement(triggerTank.id, quantity, notes)
       .then((res) => {
-        console.log(res.data);
         setTanks(res.data);
         toggleModal();
       })
-      .catch(() => {
-        console.log("ERROR");
+      .catch((err) => {
+        setApiError(err.message);
       });
   };
 
@@ -41,7 +42,7 @@ const MeasureStick = ({ triggerTank, toggleModal }) => {
               if (e.target.value <= 100000) {
                 setQuantity(e.target.value);
               }
-              e.target.setCustomValidity('');
+              e.target.setCustomValidity("");
             }}
             className="h-12 w-full rounded-lg border border-gray-400 px-3"
             required
@@ -72,6 +73,7 @@ const MeasureStick = ({ triggerTank, toggleModal }) => {
             Confirmar medición
           </button>
         </div>
+        <div className="text-center text-red-600">{apiError}</div>
       </form>
     </div>
   );

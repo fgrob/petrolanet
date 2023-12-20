@@ -41,22 +41,11 @@ const Modal = ({ height, weight, openModal, toggleModal, children }) => {
     if (openModal) {
       document.body.style.overflow = "hidden";
     }
-    //  else {
-    //   document.body.style.overflow = "auto";
-    //   console.log('autooooooooooooooo')
-    // }
 
     return () => {
       document.body.style.overflow = "auto";
     };
   }, [openModal]);
-
-  useEffect(() => {
-    console.log("montando el <Modal");
-    return () => {
-      console.log("desmontando el <Modal");
-    };
-  }, []);
 
   return (
     <div
@@ -77,7 +66,7 @@ const Modal = ({ height, weight, openModal, toggleModal, children }) => {
       >
         <button
           onClick={toggleModal}
-          className="absolute right-1 top-1 md:top-2 z-50 h-9 w-9"
+          className="absolute right-1 top-1 z-50 h-9 w-9 md:top-2"
         >
           <IoClose className="h-full w-full" />
         </button>

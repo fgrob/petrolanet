@@ -23,10 +23,10 @@ export default {
         },
       },
       width: {
-        '1/8': '12.5%',
+        "1/8": "12.5%",
       },
       transitionProperty: {
-        'height':'height'
+        height: "height",
       },
     },
   },

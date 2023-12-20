@@ -117,7 +117,6 @@ const TankAdjustment = () => {
   const adjustErrorAndCurrentQuantity = (tankName) => {
     // Adjusts the current quantity by summing the error quantity
 
-    console.log("ejecutnado el neteo");
     const newInputStates = { ...inputStates };
 
     newInputStates[tankName]["current_quantity"].disabled = false;
@@ -148,10 +147,9 @@ const TankAdjustment = () => {
   };
 
   const handleConfirmationButton = (tankId, tankName) => {
-
     const identifiers = {
       id: tankId,
-      name: tankName
+      name: tankName,
     };
     setSelectedTankIdentifiers(identifiers);
 
@@ -176,7 +174,6 @@ const TankAdjustment = () => {
       // Guard clause. We need the tanks first
       return;
     }
-    console.log(tanks);
     initializeEditStates();
     setIsLoading(false);
   }, [tanks]);
@@ -189,12 +186,15 @@ const TankAdjustment = () => {
         </div>
       ) : (
         <>
-        <div className="w-5/6 mx-4 my-3 justify-center flex">
-          <button className="btn-success-small font-bold px-4 bg-yellow-400" onClick={toggleAddTankModal}>
-            Añadir Estanque
-          </button>
-        </div>
-        <hr className="divider" />
+          <div className="mx-4 my-3 flex w-5/6 justify-center">
+            <button
+              className="btn-success-small bg-yellow-400 px-4 font-bold"
+              onClick={toggleAddTankModal}
+            >
+              Añadir Estanque
+            </button>
+          </div>
+          <hr className="divider" />
 
           {tanks
             .sort((a, b) => a.id - b.id)
@@ -317,21 +317,28 @@ const TankAdjustment = () => {
                         Saldo
                       </label>
                       <div className="relative w-1/2">
-                        {inputStates[tank.name]['current_quantity'].originalValue !=
-                          inputStates[tank.name]['current_quantity'].updatedValue && (
+                        {inputStates[tank.name]["current_quantity"]
+                          .originalValue !=
+                          inputStates[tank.name]["current_quantity"]
+                            .updatedValue && (
                           <div className="absolute start-2 top-0.5 text-xs text-red-500">
                             Valor actual:{" "}
-                            {inputStates[
-                              tank.name
-                            ]['current_quantity'].originalValue.toLocaleString("es-CL")}
+                            {inputStates[tank.name][
+                              "current_quantity"
+                            ].originalValue.toLocaleString("es-CL")}
                           </div>
                         )}
                         <input
                           id={`tankCurrentQuantity${tank.id}`}
-                          value={inputStates[tank.name]['current_quantity'].updatedValue}
+                          value={
+                            inputStates[tank.name]["current_quantity"]
+                              .updatedValue
+                          }
                           type="number"
                           className="w-full border p-3"
-                          disabled={inputStates[tank.name]['current_quantity'].disabled}
+                          disabled={
+                            inputStates[tank.name]["current_quantity"].disabled
+                          }
                           onChange={(e) =>
                             handleInputChange(
                               tank.name,
@@ -381,8 +388,12 @@ const TankAdjustment = () => {
                               .updatedValue
                           }
                           type="number"
-                          className={`w-full border font-bold p-3 ${inputStates[tank.name]["error_quantity"]
-                          .updatedValue < 0 ? "text-red-500" : "text-ocean-green-500"}`}
+                          className={`w-full border p-3 font-bold ${
+                            inputStates[tank.name]["error_quantity"]
+                              .updatedValue < 0
+                              ? "text-red-500"
+                              : "text-ocean-green-500"
+                          }`}
                           disabled={
                             inputStates[tank.name]["error_quantity"].disabled
                           }
@@ -518,7 +529,9 @@ const TankAdjustment = () => {
                         <div className="flex w-full justify-center p-2">
                           <button
                             className="rounded-lg border border-black bg-blue-100 px-2 italic hover:bg-blue-200 "
-                            onClick={() => adjustErrorAndCurrentQuantity(tank.name)}
+                            onClick={() =>
+                              adjustErrorAndCurrentQuantity(tank.name)
+                            }
                           >
                             Ajustar Saldo según diferencia
                           </button>
@@ -550,19 +563,19 @@ const TankAdjustment = () => {
         </>
       )}
       {openConfirmationModal && (
-      <Modal
-        openModal={openConfirmationModal}
-        toggleModal={toggleConfirmationModal}
-        height="h-auto"
-      >
-        {selectedTankData.hasOwnProperty("type") && (
-          <ConfirmationModal
-            selectedTankIdentifiers={selectedTankIdentifiers}
-            selectedTankData={selectedTankData}
-            toggleModal={toggleConfirmationModal}
-          />
-        )}
-      </Modal>
+        <Modal
+          openModal={openConfirmationModal}
+          toggleModal={toggleConfirmationModal}
+          height="h-auto"
+        >
+          {selectedTankData.hasOwnProperty("type") && (
+            <ConfirmationModal
+              selectedTankIdentifiers={selectedTankIdentifiers}
+              selectedTankData={selectedTankData}
+              toggleModal={toggleConfirmationModal}
+            />
+          )}
+        </Modal>
       )}
       {openAddTankModal && (
         <Modal
@@ -570,7 +583,12 @@ const TankAdjustment = () => {
           toggleModal={toggleAddTankModal}
           height="h-auto"
         >
-          <AddTankModal toggleModal={toggleAddTankModal} typeOptions={typeOptions} tankGaugeOptions={tankGaugeOptions} setIsLoading={setIsLoading}/>
+          <AddTankModal
+            toggleModal={toggleAddTankModal}
+            typeOptions={typeOptions}
+            tankGaugeOptions={tankGaugeOptions}
+            setIsLoading={setIsLoading}
+          />
         </Modal>
       )}
     </div>

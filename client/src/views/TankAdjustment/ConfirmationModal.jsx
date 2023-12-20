@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import tankService from "../../services/tank.service";
 import { AppContext } from "../../App";
 
@@ -8,6 +8,8 @@ const ConfirmationModal = ({
   toggleModal,
 }) => {
   const { setTanks } = useContext(AppContext);
+  const [apiError, setApiError] = useState("");
+
   const keyLabels = {
     type: "Tipo",
     capacity: "Capacidad",
@@ -18,25 +20,21 @@ const ConfirmationModal = ({
   };
 
   const formattedData = (key, value) => {
-
-    if (typeof value === "string"){
-        const parsedValue = parseInt(value);
-        return isNaN(parsedValue) ? value : parsedValue.toLocaleString("es-CL");
-    } else if (typeof value === "number"){
-        return key !== "tank_number" ? value.toLocaleString("es-CL") : value;
+    if (typeof value === "string") {
+      const parsedValue = parseInt(value);
+      return isNaN(parsedValue) ? value : parsedValue.toLocaleString("es-CL");
+    } else if (typeof value === "number") {
+      return key !== "tank_number" ? value.toLocaleString("es-CL") : value;
     } else if (typeof value === "boolean") {
-        return value ? "Sí" : "No";
-      } else {
-        return value
-      }
-
+      return value ? "Sí" : "No";
+    } else {
+      return value;
+    }
   };
 
   const setUpdatedData = () => {
-    console.log(selectedTankData);
     const tankId = selectedTankIdentifiers.id;
-    const changedData = {
-    };
+    const changedData = {};
 
     for (const [key, value] of Object.entries(selectedTankData)) {
       if (value.originalValue != value.updatedValue) {
@@ -44,10 +42,15 @@ const ConfirmationModal = ({
       }
     }
 
-    tankService.adjustment(tankId, changedData).then((res) => {
-      setTanks(res.data)
-      toggleModal();
-    });
+    tankService
+      .adjustment(tankId, changedData)
+      .then((res) => {
+        setTanks(res.data);
+        toggleModal();
+      })
+      .catch((err) => {
+        setApiError(err.message);
+      });
   };
 
   return (
@@ -110,6 +113,7 @@ const ConfirmationModal = ({
           Confirmar
         </button>
       </div>
+      <div className="text-center font-bold text-red-500">{apiError}</div>
     </div>
   );
 };

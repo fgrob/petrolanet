@@ -3,8 +3,7 @@ import { PiArrowSquareOutDuotone } from "react-icons/pi";
 import { PiArrowSquareInDuotone } from "react-icons/pi";
 import { PiArrowsCounterClockwiseFill } from "react-icons/pi";
 
-const SelectorView = ({action, modalView, setSelectedView}) => {
-
+const SelectorView = ({ action, modalViewOptions, setModalView }) => {
   return (
     <div className="flex flex-col flex-wrap items-center justify-evenly gap-5 md:flex-row md:content-center">
       <div className="relative w-full text-center text-2xl font-bold">
@@ -16,7 +15,7 @@ const SelectorView = ({action, modalView, setSelectedView}) => {
           type="button"
           className="relative rounded-lg border-2 border-gray-500 p-10 shadow-md hover:opacity-50"
           onClick={() => {
-            setSelectedView(modalView.TRANSFER);
+            setModalView(modalViewOptions.TRANSFER);
           }}
         >
           <PiArrowsCounterClockwiseFill className="h-28 w-28 text-gray-600 md:h-14 md:w-14" />
@@ -30,8 +29,10 @@ const SelectorView = ({action, modalView, setSelectedView}) => {
           type="button"
           className="relative rounded-lg border-2 border-gray-600 p-10 shadow-md hover:opacity-50"
           onClick={() =>
-            setSelectedView(
-              action === "load" ? modalView.REFILL : modalView.SALE,
+            setModalView(
+              action === "load"
+                ? modalViewOptions.REFILL
+                : modalViewOptions.SALE,
             )
           }
         >

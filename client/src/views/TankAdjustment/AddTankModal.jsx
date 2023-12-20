@@ -16,15 +16,20 @@ const AddTankModal = ({
   const [tankGauge, setTankGauge] = useState(tankGaugeOptions[1].value);
   const [tankNumber, setTankNumber] = useState("");
 
+  const [apiError, setApiError] = useState("");
+
   const handleSubmit = (e) => {
     e.preventDefault();
 
     tankService
       .createTank(tankName, tankType, tankCapacity, tankGauge, tankNumber)
       .then((res) => {
-        setIsLoading(true);
         setTanks(res.data);
         toggleModal();
+        setIsLoading(true);
+      })
+      .catch((err) => {
+        setApiError(err.message);
       });
   };
 
@@ -203,6 +208,7 @@ const AddTankModal = ({
             Añadir
           </button>
         </div>
+        <div className="text-center font-bold text-red-500">{apiError}</div>
       </form>
     </div>
   );

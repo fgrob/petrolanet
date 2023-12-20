@@ -13,7 +13,7 @@ const ConfirmationView = ({
   selectedTank = null,
   clientSupplier = null,
   handleConfirmation,
-  transferError
+  transferError,
 }) => {
   let originType;
   let originName;
@@ -104,17 +104,22 @@ const ConfirmationView = ({
           {parseInt(quantity).toLocaleString("es-CL")} Lts
         </div>
         <div className="col-span-2 flex justify-around p-1">
-          <button className="btn-error" onClick={() => setIsConfirmationVisible(false)}>
+          <button
+            className="btn-error"
+            onClick={() => setIsConfirmationVisible(false)}
+          >
             Cancelar
           </button>
-          <button className="btn-success" onClick={handleConfirmation}>Confirmar</button>
+          <button className="btn-success" onClick={handleConfirmation}>
+            Confirmar
+          </button>
         </div>
       </div>
-        {transferError !== '' && (
-          <div className="text-red-500 text-center w-full mt-2">
-              {transferError}
-          </div>
-        )}
+      {transferError !== "" && (
+        <div className="mt-2 w-full text-center font-bold text-red-500">
+          {transferError}
+        </div>
+      )}
     </div>
   );
 };

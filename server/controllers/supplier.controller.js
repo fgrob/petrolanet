@@ -6,7 +6,6 @@ const getSuppliers = async (req, res) => {
     const supplier = await Supplier.findAll();
     res.json(supplier);
   } catch (err) {
-    console.log("Error fetching Suppliers: ", err);
     res.status(500).json({ err: "Internal server error" });
   }
 };
@@ -22,8 +21,7 @@ const createSupplier = async (req, res) => {
 
     const updatedSuppliers = await Supplier.findAll();
     res.status(200).json(updatedSuppliers);
-  } catch (err){
-    console.log("Error creating supplier", err);
+  } catch (err) {
     res.status(500).json({ error: "Internal server error" });
   }
 };
@@ -39,7 +37,6 @@ const editSupplier = async (req, res) => {
     const updatedSuppliers = await Supplier.findAll();
     res.status(200).json(updatedSuppliers);
   } catch (err) {
-    console.log("Error editing client", err);
     res.status(500).json({ error: "Internal server error" });
   }
 };

@@ -8,75 +8,51 @@ import ErrorsView from "./ErrorsView";
 import Modal from "../../components/Modal";
 import EventsView from "./EventsView";
 
-const TankModal = ({ openModal, toggleModal, action, triggerTank }) => {
-
+const TankModal = ({
+  openModal,
+  toggleModal,
+  modalView,
+  setModalView,
+  modalViewOptions,
+  action,
+  triggerTank,
+}) => {
   const [height, setHeight] = useState(null);
-
-  const modalView = {
-    SELECTOR: "SELECTOR",
-    SALE: "SALE",
-    REFILL: "REFILL",
-    TRANSFER: "TRANSFER",
-    MEASURE: "MEASURE",
-    ERRORS: "ERRORS",
-    EVENTLOGS: "EVENTLOGS",
-  };
-
-  const [selectedView, setSelectedView] = useState();
   const [isConfirmationVisible, setIsConfirmationVisible] = useState(false);
 
-
   useEffect(() => {
-    console.log('ejecutando useEffect del tankModal')
-    console.log('a ver selectedView: ', selectedView)
     setIsConfirmationVisible(false);
-
-    if (action === "measure") {
-      setSelectedView(modalView.MEASURE);
-    } else if (action === "errors") {
-      setSelectedView(modalView.ERRORS);
-    } else if (action === "eventlogs"){
-      setSelectedView(modalView.EVENTLOGS);
-    } else {
-      setSelectedView(modalView.SELECTOR);
-    }
-
-    return (() => {
-      console.log('...desmontando tankModal')
-    })
-
   }, [openModal]);
 
   return (
     <Modal openModal={openModal} toggleModal={toggleModal} height={height}>
-      
       {/* Back Arrow */}
-      {selectedView !== modalView.SELECTOR &&
-        selectedView !== modalView.MEASURE &&
-        selectedView !== modalView.ERRORS && 
-        selectedView !== modalView.EVENTLOGS && (
+      {modalView !== modalViewOptions.SELECTOR &&
+        modalView !== modalViewOptions.MEASURE &&
+        modalView !== modalViewOptions.ERRORS &&
+        modalView !== modalViewOptions.EVENTLOGS && (
           <button
-          onClick={() => {
-            isConfirmationVisible
-            ? setIsConfirmationVisible(false)
-            : setSelectedView(modalView.SELECTOR);
-          }}
-          className="absolute left-1 top-1"
+            onClick={() => {
+              isConfirmationVisible
+                ? setIsConfirmationVisible(false)
+                : setModalView(modalViewOptions.SELECTOR);
+            }}
+            className="absolute left-1 top-1"
           >
             <IoArrowBack className="h-9 w-9" />
           </button>
         )}
 
-        {/* MODAL DE SELECCION  */}
-      {openModal && selectedView === modalView.SELECTOR && (
+      {/* MODAL DE SELECCION  */}
+      {openModal && modalView === modalViewOptions.SELECTOR && (
         <SelectorView
           action={action}
-          modalView={modalView}
-          setSelectedView={setSelectedView}
+          modalViewOptions={modalViewOptions}
+          setModalView={setModalView}
         />
       )}
       {/* MODAL DE TRANSFERENCIA  */}
-      {openModal && selectedView === modalView.TRANSFER && (
+      {openModal && modalView === modalViewOptions.TRANSFER && (
         <TransferView
           action={action}
           triggerTank={triggerTank}
@@ -88,8 +64,8 @@ const TankModal = ({ openModal, toggleModal, action, triggerTank }) => {
       )}
       {/* MODAL CLIENTE PROVEEDOR */}
       {openModal &&
-        (selectedView === modalView.REFILL ||
-          selectedView === modalView.SALE) && (
+        (modalView === modalViewOptions.REFILL ||
+          modalView === modalViewOptions.SALE) && (
           <ClientSupplierView
             action={action}
             triggerTank={triggerTank}
@@ -100,17 +76,17 @@ const TankModal = ({ openModal, toggleModal, action, triggerTank }) => {
         )}
 
       {/* MODAL DE MEDICION DE ESTANQUE */}
-      {openModal && selectedView === modalView.MEASURE && (
+      {openModal && modalView === modalViewOptions.MEASURE && (
         <MeasureStick triggerTank={triggerTank} toggleModal={toggleModal} />
       )}
 
       {/* MODAL DE VISUALIZACION DE DIFERENCIAS */}
-      {openModal && selectedView === modalView.ERRORS && (
-        <ErrorsView setHeight={setHeight}/>
+      {openModal && modalView === modalViewOptions.ERRORS && (
+        <ErrorsView setHeight={setHeight} />
       )}
       {/* MODAL DE MOVIMIENTOS DEL DIA  */}
-      {openModal && selectedView === modalView.EVENTLOGS && (
-        <EventsView triggerTank={triggerTank} setHeight={setHeight}/>
+      {openModal && modalView === modalViewOptions.EVENTLOGS && (
+        <EventsView triggerTank={triggerTank} setHeight={setHeight} />
       )}
     </Modal>
   );

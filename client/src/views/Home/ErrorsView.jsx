@@ -5,19 +5,22 @@ import { MdOutlineComment } from "react-icons/md";
 import { BiLoaderCircle } from "react-icons/bi";
 import ModalSimple from "../../components/ModalSimple";
 
-
 const ErrorsView = ({ setHeight }) => {
   const [eventLogs, setEventLogs] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
   const [openNotesModal, setOpenNotesModal] = useState(false);
   const [selectedNote, setSelectedNote] = useState("");
+  const [apiError, setApiError] = useState("");
 
   const getEventLogs = () => {
-    eventLogService.getLastErrorEvents().then((res) => {
-      setEventLogs(res.data);
-      setIsLoading(false);
-    });
+    eventLogService
+      .getLastErrorEvents()
+      .then((res) => {
+        setEventLogs(res.data);
+        setIsLoading(false);
+      })
+      .catch((err) => setApiError(err.message));
   };
 
   const handleOpenNote = (note) => {
@@ -94,6 +97,7 @@ const ErrorsView = ({ setHeight }) => {
               ))}
             </tbody>
           </table>
+          <div className="text-center text-red-600">{apiError}</div>
         </div>
       )}
       {openNotesModal && (

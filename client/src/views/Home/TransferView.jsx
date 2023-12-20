@@ -3,13 +3,20 @@ import { AppContext } from "../../App";
 import ConfirmationView from "./ConfirmationView";
 import tankService from "../../services/tank.service";
 
-function TransferView({ action, triggerTank, toggleModal, openModal, isConfirmationVisible, setIsConfirmationVisible }) {
+function TransferView({
+  action,
+  triggerTank,
+  toggleModal,
+  openModal,
+  isConfirmationVisible,
+  setIsConfirmationVisible,
+}) {
   const { tanks, setTanks } = useContext(AppContext);
   const [selectedTankId, setSelectedTankId] = useState("");
   const [selectedTank, setSelectedTank] = useState("");
   const [quantity, setQuantity] = useState("");
 
-  const [transferError, setTransferError] = useState('');
+  const [transferError, setTransferError] = useState("");
 
   useEffect(() => {
     setSelectedTankId("");
@@ -17,7 +24,6 @@ function TransferView({ action, triggerTank, toggleModal, openModal, isConfirmat
   }, [openModal]);
 
   useEffect(() => {
-
     if (
       (selectedTankId !== "" &&
         selectedTank &&
@@ -39,13 +45,11 @@ function TransferView({ action, triggerTank, toggleModal, openModal, isConfirmat
       .transfer(action, triggerTank.id, selectedTankId, quantity)
       .then((res) => {
         setTanks(res.data);
-        setTransferError('');
+        setTransferError("");
         toggleModal();
       })
-      .catch(() => {
-        setTransferError(
-          "No se pudo realizar la transferencia. Favor informar",
-        );
+      .catch((err) => {
+        setTransferError(err.message);
       });
   };
 
@@ -55,7 +59,9 @@ function TransferView({ action, triggerTank, toggleModal, openModal, isConfirmat
         Transferencia Interna
       </div>
       <div className=" w-full rounded bg-gray-200 text-center text-2xl font-thin">
-        {action === "load" ? "Cargar " + triggerTank.name : "Descargar " + triggerTank.name}
+        {action === "load"
+          ? "Cargar " + triggerTank.name
+          : "Descargar " + triggerTank.name}
       </div>
       {!isConfirmationVisible ? (
         <form onSubmit={handleTransfer} className="grid gap-5">
@@ -66,11 +72,13 @@ function TransferView({ action, triggerTank, toggleModal, openModal, isConfirmat
               value={selectedTankId}
               onChange={(e) => {
                 setSelectedTankId(e.target.value);
-                e.target.setCustomValidity('');
+                e.target.setCustomValidity("");
               }}
               className="mt-10 h-12 w-full rounded-lg border border-gray-600 bg-gray-50"
               required
-              onInvalid={e => e.target.setCustomValidity("Debes seleccionar un estanque")}
+              onInvalid={(e) =>
+                e.target.setCustomValidity("Debes seleccionar un estanque")
+              }
             >
               <option value="">
                 Seleccionar estanque {action === "load" ? "origen" : "destino"}
@@ -78,10 +86,10 @@ function TransferView({ action, triggerTank, toggleModal, openModal, isConfirmat
               {tanks
                 .filter((tank) => tank.id !== triggerTank.id)
                 .map((tank) => (
-                <option key={tank.id} value={tank.id}>
-                  {tank.name.toUpperCase()}
-                </option>
-              ))}
+                  <option key={tank.id} value={tank.id}>
+                    {tank.name.toUpperCase()}
+                  </option>
+                ))}
             </select>
           </div>
           <div>
@@ -98,13 +106,15 @@ function TransferView({ action, triggerTank, toggleModal, openModal, isConfirmat
                 if (e.target.value <= 100000) {
                   setQuantity(e.target.value);
                 }
-                e.target.setCustomValidity('');
+                e.target.setCustomValidity("");
               }}
               className=" h-12 w-full rounded-lg border border-gray-600"
               required
               pattern="[0-9]*"
               autoComplete="off"
-              onInvalid={e => e.target.setCustomValidity("Debes ingresar una cantidad válida")}
+              onInvalid={(e) =>
+                e.target.setCustomValidity("Debes ingresar una cantidad válida")
+              }
             />
           </div>
           <div className="mt-12 flex w-full justify-center">

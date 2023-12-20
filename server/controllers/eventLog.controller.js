@@ -1,23 +1,28 @@
 const db = require("../models");
 const { Op } = require("sequelize");
+const permissions = require("../config/permissions");
 
 const {
   eventLog: EventLog,
   operation: Operation,
-  user: User,
+  // user: User,
   tank: Tank,
   client: Client,
   supplier: Supplier,
 } = db;
 
 const getEventLogs = async (req, res) => {
+  const all_database_access = req.auth.payload.permissions.includes(
+    permissions.VIEW_ALL_DATABASE
+  );
+  const username = req.auth.payload.username;
+
   try {
     let startDate;
     let endDate;
     let tankIdFilter = null; // null is for events in all tanks
 
     if (req.query.startDate) {
-      console.log(req.query.startDate)
       startDate = new Date(req.query.startDate);
     }
 
@@ -26,7 +31,7 @@ const getEventLogs = async (req, res) => {
       endDate.setUTCHours(23, 59, 59, 999); // (end of the day)
     }
 
-    if (req.query.tankId){
+    if (req.query.tankId) {
       tankIdFilter = parseInt(req.query.tankId);
     }
 
@@ -55,6 +60,7 @@ const getEventLogs = async (req, res) => {
           [Op.between]: [startDate, endDate],
         },
         ...(tankIdFilter !== null && { tank_id: tankIdFilter }),
+        ...(!all_database_access && { user: username }),
       },
       include: [
         {
@@ -62,11 +68,11 @@ const getEventLogs = async (req, res) => {
           as: "operation",
           attributes: ["id", "name"],
         },
-        {
-          model: User,
-          as: "user",
-          attributes: ["username"],
-        },
+        // {
+        //   model: User,
+        //   as: "user",
+        //   attributes: ["username"],
+        // },
         {
           model: Tank,
           as: "tank",
@@ -90,13 +96,12 @@ const getEventLogs = async (req, res) => {
           "supplier_id",
           "tank_id",
           "updatedAt",
-          "user_id",
+          // "user_id",
         ],
       },
     });
     res.json(eventLogs);
   } catch (err) {
-    console.log("Error fetching eventlogs: ", err);
     res.status(500).json({ err: "Internal server error" });
   }
 };
@@ -121,13 +126,12 @@ const getLastErrorEvents = async (req, res) => {
               as: "tank",
               attributes: ["name", "type"],
             },
-          ]
+          ],
         });
 
         lastEvent && eventLogs.push(lastEvent);
       }
     }
-    console.log('a ver q ondaaa: ', eventLogs)
     res.status(200).json(eventLogs);
   } catch {
     res.status(500).json({ err: "Internal server error" });
