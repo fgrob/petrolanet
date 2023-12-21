@@ -1,5 +1,6 @@
 module.exports = {
   VIEW_OWN_DATABASE: "view:own_database",
+  VIEW_TANKS_DATABASE: "view:tanks_database",
   VIEW_ALL_DATABASE: "view:all_database",
   VIEW_CLIENTS: "view:clients",
   VIEW_SUPPLIERS: "view:suppliers",

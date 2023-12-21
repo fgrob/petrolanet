@@ -20,7 +20,7 @@ const Home = () => {
     EVENTLOGS: "EVENTLOGS",
   };
 
-  const { tanks, openBackdrop, setOpenBackdrop } = useContext(AppContext);
+  const { tanks, openBackdrop, setOpenBackdrop, userPermissions } = useContext(AppContext);
   const [openModal, setOpenModal] = useState(false);
   const [action, setAction] = useState("");
   const [modalView, setModalView] = useState();
@@ -129,11 +129,13 @@ const Home = () => {
               </div>
               <div className="flex-grow-0 text-sm">Posible diferencia</div>
             </button>
+              {userPermissions.includes("admin:tanks_adjustments") && (
             <div className="mt-2 flex w-full flex-wrap justify-between gap-4">
               <Link className="btn-success w-full text-center" to="/adjustment">
                 Ajustar Estanques
               </Link>
             </div>
+              )}
           </div>
           {tanks
             .sort((a, b) => a.id - b.id)

@@ -14,8 +14,9 @@ const EventsView = ({ triggerTank, setHeight }) => {
   const [selectedNote, setSelectedNote] = useState("");
 
   const getEventLogs = () => {
-    let date = new Date();
-    eventLogService.getEventLogs(date, date, triggerTank.id).then((res) => {
+    const startDate = moment.tz('America/Santiago').startOf('day');
+    const endDate = moment.tz('America/Santiag').endOf('day');
+    eventLogService.getEventLogs(startDate, endDate, triggerTank.id).then((res) => {
       setEventLogs(res.data);
       setIsLoading(false);
     });

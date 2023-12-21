@@ -6,6 +6,7 @@ import { MdOutlineFilterAlt } from "react-icons/md";
 import { PiProjectorScreenChartDuotone } from "react-icons/pi";
 import { BiLoaderCircle } from "react-icons/bi";
 import TotalsBox from "./totalsBox";
+import moment from "moment-timezone";
 
 import { Link } from "react-router-dom";
 
@@ -165,45 +166,18 @@ const FiltersBar = ({
     setDefaultEndDate = true,
   ) => {
     //this function sets a default date for the startDate or endDate or both if necessary
-    // default startDate: the 1st day of the previous month, starting today
+    // default startDate: the 1st day of the current month
     // default endDate: today
 
-    let date = new Date().toLocaleDateString(); // for UTC differences management
-    let [month, day, year] = date.split("/");
-
     if (setDefaultStartDate) {
-      let startDateMonth = month;
-      let startDateYear = year;
-
-      if (month === "1") {
-        // january case
-        startDateMonth = "12";
-        startDateYear = parseInt(year) - 1;
-      } else {
-        startDateMonth = parseInt(month) - 1;
-        startDateMonth = startDateMonth.toString(); // the following padStart requires string
-      }
-
-      startDateMonth = startDateMonth.padStart(2, "0"); // add a leading zero if it is less than 10 (required):
-
-      const startDate = `${startDateYear}-${startDateMonth}-01`;
-      setStartDate(startDate);
+      const date = moment.tz("America/Santiago").startOf("month").startOf("day");
+      setStartDate(date);
     }
 
     if (setDefaultEndDate) {
-      month = month.padStart(2, "0"); // add a leading zero if it is less than 10 (required):
-      day = day.padStart(2, "0");
-      const endDate = `${year}-${month}-${day}`;
-      setEndDate(endDate);
+      const date = moment.tz("America/Santiago").endOf("day");
+      setEndDate(date);
     }
-  };
-
-  const reorderDateString = (date) => {
-    // takes a date string in format 2023-01-31 and returns 31-01-2023
-
-    const [year, month, day] = date.split("-");
-    const formatedDate = [day, month, year].join("-");
-    return formatedDate;
   };
 
   useEffect(() => {
@@ -364,8 +338,8 @@ const FiltersBar = ({
                 selectedClientSupplier={selectedClientSupplier}
                 selectedUser={selectedUser}
                 selectedOperation={selectedOperation}
-                startDate={reorderDateString(startDate)}
-                endDate={reorderDateString(endDate)}
+                startDate={startDate}
+                endDate={endDate}
                 selectedTankType={selectedTankType}
                 selectedTank={selectedTank}
                 selectedDocumentType={selectedDocumentType}
@@ -378,11 +352,15 @@ const FiltersBar = ({
         <div className="flex h-fit flex-col text-xs md:flex-row md:gap-2 md:text-lg">
           <div className="h-fit">
             Desde:{" "}
-            <span className="font-bold">{reorderDateString(startDate)}</span>
+            {startDate && (
+              <span className="font-bold">{startDate.format('DD-MM-YYYY')}</span>
+            )}
           </div>
           <div className="h-fit">
             Hasta:{" "}
-            <span className="font-bold">{reorderDateString(endDate)}</span>
+            {endDate && (
+              <span className="font-bold">{endDate.format('DD-MM-YYYY')}</span>
+            )}
           </div>
         </div>
       </div>
@@ -542,9 +520,9 @@ const FiltersBar = ({
             </label>
             <input
               id="inputDateFrom"
-              onChange={(e) => setStartDate(e.target.value)}
+              onChange={(e) => setStartDate(moment(e.target.value, "YYYY-MM-DD").tz("America/Santiago"))}
               type="date"
-              value={startDate}
+              value={startDate && startDate.format('YYYY-MM-DD')}
               className="w-full rounded border border-gray-300 p-2"
             />
           </div>
@@ -558,9 +536,9 @@ const FiltersBar = ({
             </label>
             <input
               id="inputDateTo"
-              onChange={(e) => setEndDate(e.target.value)}
+              onChange={(e) => setEndDate(moment(e.target.value, "YYYY-MM-DD").tz("America/Santiago"))}
               type="date"
-              value={endDate}
+              value={endDate && endDate.format('YYYY-MM-DD')}
               className="w-full rounded border border-gray-300 p-2"
             />
           </div>

@@ -28,3 +28,8 @@ dist-ssr
 
 datatest/
 
+# Archivos generados por OpenSSL
+private-key.pem
+cert-request.csr
+certificate.pem
+

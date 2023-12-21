@@ -196,8 +196,11 @@ const TotalsBox = ({
             {selectedClientSupplier}
           </li>
           <li>
-            De <span className="font-bold">{startDate}</span> a
-            <span className="font-bold"> {endDate}</span>
+            De {startDate && (
+              <span className="font-bold">{startDate.format('DD-MM-YYYY')}</span>
+            )} a {" "} {endDate && (
+              <span className="font-bold">{endDate.format('DD-MM-YYYY')}</span>
+            )}
           </li>
           {appliedFilters.map(
             (filter) =>

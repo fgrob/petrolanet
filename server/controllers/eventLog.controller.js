@@ -1,6 +1,7 @@
 const db = require("../models");
 const { Op } = require("sequelize");
 const permissions = require("../config/permissions");
+const moment = require("moment-timezone");
 
 const {
   eventLog: EventLog,
@@ -12,9 +13,14 @@ const {
 } = db;
 
 const getEventLogs = async (req, res) => {
-  const all_database_access = req.auth.payload.permissions.includes(
-    permissions.VIEW_ALL_DATABASE
+  // console.log(req.auth.payload)
+  const own_database_access = req.auth.payload.permissions.includes(
+    permissions.VIEW_OWN_DATABASE
   );
+  const tanks_database_access = req.auth.payload.permissions.includes(
+    permissions.VIEW_TANKS_DATABASE
+  );
+
   const username = req.auth.payload.username;
 
   try {
@@ -23,36 +29,37 @@ const getEventLogs = async (req, res) => {
     let tankIdFilter = null; // null is for events in all tanks
 
     if (req.query.startDate) {
-      startDate = new Date(req.query.startDate);
+      // recibe una hora 'Chile'. La llevamos al inicio del dìa, y luego la convertimos a UTC poruque en la BBDD usamos UTC
+      console.log("req query start date:", req.query.startDate);
+      startDate = moment(req.query.startDate).startOf("day").utc();
+      console.log("aca va la fecha con moment: ", startDate);
+      console.log(
+        "aca va el inicio del mes! ",
+        moment.tz("America/Santiago").startOf("month").startOf("day").utc()
+      );
+    }
+
+    if (!startDate) {
+      // Si no hay fecha de inicio especificada, entonces fijar al principio del mes a primera hora
+      startDate = moment
+        .tz("America/Santiago")
+        .startOf("month")
+        .startOf("day")
+        .utc();
     }
 
     if (req.query.endDate) {
-      endDate = new Date(req.query.endDate);
-      endDate.setUTCHours(23, 59, 59, 999); // (end of the day)
+      endDate = moment(req.query.endDate).endOf("day").utc();
+    }
+
+    if (!endDate) {
+      // Si no hay fecha, la fijamos al final del día actual
+      endDate = moment.tz("America/Santiago").endOf("day").utc();
     }
 
     if (req.query.tankId) {
       tankIdFilter = parseInt(req.query.tankId);
     }
-
-    if (!startDate) {
-      // fetching the current and last month for the initial data
-      const now = new Date();
-
-      if (now.getMonth() === 0) {
-        //JS january starts in 0
-        startDate = new Date(now.getFullYear() - 1, 11, 1);
-      } else {
-        startDate = new Date(now.getFullYear(), now.getMonth() - 1, 1);
-      }
-    }
-
-    if (!endDate) {
-      endDate = new Date();
-    }
-
-    startDate.setUTCHours(0, 0, 0, 0);
-    endDate.setUTCHours(23, 59, 59, 999);
 
     const eventLogs = await EventLog.findAll({
       where: {
@@ -60,7 +67,8 @@ const getEventLogs = async (req, res) => {
           [Op.between]: [startDate, endDate],
         },
         ...(tankIdFilter !== null && { tank_id: tankIdFilter }),
-        ...(!all_database_access && { user: username }),
+        ...(own_database_access && { user: username }),
+        ...(tanks_database_access && { "$tank.type$": { [Op.not]: "CAMION" } }),
       },
       include: [
         {
@@ -68,11 +76,6 @@ const getEventLogs = async (req, res) => {
           as: "operation",
           attributes: ["id", "name"],
         },
-        // {
-        //   model: User,
-        //   as: "user",
-        //   attributes: ["username"],
-        // },
         {
           model: Tank,
           as: "tank",
@@ -96,7 +99,6 @@ const getEventLogs = async (req, res) => {
           "supplier_id",
           "tank_id",
           "updatedAt",
-          // "user_id",
         ],
       },
     });
