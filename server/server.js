@@ -17,16 +17,14 @@ require("./routes/eventLog.routes")(app);
 
 db.sequelize
   .sync({})
-  // db.sequelize.sync({ force: true })
   .then(() => {
-    console.log("Database ready for use");
+    console.log("Database OK");
   })
   .catch(() => {
     console.log("Database Error");
   });
 
-app.listen(8000, () => {
-  console.log("Listening at port 8000");
-}
-);
-
+port = process.env.PORT;
+app.listen(port, () => {
+  console.log(`Listening at port ${port}`);
+});
