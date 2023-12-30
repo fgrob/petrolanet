@@ -1,6 +1,10 @@
 const db = require("../models");
 const { tank: Tank, eventLog: EventLog } = db;
 
+const testApi = async (req, res) => {
+  res.status(200).json({ message: "todo bien por aca"});
+}
+
 const getTanks = async (req, res) => {
   try {
     const tanks = await Tank.findAll();
@@ -272,6 +276,7 @@ const adjustmentOperation = async (req, res) => {
 };
 
 const tankController = {
+  testApi,
   getTanks,
   createTank,
   transferOperation,
