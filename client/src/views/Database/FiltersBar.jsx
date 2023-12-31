@@ -5,7 +5,7 @@ import { IoHomeSharp } from "react-icons/io5";
 import { MdOutlineFilterAlt } from "react-icons/md";
 import { PiProjectorScreenChartDuotone } from "react-icons/pi";
 import { BiLoaderCircle } from "react-icons/bi";
-import TotalsBox from "./totalsBox";
+import TotalsBox from "./TotalsBox";
 import moment from "moment-timezone";
 
 import { Link } from "react-router-dom";
