@@ -20,8 +20,9 @@ db.sequelize
   .then(() => {
     console.log("Database OK");
   })
-  .catch(() => {
+  .catch((err) => {
     console.log("Database Error");
+    console.log(err);
   });
 
 port = process.env.PORT;
