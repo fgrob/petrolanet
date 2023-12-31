@@ -3,7 +3,7 @@ import { CiEdit } from "react-icons/ci";
 import { BiLoaderCircle } from "react-icons/bi";
 import { AppContext } from "../App";
 import Modal from "../components/Modal";
-import ConfirmationModal from "./TankAdjustment/confirmationModal";
+import ConfirmationModal from "./tankAdjustment/confirmationModal";
 import AddTankModal from "./TankAdjustment/AddTankModal";
 
 const TankAdjustment = () => {
