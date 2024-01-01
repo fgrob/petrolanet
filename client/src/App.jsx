@@ -96,6 +96,7 @@ function App() {
         const { status, statusText } = err.response;
         setErrorViewMessage(`${status} - ${statusText}`);
         setGetTanksError(true);
+        console.log('get tank error?', err)
       });
   };
 
@@ -103,6 +104,7 @@ function App() {
     if (!isLoading && !isAuthenticated) {
       loginWithRedirect();
     } else if (isAuthenticated) {
+      console.log('isAuthenticated?', isAuthenticated) // BORRAR
       getTankData();
     }
   }, [isLoading]);
