@@ -28,4 +28,5 @@ db.sequelize
 port = process.env.PORT;
 app.listen(port, () => {
   console.log(`Listening at port ${port}`);
+  console.log('probando variables de entorno: ', process.env.TEST)
 });
