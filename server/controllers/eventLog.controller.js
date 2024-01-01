@@ -13,7 +13,6 @@ const {
 } = db;
 
 const getEventLogs = async (req, res) => {
-  // console.log(req.auth.payload)
   const own_database_access = req.auth.payload.permissions.includes(
     permissions.VIEW_OWN_DATABASE
   );
@@ -30,13 +29,7 @@ const getEventLogs = async (req, res) => {
 
     if (req.query.startDate) {
       // recibe una hora 'Chile'. La llevamos al inicio del dìa, y luego la convertimos a UTC poruque en la BBDD usamos UTC
-      console.log("req query start date:", req.query.startDate);
       startDate = moment(req.query.startDate).startOf("day").utc();
-      console.log("aca va la fecha con moment: ", startDate);
-      console.log(
-        "aca va el inicio del mes! ",
-        moment.tz("America/Santiago").startOf("month").startOf("day").utc()
-      );
     }
 
     if (!startDate) {
@@ -104,7 +97,8 @@ const getEventLogs = async (req, res) => {
     });
     res.json(eventLogs);
   } catch (err) {
-    res.status(500).json({ err: "Internal server error" });
+    console.error(err)
+    res.status(500).json({ error: "Internal server error" });
   }
 };
 
@@ -135,8 +129,9 @@ const getLastErrorEvents = async (req, res) => {
       }
     }
     res.status(200).json(eventLogs);
-  } catch {
-    res.status(500).json({ err: "Internal server error" });
+  } catch (err) {
+    console.error(err)
+    res.status(500).json({ error: "Internal server error" });
   }
 };
 

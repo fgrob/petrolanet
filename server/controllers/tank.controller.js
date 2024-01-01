@@ -1,16 +1,13 @@
 const db = require("../models");
 const { tank: Tank, eventLog: EventLog } = db;
 
-const testApi = async (req, res) => {
-  res.status(200).json({ message: "todo bien por aca"});
-}
-
 const getTanks = async (req, res) => {
   try {
     const tanks = await Tank.findAll();
     res.json(tanks);
   } catch (err) {
-    res.status(500).json({ err: "Internal server error" });
+    console.error(err);
+    res.status(500).json({ error: "Internal server error" });
   }
 };
 
@@ -37,6 +34,7 @@ const createTank = async (req, res) => {
     const updatedTanks = await Tank.findAll();
     return res.status(200).json(updatedTanks);
   } catch (err) {
+    console.error(err);
     res.status(500).json({ error: "Internal server error" });
   }
 };
@@ -103,9 +101,10 @@ const transferOperation = async (req, res) => {
     const updatedTanks = await Tank.findAll();
     return res.status(200).json(updatedTanks);
   } catch (err) {
+    console.error(err);
     return res
       .status(500)
-      .json({ err: "Error in the transfer: " + err.message });
+      .json({ error: "Error in the transfer: " + err.message });
   }
 };
 
@@ -171,11 +170,10 @@ const sellOrSupplyOperation = async (req, res) => {
     const updatedTanks = await Tank.findAll();
     return res.status(200).json(updatedTanks);
   } catch (err) {
-    console.log('aca va el error:')
-    console.log(err)
+    console.error(err);
     return res
       .status(500)
-      .json({ err: "Error in the transfer: " + err.message });
+      .json({ error: "Error in the transfer: " + err.message });
   }
 };
 
@@ -209,9 +207,10 @@ const measurementOperation = async (req, res) => {
     const updatedTanks = await Tank.findAll();
     return res.status(200).json(updatedTanks);
   } catch (err) {
+    console.error(err);
     return res
       .status(500)
-      .json({ err: "Error in the measurement operation: " + err.message });
+      .json({ error: "Error in the measurement operation: " + err.message });
   }
 };
 
@@ -271,14 +270,14 @@ const adjustmentOperation = async (req, res) => {
     const updatedTanks = await Tank.findAll();
     return res.status(200).json(updatedTanks);
   } catch (err) {
+    console.error(err);
     return res
       .status(500)
-      .json({ err: "Error in the adjustment: " + err.message });
+      .json({ error: "Error in the adjustment: " + err.message });
   }
 };
 
 const tankController = {
-  testApi,
   getTanks,
   createTank,
   transferOperation,

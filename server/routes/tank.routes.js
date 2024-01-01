@@ -5,7 +5,6 @@ const {
 } = require("../middlewares/auth0.middleware");
 
 module.exports = function (app) {
-  app.get("/api/testapi", tankController.testApi);
   app.get("/api/tank/all", validateAccessToken, tankController.getTanks);
   app.put(
     "/api/tank/transfer",

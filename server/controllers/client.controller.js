@@ -6,7 +6,8 @@ const getClients = async (req, res) => {
     const client = await Client.findAll();
     res.json(client);
   } catch (err) {
-    res.status(500).json({ err: "Internal server error" });
+    console.error(err);
+    res.status(500).json({ error: "Internal server error" });
   }
 };
 
@@ -22,6 +23,7 @@ const createClient = async (req, res) => {
     const updatedClients = await Client.findAll();
     res.status(200).json(updatedClients);
   } catch (err) {
+    console.error(err);
     res.status(500).json({ error: "Internal server error" });
   }
 };
@@ -37,6 +39,7 @@ const editClient = async (req, res) => {
     const updatedClients = await Client.findAll();
     res.status(200).json(updatedClients);
   } catch (err) {
+    console.error(err)
     res.status(500).json({ error: "Internal server error" });
   }
 };

@@ -18,11 +18,11 @@ require("./routes/eventLog.routes")(app);
 db.sequelize
   .sync({})
   .then(() => {
-    console.log("Database OK");
+    console.log("Database connection OK");
   })
   .catch((err) => {
-    console.log("Database Error");
-    console.log(err);
+    console.log("Database connection Error");
+    console.error(err);
   });
 
 port = process.env.PORT;
