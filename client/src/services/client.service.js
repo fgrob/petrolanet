@@ -3,10 +3,12 @@ import axios from "axios";
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 const API_URL = `${API_BASE_URL}/client/`;
 
-const accessToken = localStorage.getItem("accessToken");
-const config = (additionalHeaders = {}) => ({
-  headers: { authorization: `Bearer ${accessToken}`, ...additionalHeaders },
-});
+const config = (additionalHeaders = {}) => {
+  const accessToken = localStorage.getItem("accessToken");
+  return {
+    headers: { authorization: `Bearer ${accessToken}`, ...additionalHeaders },
+  };
+};
 
 const getClients = (callerInfo) => {
   return axios.get(API_URL + "all", config({ "x-caller-info": callerInfo }));

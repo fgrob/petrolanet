@@ -3,13 +3,15 @@ import axios from "axios";
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 const API_URL = `${API_BASE_URL}/tank/`;
 
-const accessToken = localStorage.getItem("accessToken");
-const config = (additionalHeaders = {}) => ({
-  headers: { authorization: `Bearer ${accessToken}`, ...additionalHeaders },
-});
+const config = (additionalHeaders = {}) => {
+  const accessToken = localStorage.getItem("accessToken");
+  return {
+    headers: { authorization: `Bearer ${accessToken}`, ...additionalHeaders },
+  };
+};
 
-const getTanks = () => {
-  return axios.get(API_URL + "all", config(accessToken));
+const getTanks = () => { 
+  return axios.get(API_URL + "all", config());
 };
 
 const transfer = (action, triggerTankId, selectedTankId, quantity) => {
@@ -21,7 +23,7 @@ const transfer = (action, triggerTankId, selectedTankId, quantity) => {
       selectedTankId,
       quantity,
     },
-    config(accessToken),
+    config(),
   );
 };
 
@@ -45,7 +47,7 @@ const sellOrSupply = (
       quantity,
       notes,
     },
-    config(accessToken),
+    config(),
   );
 };
 
@@ -57,7 +59,7 @@ const tankMeasurement = (triggerTankId, quantity, notes) => {
       quantity,
       notes,
     },
-    config(accessToken),
+    config(),
   );
 };
 
@@ -65,7 +67,7 @@ const adjustment = (tankId, changedData) => {
   return axios.put(
     API_URL + "adjustment",
     { tankId, changedData },
-    config(accessToken),
+    config(),
   );
 };
 
@@ -85,7 +87,7 @@ const createTank = (
       tankGauge,
       tankNumber,
     },
-    config(accessToken),
+    config(),
   );
 };
 

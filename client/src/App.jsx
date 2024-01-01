@@ -22,7 +22,7 @@ function App() {
     loginWithRedirect,
     getAccessTokenSilently,
   } = useAuth0();
-  const [accessToken, setAccessToken] = useState();
+  // const [accessToken, setAccessToken] = useState();
 
   const [tanks, setTanks] = useState([]);
   const [openBackdrop, setOpenBackdrop] = useState(false);
@@ -79,10 +79,10 @@ function App() {
   const getAccessToken = async () => {
     const accessToken = await getAccessTokenSilently();
     const decodedToken = jwtDecode(accessToken);
-    setAccessToken(accessToken);
+    // setAccessToken(accessToken);
     localStorage.setItem("accessToken", accessToken);
     setUserPermissions(decodedToken.permissions);
-    return accessToken;
+    return;
   };
 
   const getTankData = async () => {
@@ -90,14 +90,12 @@ function App() {
     tankService
       .getTanks()
       .then((res) => {
-        console.log('hubo respuesta de los tankes..', res) // borrar
         setTanks(res.data);
       })
       .catch((err) => {
         const { status, statusText } = err.response;
         setErrorViewMessage(`${status} - ${statusText}`);
         setGetTanksError(true);
-        console.log('get tank error?', err)
       });
   };
 
@@ -105,16 +103,14 @@ function App() {
     if (!isLoading && !isAuthenticated) {
       loginWithRedirect();
     } else if (isAuthenticated) {
-      console.log('isAuthenticated?', isAuthenticated) // BORRAR
       getTankData();
     }
-    console.log('isLoading?', isLoading) // BORRAR
   }, [isLoading]);
 
   return (
     <AppContext.Provider
       value={{
-        accessToken,
+        // accessToken,
         tanks,
         setTanks,
         openBackdrop,
