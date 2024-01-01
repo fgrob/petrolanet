@@ -90,6 +90,7 @@ function App() {
     tankService
       .getTanks()
       .then((res) => {
+        console.log('hubo respuesta de los tankes..', res) // borrar
         setTanks(res.data);
       })
       .catch((err) => {
@@ -107,6 +108,7 @@ function App() {
       console.log('isAuthenticated?', isAuthenticated) // BORRAR
       getTankData();
     }
+    console.log('isLoading?', isLoading) // BORRAR
   }, [isLoading]);
 
   return (
