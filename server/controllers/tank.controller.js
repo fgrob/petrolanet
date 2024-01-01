@@ -171,6 +171,8 @@ const sellOrSupplyOperation = async (req, res) => {
     const updatedTanks = await Tank.findAll();
     return res.status(200).json(updatedTanks);
   } catch (err) {
+    console.log('aca va el error:')
+    console.log(err)
     return res
       .status(500)
       .json({ err: "Error in the transfer: " + err.message });
