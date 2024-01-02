@@ -33,6 +33,7 @@ function App() {
   const [getTanksError, setGetTanksError] = useState(false);
   const [errorViewMessage, setErrorViewMessage] = useState("");
 
+  const [username, setUsername] = useState("");
   const [userPermissions, setUserPermissions] = useState([]);
 
   const sideBarReducer = (state, action) => {
@@ -79,8 +80,8 @@ function App() {
   const getAccessToken = async () => {
     const accessToken = await getAccessTokenSilently();
     const decodedToken = jwtDecode(accessToken);
-    // setAccessToken(accessToken);
     localStorage.setItem("accessToken", accessToken);
+    setUsername(decodedToken.username)
     setUserPermissions(decodedToken.permissions);
     return;
   };
@@ -110,11 +111,11 @@ function App() {
   return (
     <AppContext.Provider
       value={{
-        // accessToken,
         tanks,
         setTanks,
         openBackdrop,
         setOpenBackdrop,
+        username,
         userPermissions,
       }}
     >

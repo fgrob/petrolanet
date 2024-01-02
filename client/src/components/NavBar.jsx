@@ -1,14 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { FaUserCircle } from "react-icons/fa";
 import { HiOutlineMenuAlt2 } from "react-icons/hi";
 import { useLocation } from "react-router-dom";
 import { useAuth0 } from "@auth0/auth0-react";
+import { AppContext } from "../App";
 
 const NavBar = ({ dispatchSideBarState }) => {
   const [header, setHeader] = useState("");
   const location = useLocation();
   const [openUserSection, setOpenUserSection] = useState(false);
-  const { user, logout } = useAuth0();
+  const { username } = useContext(AppContext); 
+  const { logout } = useAuth0();
 
   const getHeader = () => {
     if (location.pathname === "/") {
@@ -44,7 +46,7 @@ const NavBar = ({ dispatchSideBarState }) => {
           className="group mr-2 flex items-center justify-end gap-1 lg:mr-4"
         >
           <span className="hidden transition duration-100 group-hover:text-gray-200 lg:block">
-            {user.nickname}
+            {username}
           </span>
           <FaUserCircle className="h-7 w-7 transition duration-100 group-hover:text-gray-200" />
         </button>
