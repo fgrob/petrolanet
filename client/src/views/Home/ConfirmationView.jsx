@@ -65,7 +65,7 @@ const ConfirmationView = ({
   }
 
   return (
-    <div className="relative flex w-full flex-col items-center">
+    <div className="relative flex w-full flex-col items-center overflow-hidden ">
       <div className="grid w-full grid-cols-2 border-4 ">
         <div className="border-b-4 border-r-4 capitalize">
           <div className="my-5 rounded bg-red-500 text-center text-white shadow">
