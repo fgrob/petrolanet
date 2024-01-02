@@ -57,7 +57,7 @@ const Modal = ({ height, weight, openModal, toggleModal, children }) => {
     >
       <div
         ref={tankModalRef}
-        className={`relative mx-2 flex ${
+        className={`relative overflow-auto mx-2 flex ${
           weight ? weight : "w-full md:max-w-fit"
         } ${
           height ? height : "h-5/6 max-h-full  md:h-auto"
