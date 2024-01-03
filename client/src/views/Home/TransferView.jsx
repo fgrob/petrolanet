@@ -15,6 +15,7 @@ function TransferView({
   const [selectedTankId, setSelectedTankId] = useState("");
   const [selectedTank, setSelectedTank] = useState("");
   const [quantity, setQuantity] = useState("");
+  const [directTransfer, setDirectTransfer] = useState(false);
 
   const [transferError, setTransferError] = useState("");
 
@@ -42,7 +43,13 @@ function TransferView({
 
   const handleConfirmationTransfer = () => {
     tankService
-      .transfer(action, triggerTank.id, selectedTankId, quantity)
+      .transfer(
+        action,
+        triggerTank.id,
+        selectedTankId,
+        quantity,
+        directTransfer,
+      )
       .then((res) => {
         setTanks(res.data);
         setTransferError("");
@@ -116,6 +123,17 @@ function TransferView({
                 e.target.setCustomValidity("Debes ingresar una cantidad válida")
               }
             />
+          </div>
+          <div className="flex">
+            <input
+              type="checkbox"
+              value={directTransfer}
+              onChange={() => setDirectTransfer(!directTransfer)}
+              className="form-checkbox focus:shadow-outline-red rounded h-4 w-4 self-center border-gray-300 text-red-500 focus:outline-none mr-1"
+            />
+            <label htmlFor="directTranfer" className="font-bold text-red-500">
+              Transferencia Directa (no modifica Numeral)
+            </label>
           </div>
           <div className="mt-12 flex w-full justify-center">
             <button className="btn-success" type="submit">

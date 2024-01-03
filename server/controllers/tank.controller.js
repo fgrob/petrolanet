@@ -40,7 +40,7 @@ const createTank = async (req, res) => {
 };
 
 const transferOperation = async (req, res) => {
-  const { action, triggerTankId, selectedTankId, quantity } = req.body;
+  const { action, triggerTankId, selectedTankId, quantity, directTransfer } = req.body;
   const username = req.auth.payload.username;
   const intQuantity = parseInt(quantity);
 
@@ -62,8 +62,8 @@ const transferOperation = async (req, res) => {
       const originTank = await Tank.findByPk(originTankId);
       const destinationTank = await Tank.findByPk(destinationTankId);
 
-      //Check if tank_gauge is true in the origin tank
-      if (originTank.tank_gauge) {
+      //Check if tank_gauge is true in the origin tank and if it is not a direct transfer (direct transfer dont modify the tank number)
+      if (originTank.tank_gauge && !directTransfer) {
         originTank.tank_number += intQuantity;
       }
 

@@ -14,7 +14,7 @@ const getTanks = () => {
   return axios.get(API_URL + "all", config());
 };
 
-const transfer = (action, triggerTankId, selectedTankId, quantity) => {
+const transfer = (action, triggerTankId, selectedTankId, quantity, directTransfer) => {
   return axios.put(
     API_URL + "transfer",
     {
@@ -22,6 +22,7 @@ const transfer = (action, triggerTankId, selectedTankId, quantity) => {
       triggerTankId,
       selectedTankId,
       quantity,
+      directTransfer,
     },
     config(),
   );
