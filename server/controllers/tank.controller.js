@@ -1,3 +1,4 @@
+const moment = require('moment');
 const db = require("../models");
 const { tank: Tank, eventLog: EventLog } = db;
 
@@ -73,12 +74,13 @@ const transferOperation = async (req, res) => {
 
       //Update the current quantity and timestamp in origin tank
       originTank.current_quantity -= intQuantity;
-      originTank.timestamp_current_quantity = new Date();
+      // originTank.timestamp_current_quantity = new Date();
+      originTank.timestamp_current_quantity = moment().toISOString();
       await originTank.save({ transaction: t });
 
       //Update destination tank
       destinationTank.current_quantity += intQuantity;
-      destinationTank.timestamp_current_quantity = new Date();
+      destinationTank.timestamp_current_quantity = moment().toISOString();
       await destinationTank.save({ transaction: t });
 
       //Event Logs Origin Tank
@@ -156,7 +158,7 @@ const sellOrSupplyOperation = async (req, res) => {
       //Update current quantity and timestamp in trigger Tank
       action === "unload";
       triggerTank.current_quantity += intQuantity;
-      triggerTank.timestamp_current_quantity = new Date();
+      triggerTank.timestamp_current_quantity = moment().toISOString();
       await triggerTank.save({ transaction: t });
 
       //Event Logs
@@ -202,7 +204,7 @@ const measurementOperation = async (req, res) => {
 
       triggerTank.measured_quantity = intQuantity;
       triggerTank.error_quantity = intQuantity - triggerTank.current_quantity;
-      triggerTank.timestamp_measured_quantity = new Date();
+      triggerTank.timestamp_measured_quantity = moment().toISOString();
       await triggerTank.save({ transaction: t });
 
       await EventLog.create({
@@ -288,7 +290,7 @@ const adjustmentOperation = async (req, res) => {
 
     const socket = req.app.get("socket")
     socket.broadcast.emit("updatedTanks", updatedTanks);
-    
+
     return res.status(200).json(updatedTanks);
   } catch (err) {
     console.error(err);

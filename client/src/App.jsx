@@ -116,6 +116,11 @@ function App() {
       setTanks(updatedTanks);
     });
 
+    socket.on('hi', () => { // BORRAR
+      console.log('Recibido "hi" desde el servidor');
+      // Puedes realizar acciones adicionales aquí si es necesario
+    });
+
     return () => {
       socket.disconnect();
     };
