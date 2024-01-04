@@ -11,6 +11,7 @@ import TankAdjustment from "./views/TankAdjustment";
 import ClientSupplierAdjustment from "./views/ClientSupplierAdjustment";
 import { BiLoaderCircle } from "react-icons/bi";
 import { jwtDecode } from "jwt-decode";
+import io from "socket.io-client";
 
 export const AppContext = createContext();
 
@@ -81,7 +82,7 @@ function App() {
     const accessToken = await getAccessTokenSilently();
     const decodedToken = jwtDecode(accessToken);
     localStorage.setItem("accessToken", accessToken);
-    setUsername(decodedToken.username)
+    setUsername(decodedToken.username);
     setUserPermissions(decodedToken.permissions);
     return;
   };
@@ -108,6 +109,17 @@ function App() {
     }
   }, [isLoading]);
 
+  useEffect(() => {
+    const socket = io(`localhost:${import.meta.env.VITE_BACKEND_PORT}`);
+
+    socket.on("updatedTanks", (updatedTanks) => {
+      setTanks(updatedTanks);
+    });
+
+    return () => {
+      socket.disconnect();
+    };
+  }, []);
   return (
     <AppContext.Provider
       value={{

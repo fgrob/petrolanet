@@ -32,6 +32,10 @@ const createTank = async (req, res) => {
     await Tank.create(tankData);
 
     const updatedTanks = await Tank.findAll();
+
+    const socket = req.app.get("socket")
+    socket.broadcast.emit("updatedTanks", updatedTanks);
+
     return res.status(200).json(updatedTanks);
   } catch (err) {
     console.error(err);
@@ -85,7 +89,8 @@ const transferOperation = async (req, res) => {
         transaction_quantity: intQuantity * -1,
         balance: originTank.current_quantity,
         tank_number_to_date: originTank.tank_number,
-      });
+        notes: directTransfer ? "Transferencia directa (no modifica Numeral)" : "",
+      }); 
 
       //Event logs Destination Tank
       await EventLog.create({
@@ -99,6 +104,10 @@ const transferOperation = async (req, res) => {
     });
 
     const updatedTanks = await Tank.findAll();
+
+    const socket = req.app.get("socket")
+    socket.broadcast.emit("updatedTanks", updatedTanks);
+    
     return res.status(200).json(updatedTanks);
   } catch (err) {
     console.error(err);
@@ -168,6 +177,10 @@ const sellOrSupplyOperation = async (req, res) => {
     });
 
     const updatedTanks = await Tank.findAll();
+
+    const socket = req.app.get("socket")
+    socket.broadcast.emit("updatedTanks", updatedTanks);
+
     return res.status(200).json(updatedTanks);
   } catch (err) {
     console.error(err);
@@ -205,6 +218,10 @@ const measurementOperation = async (req, res) => {
     });
 
     const updatedTanks = await Tank.findAll();
+
+    const socket = req.app.get("socket")
+    socket.broadcast.emit("updatedTanks", updatedTanks);
+
     return res.status(200).json(updatedTanks);
   } catch (err) {
     console.error(err);
@@ -268,6 +285,10 @@ const adjustmentOperation = async (req, res) => {
     });
 
     const updatedTanks = await Tank.findAll();
+
+    const socket = req.app.get("socket")
+    socket.broadcast.emit("updatedTanks", updatedTanks);
+    
     return res.status(200).json(updatedTanks);
   } catch (err) {
     console.error(err);
