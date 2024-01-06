@@ -110,15 +110,10 @@ function App() {
   }, [isLoading]);
 
   useEffect(() => {
-    const socket = io(`localhost:${import.meta.env.VITE_BACKEND_PORT}`);
+    const socket = io(import.meta.env.VITE_SOCKETIO_BACKEND_URL);
 
     socket.on("updatedTanks", (updatedTanks) => {
       setTanks(updatedTanks);
-    });
-
-    socket.on('hi', () => { // BORRAR
-      console.log('Recibido "hi" desde el servidor');
-      // Puedes realizar acciones adicionales aquí si es necesario
     });
 
     return () => {

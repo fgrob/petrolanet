@@ -25,7 +25,7 @@ io.on("connection", (socket) => {
 
   app.set("socket", socket); // Hace el objeto io accesible a través de req.app
 
-  socket.broadcast.emit('hi') // borrar
+  // socket.broadcast.emit('hi') // borrar
 
   socket.on("disconnect", () => {
     console.log("socket.io: user disconnected");

@@ -20,6 +20,14 @@ const getEventLogs = async (req, res) => {
     permissions.VIEW_TANKS_DATABASE
   );
 
+  const tanks_partial_database_access = req.auth.payload.permissions.includes(
+    permissions.VIEW_TANKS_PARTIAL_DATABASE
+  );
+
+  const trucks_partial_database_access = req.auth.payload.permissions.includes(
+    permissions.VIEW_TRUCKS_PARTIAL_DATABASE
+  );
+
   const username = req.auth.payload.username;
 
   try {
@@ -59,9 +67,63 @@ const getEventLogs = async (req, res) => {
         createdAt: {
           [Op.between]: [startDate, endDate],
         },
-        ...(tankIdFilter !== null && { tank_id: tankIdFilter }),
-        ...(own_database_access && { user: username }),
-        ...(tanks_database_access && { "$tank.type$": { [Op.not]: "CAMION" } }),
+        ...(tankIdFilter !== null && { tank_id: tankIdFilter }), // Condition: Filter by tank ID if defined.
+        // ...(own_database_access && { user: username }), // Condition: Limited access to events associated only with the user.
+        // ...(tanks_database_access && { "$tank.type$": { [Op.not]: "CAMION" } }),
+        // ...(tanks_full_database_access && {
+        //   "$tank.type$": { [Op.in]: ["ESTANQUE", "ESTANQUE MOVIL"] }, // Tipo de tanque es "ESTANQUE" o "ESTANQUE MOVIL".
+        // }),
+        // ...(trucks_full_database_access && {
+        //   "$tank.type$": "CAMION",  // Condición: Tipo de tanque es "CAMION".
+        // }),
+        ...(tanks_partial_database_access && {
+          // "Incluir si el tipo no es estanque OR incluir si: es estanque pero la operacion no es venta, OR es estanque y esta asociada al usuario"
+          [Op.or]: [
+            { "$tank.type$": { [Op.notIn]: ["ESTANQUE", "ESTANQUE MOVIL"] } }, 
+            {                                                
+              [Op.or]: [
+                { "$operation.id$": { [Op.not]: 2 } }, 
+                { user: username }
+              ],
+            },
+          ],
+        }),
+        ...(trucks_partial_database_access && {
+          // "Incluir si el tipo no es camion OR incluir si: es camion pero la operacion no es venta, OR es camion y esta asociada al usuario"
+          [Op.or]: [
+            { "$tank.type$": { [Op.notIn]: ["CAMION"] } }, 
+            {                                                
+              [Op.or]: [
+                { "$operation.id$": { [Op.not]: 2 } }, 
+                { user: username }
+              ],
+            },
+          ],
+        }),
+        // ...(tanks_partial_database_access && {
+        //   [Op.or]: [
+        //     // Filtro: todas las operaciones excepto las de venta, a menos que la venta esté asociada al usuario
+        //     { "$operation.id$": { [Op.not]: 2 } },
+        //     { "$operation.id$": 2, user: username },
+        //   ],
+        // }),
+        // ...(tanks_partial_database_access && {
+        //   [Op.or]: [
+        //     { "$tank.type$": { [Op.in]: ["ESTANQUE", "ESTANQUE MOVIL"] } },  // Condición: Tipo de tanque es "ESTANQUE" o "ESTANQUE MOVIL".
+        //     {
+        //       [Op.and]: [  // Filtro: todas las operaciones excepto las de venta, a menos que la venta esté asociada al usuario
+        //     { "$operation.id$": { [Op.not]: 2 } },
+        //     { "$operation.id$": 2, user: username },
+        //   ],
+        //     },
+        //   ],
+        // }),
+        // ...(trucks_partial_database_access && {
+        //   [Op.or]: [
+        //     { "$operation.id$": { [Op.not]: 2 } },
+        //     { "$operation.id$": 2, user: username },
+        //   ],
+        // }),
       },
       include: [
         {
@@ -97,7 +159,7 @@ const getEventLogs = async (req, res) => {
     });
     res.json(eventLogs);
   } catch (err) {
-    console.error(err)
+    console.error(err);
     res.status(500).json({ error: "Internal server error" });
   }
 };
@@ -130,7 +192,7 @@ const getLastErrorEvents = async (req, res) => {
     }
     res.status(200).json(eventLogs);
   } catch (err) {
-    console.error(err)
+    console.error(err);
     res.status(500).json({ error: "Internal server error" });
   }
 };
