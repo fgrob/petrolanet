@@ -19,18 +19,21 @@ app.use(express.json());
 app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 
+const connectedSockets = new Set();
 io.on("connection", (socket) => {
 
   console.log("socket.io: user connected");
+  connectedSockets.add(socket);
 
-  app.set("socket", socket); // Hace el objeto io accesible a través de req.app
-
+  
   // socket.broadcast.emit('hi') // borrar
-
+  
   socket.on("disconnect", () => {
     console.log("socket.io: user disconnected");
+    connectedSockets.delete(socket);
   });
 });
+app.set("connectedSockets", connectedSockets); // Hace el objeto io accesible a través de req.app
 
 require("./routes/tank.routes")(app);
 require("./routes/client.routes")(app);
@@ -48,7 +51,6 @@ db.sequelize
   });
 
 port = process.env.PORT;
-// app.listen(port, () => {
 server.listen(port, () => {
   console.log(`Listening at port ${port}`);
 });
