@@ -93,15 +93,12 @@ const Home = () => {
 
   useEffect(() => {
     const socket = io(import.meta.env.VITE_SOCKETIO_BACKEND_URL);
-    console.log('el socket', socket.id)
 
     socket.on("connect", () => {
-      console.log(socket.id)
       localStorage.setItem('socketId', socket.id)
     })
 
     socket.on("updatedTanks", (updatedTanks) => {
-      console.log('ejecutando el evento sockeet')
       setTanks(updatedTanks);
     });
 

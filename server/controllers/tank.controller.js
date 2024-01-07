@@ -34,8 +34,13 @@ const createTank = async (req, res) => {
 
     const updatedTanks = await Tank.findAll();
 
-    const socket = req.app.get("socket")
-    socket.broadcast.emit("updatedTanks", updatedTanks);
+    // Get the Socket.IO instance
+    const io = req.app.get("io");
+    // Get the socket ID sent in the tank services request headers
+    const socketId = req.headers.socketid;
+    // Emit the message to all clients except the sender
+    const socket = io.sockets.sockets.get(socketId);
+    socket.broadcast.emit("updatedTanks", updatedTanks)
 
     return res.status(200).json(updatedTanks);
   } catch (err) {
@@ -107,11 +112,8 @@ const transferOperation = async (req, res) => {
 
     const updatedTanks = await Tank.findAll();
 
-    // Obtener la instancia de socket IO
     const io = req.app.get("io");
-    // Obtener la id del socket enviada en la request de los tank services
     const socketId = req.headers.socketid;
-    // Emitir el mensaje a todos los clientes excepto al emisor
     const socket = io.sockets.sockets.get(socketId);
     socket.broadcast.emit("updatedTanks", updatedTanks)
     
@@ -185,8 +187,10 @@ const sellOrSupplyOperation = async (req, res) => {
 
     const updatedTanks = await Tank.findAll();
 
-    const socket = req.app.get("socket")
-    socket.broadcast.emit("updatedTanks", updatedTanks);
+    const io = req.app.get("io");
+    const socketId = req.headers.socketid;
+    const socket = io.sockets.sockets.get(socketId);
+    socket.broadcast.emit("updatedTanks", updatedTanks)
 
     return res.status(200).json(updatedTanks);
   } catch (err) {
@@ -226,8 +230,10 @@ const measurementOperation = async (req, res) => {
 
     const updatedTanks = await Tank.findAll();
 
-    const socket = req.app.get("socket")
-    socket.broadcast.emit("updatedTanks", updatedTanks);
+    const io = req.app.get("io");
+    const socketId = req.headers.socketid;
+    const socket = io.sockets.sockets.get(socketId);
+    socket.broadcast.emit("updatedTanks", updatedTanks)
 
     return res.status(200).json(updatedTanks);
   } catch (err) {
@@ -293,8 +299,10 @@ const adjustmentOperation = async (req, res) => {
 
     const updatedTanks = await Tank.findAll();
 
-    const socket = req.app.get("socket")
-    socket.broadcast.emit("updatedTanks", updatedTanks);
+    const io = req.app.get("io");
+    const socketId = req.headers.socketid;
+    const socket = io.sockets.sockets.get(socketId);
+    socket.broadcast.emit("updatedTanks", updatedTanks)
 
     return res.status(200).json(updatedTanks);
   } catch (err) {
