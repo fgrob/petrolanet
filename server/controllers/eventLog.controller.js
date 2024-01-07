@@ -13,13 +13,6 @@ const {
 } = db;
 
 const getEventLogs = async (req, res) => {
-  const own_database_access = req.auth.payload.permissions.includes(
-    permissions.VIEW_OWN_DATABASE
-  );
-  const tanks_database_access = req.auth.payload.permissions.includes(
-    permissions.VIEW_TANKS_DATABASE
-  );
-
   const tanks_partial_database_access = req.auth.payload.permissions.includes(
     permissions.VIEW_TANKS_PARTIAL_DATABASE
   );
@@ -68,62 +61,29 @@ const getEventLogs = async (req, res) => {
           [Op.between]: [startDate, endDate],
         },
         ...(tankIdFilter !== null && { tank_id: tankIdFilter }), // Condition: Filter by tank ID if defined.
-        // ...(own_database_access && { user: username }), // Condition: Limited access to events associated only with the user.
-        // ...(tanks_database_access && { "$tank.type$": { [Op.not]: "CAMION" } }),
-        // ...(tanks_full_database_access && {
-        //   "$tank.type$": { [Op.in]: ["ESTANQUE", "ESTANQUE MOVIL"] }, // Tipo de tanque es "ESTANQUE" o "ESTANQUE MOVIL".
-        // }),
-        // ...(trucks_full_database_access && {
-        //   "$tank.type$": "CAMION",  // Condición: Tipo de tanque es "CAMION".
-        // }),
         ...(tanks_partial_database_access && {
-          // "Incluir si el tipo no es estanque OR incluir si: es estanque pero la operacion no es venta, OR es estanque y esta asociada al usuario"
+          // Condition: "Include if the type is not a tank OR include if it is a tank but the operation is not a sale, OR it is a tank and it is a sale, but it is associated with the user."
           [Op.or]: [
-            { "$tank.type$": { [Op.notIn]: ["ESTANQUE", "ESTANQUE MOVIL"] } }, 
-            {                                                
+            { "$tank.type$": { [Op.notIn]: ["ESTANQUE", "ESTANQUE MOVIL"] } },
+            {
               [Op.or]: [
-                { "$operation.id$": { [Op.not]: 2 } }, 
-                { user: username }
+                { "$operation.id$": { [Op.not]: 2 } },
+                { user: username },
               ],
             },
           ],
         }),
         ...(trucks_partial_database_access && {
-          // "Incluir si el tipo no es camion OR incluir si: es camion pero la operacion no es venta, OR es camion y esta asociada al usuario"
           [Op.or]: [
-            { "$tank.type$": { [Op.notIn]: ["CAMION"] } }, 
-            {                                                
+            { "$tank.type$": { [Op.notIn]: ["CAMION"] } },
+            {
               [Op.or]: [
-                { "$operation.id$": { [Op.not]: 2 } }, 
-                { user: username }
+                { "$operation.id$": { [Op.not]: 2 } },
+                { user: username },
               ],
             },
           ],
         }),
-        // ...(tanks_partial_database_access && {
-        //   [Op.or]: [
-        //     // Filtro: todas las operaciones excepto las de venta, a menos que la venta esté asociada al usuario
-        //     { "$operation.id$": { [Op.not]: 2 } },
-        //     { "$operation.id$": 2, user: username },
-        //   ],
-        // }),
-        // ...(tanks_partial_database_access && {
-        //   [Op.or]: [
-        //     { "$tank.type$": { [Op.in]: ["ESTANQUE", "ESTANQUE MOVIL"] } },  // Condición: Tipo de tanque es "ESTANQUE" o "ESTANQUE MOVIL".
-        //     {
-        //       [Op.and]: [  // Filtro: todas las operaciones excepto las de venta, a menos que la venta esté asociada al usuario
-        //     { "$operation.id$": { [Op.not]: 2 } },
-        //     { "$operation.id$": 2, user: username },
-        //   ],
-        //     },
-        //   ],
-        // }),
-        // ...(trucks_partial_database_access && {
-        //   [Op.or]: [
-        //     { "$operation.id$": { [Op.not]: 2 } },
-        //     { "$operation.id$": 2, user: username },
-        //   ],
-        // }),
       },
       include: [
         {

@@ -248,6 +248,7 @@ const adjustmentOperation = async (req, res) => {
   const tankId = req.body.tankId;
   const username = req.auth.payload.username;
   const changedData = req.body.changedData;
+  const notes = req.body.notes;
 
   try {
     //Start a transaction
@@ -293,6 +294,7 @@ const adjustmentOperation = async (req, res) => {
           balance: new_current_quantity,
           error_quantity: new_error_quantity,
           tank_number_to_date: new_tank_number_to_date,
+          notes: notes,
         });
       }
     });

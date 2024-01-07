@@ -10,6 +10,8 @@ const ConfirmationModal = ({
   const { setTanks } = useContext(AppContext);
   const [apiError, setApiError] = useState("");
 
+  const [notes, setNotes] = useState();
+
   const keyLabels = {
     type: "Tipo",
     capacity: "Capacidad",
@@ -43,7 +45,7 @@ const ConfirmationModal = ({
     }
 
     tankService
-      .adjustment(tankId, changedData)
+      .adjustment(tankId, changedData, notes)
       .then((res) => {
         setTanks(res.data);
         toggleModal();
@@ -97,6 +99,26 @@ const ConfirmationModal = ({
               </td>
             </tr>
           ))}
+          <tr className="transition-all duration-300 hover:bg-gray-100">
+            <td
+              className="border-b px-6 py-2 text-center font-bold"
+              colSpan="3"
+            >
+              <label htmlFor="NoteArea">Notas</label>
+            </td>
+          </tr>
+          <tr className="border border-red-500 transition-all duration-300 hover:bg-gray-100">
+            <td className="border-b px-6 py-2" colSpan="3">
+              <textarea
+                id="NoteArea"
+                className="focus:shadow-outline-blue block w-full resize-none rounded border border-gray-500 bg-gray-50 px-4 py-2 leading-5 text-gray-600 transition duration-300 ease-in-out focus:border-gray-600 focus:outline-none"
+                rows="3"
+                placeholder="Escribe aquí..."
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+              ></textarea>
+            </td>
+          </tr>
         </tbody>
       </table>
       <div className="mt-3 flex w-full justify-center gap-3">
@@ -113,6 +135,7 @@ const ConfirmationModal = ({
           Confirmar
         </button>
       </div>
+
       <div className="text-center font-bold text-red-500">{apiError}</div>
     </div>
   );

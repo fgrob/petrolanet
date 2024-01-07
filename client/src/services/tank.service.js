@@ -65,10 +65,10 @@ const tankMeasurement = (triggerTankId, quantity, notes) => {
   );
 };
 
-const adjustment = (tankId, changedData) => {
+const adjustment = (tankId, changedData, notes) => {
   return axios.put(
     API_URL + "adjustment",
-    { tankId, changedData },
+    { tankId, changedData, notes },
     config(),
   );
 };

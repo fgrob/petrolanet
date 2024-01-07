@@ -174,6 +174,7 @@ const TankAdjustment = () => {
       // Guard clause. We need the tanks first
       return;
     }
+    console.log('parece q hay cambios en tanks')
     initializeEditStates();
     setIsLoading(false);
   }, [tanks]);

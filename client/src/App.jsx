@@ -1,6 +1,7 @@
 import { createContext, useEffect, useReducer, useState } from "react";
 import { Route, Routes } from "react-router-dom";
 import { useAuth0 } from "@auth0/auth0-react";
+import io from "socket.io-client";
 import tankService from "./services/tank.service";
 import NavBar from "./components/NavBar";
 import SideBar from "./components/SideBar";
@@ -106,6 +107,23 @@ function App() {
       getTankData();
     }
   }, [isLoading]);
+
+  useEffect(() => {
+      const socket = io(import.meta.env.VITE_SOCKETIO_BACKEND_URL);
+  
+      socket.on("connect", () => {
+        localStorage.setItem('socketId', socket.id)
+      })
+  
+      socket.on("updatedTanks", (updatedTanks) => {
+        setTanks(updatedTanks);
+      });
+  
+      return () => {
+        socket.disconnect();
+        localStorage.removeItem('socketId');
+      };
+  }, []);
 
   return (
     <AppContext.Provider
