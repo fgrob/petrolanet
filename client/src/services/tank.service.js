@@ -5,8 +5,10 @@ const API_URL = `${API_BASE_URL}/tank/`;
 
 const config = (additionalHeaders = {}) => {
   const accessToken = localStorage.getItem("accessToken");
+  const socketId = localStorage.getItem("socketId")
+  console.log('a ver si el servicio...', socketId)
   return {
-    headers: { authorization: `Bearer ${accessToken}`, ...additionalHeaders },
+    headers: { authorization: `Bearer ${accessToken}`, socketid: socketId,  ...additionalHeaders },
   };
 };
 

@@ -107,13 +107,13 @@ const transferOperation = async (req, res) => {
 
     const updatedTanks = await Tank.findAll();
 
-    // Obtener el conjunto de sockets conectados desde req.app
-    const connectedSockets = req.app.get("connectedSockets");
-
+    // Obtener la instancia de socket IO
+    const io = req.app.get("io");
+    // Obtener la id del socket enviada en la request de los tank services
+    const socketId = req.headers.socketid;
     // Emitir el mensaje a todos los clientes excepto al emisor
-    connectedSockets.forEach((connectedSocket) => {
-      connectedSocket.broadcast.emit("updatedTanks", updatedTanks);
-    });
+    const socket = io.sockets.sockets.get(socketId);
+    socket.broadcast.emit("updatedTanks", updatedTanks)
     
     return res.status(200).json(updatedTanks);
   } catch (err) {

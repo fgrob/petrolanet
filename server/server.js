@@ -1,39 +1,19 @@
 require("dotenv").config();
 const express = require("express");
-const socketIO = require("socket.io");
 const http = require("http");
 const cors = require("cors");
+const db = require("./models");
+const socketIO = require('./socket.io')
 
 const app = express();
 const server = http.createServer(app);
-const io = socketIO(server, {
-  cors: {
-    origin: `${process.env.CLIENT_URL}`,
-  }
-});
-const db = require("./models");
+const io = socketIO(server) // Initializes socket.io with server
 
 app.use(cors());
-
 app.use(express.json());
-app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 
-const connectedSockets = new Set();
-io.on("connection", (socket) => {
-
-  console.log("socket.io: user connected");
-  connectedSockets.add(socket);
-
-  
-  // socket.broadcast.emit('hi') // borrar
-  
-  socket.on("disconnect", () => {
-    console.log("socket.io: user disconnected");
-    connectedSockets.delete(socket);
-  });
-});
-app.set("connectedSockets", connectedSockets); // Hace el objeto io accesible a través de req.app
+app.set("io", io); // Make io instance available to routes
 
 require("./routes/tank.routes")(app);
 require("./routes/client.routes")(app);

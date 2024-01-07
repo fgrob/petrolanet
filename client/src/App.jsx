@@ -11,7 +11,7 @@ import TankAdjustment from "./views/TankAdjustment";
 import ClientSupplierAdjustment from "./views/ClientSupplierAdjustment";
 import { BiLoaderCircle } from "react-icons/bi";
 import { jwtDecode } from "jwt-decode";
-import io from "socket.io-client";
+// import io from "socket.io-client";
 
 export const AppContext = createContext();
 
@@ -36,7 +36,7 @@ function App() {
 
   const [username, setUsername] = useState("");
   const [userPermissions, setUserPermissions] = useState([]);
-
+  
   const sideBarReducer = (state, action) => {
     switch (action.type) {
       case "TOGGLE_STATE":
@@ -109,17 +109,24 @@ function App() {
     }
   }, [isLoading]);
 
-  useEffect(() => {
-    const socket = io(import.meta.env.VITE_SOCKETIO_BACKEND_URL);
+  // useEffect(() => {
+  //   const socket = io(import.meta.env.VITE_SOCKETIO_BACKEND_URL);
+  //   // console.log('el socket', socket.id)
 
-    socket.on("updatedTanks", (updatedTanks) => {
-      setTanks(updatedTanks);
-    });
+  //   socket.on("connect", () => {
+  //     console.log(socket.id)
+  //     localStorage.setItem('socketId', socket.id)
+  //   })
 
-    return () => {
-      socket.disconnect();
-    };
-  }, []);
+  //   socket.on("updatedTanks", (updatedTanks) => {
+  //     setTanks(updatedTanks);
+  //   });
+
+  //   return () => {
+  //     socket.disconnect();
+  //     localStorage.removeItem('socketId');
+  //   };
+  // }, []);
   return (
     <AppContext.Provider
       value={{

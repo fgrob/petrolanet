@@ -6,6 +6,7 @@ import moment from "moment-timezone";
 import TankModal from "./Home/TankModal";
 import { Link } from "react-router-dom";
 import { BiLoaderCircle } from "react-icons/bi";
+import io from "socket.io-client";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -20,7 +21,7 @@ const Home = () => {
     EVENTLOGS: "EVENTLOGS",
   };
 
-  const { tanks, openBackdrop, setOpenBackdrop, userPermissions } = useContext(AppContext);
+  const { tanks, setTanks, openBackdrop, setOpenBackdrop, userPermissions } = useContext(AppContext);
   const [openModal, setOpenModal] = useState(false);
   const [action, setAction] = useState("");
   const [modalView, setModalView] = useState();
@@ -89,6 +90,26 @@ const Home = () => {
       setIsLoading(false);
     }
   }, [tanks]);
+
+  useEffect(() => {
+    const socket = io(import.meta.env.VITE_SOCKETIO_BACKEND_URL);
+    console.log('el socket', socket.id)
+
+    socket.on("connect", () => {
+      console.log(socket.id)
+      localStorage.setItem('socketId', socket.id)
+    })
+
+    socket.on("updatedTanks", (updatedTanks) => {
+      console.log('ejecutando el evento sockeet')
+      setTanks(updatedTanks);
+    });
+
+    return () => {
+      socket.disconnect();
+      localStorage.removeItem('socketId');
+    };
+  }, []);
 
   return (
     <div className="flex flex-wrap content-between justify-evenly">
